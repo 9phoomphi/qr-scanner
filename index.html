@@ -1,127 +1,891 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QR Scanner (jsQR + Canvas)</title>
-  
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Document Control</title>
   <style>
-    body { font-family: 'Sarabun', sans-serif; text-align: center; background-color: #f4f6f9; margin: 0; padding: 20px; }
-    .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    h2 { color: #333; margin-top: 0; }
-    #canvas { width: 100%; max-width: 300px; border-radius: 8px; border: 2px solid #ddd; margin-bottom: 15px; }
-    #statusMessage { font-size: 16px; font-weight: bold; color: #555; margin: 10px 0; padding: 10px; border-radius: 6px; background-color: #e9ecef; }
-    .success { background-color: #d4edda !important; color: #155724 !important; border: 1px solid #c3e6cb; }
-    .error { background-color: #f8d7da !important; color: #721c24 !important; border: 1px solid #f5c6cb; }
-    #fallback-section { display: none; margin-top: 15px; }
-    .custom-file-upload { display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-    .custom-file-upload:active { background-color: #0056b3; }
-    input[type="file"] { display: none; }
-    #rescanBtn { display: none; margin-top: 15px; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #dbe4f0;
+      --primary: #2563eb;
+      --primary-2: #1d4ed8;
+      --danger: #dc2626;
+      --success: #15803d;
+      --warning: #b45309;
+      --shadow: 0 16px 38px rgba(15, 23, 42, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans Thai", "Noto Sans Thai", sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 600px at 10% -10%, #dbeafe, rgba(219, 234, 254, 0)), var(--bg);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .muted { color: var(--muted); }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.83rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    input, select {
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0 12px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .btn {
+      border: none;
+      height: 38px;
+      border-radius: 999px;
+      padding: 0 14px;
+      font: inherit;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      background: linear-gradient(180deg, var(--primary), var(--primary-2));
+    }
+
+    .btn.secondary { background: #334155; }
+    .btn.success { background: #15803d; }
+    .btn.danger { background: var(--danger); }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.80rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: #f8fbff;
+    }
+
+    .status-pill.ok {
+      color: var(--success);
+      border-color: rgba(21, 128, 61, 0.28);
+      background: rgba(21, 128, 61, 0.08);
+    }
+
+    .status-pill.warn {
+      color: var(--warning);
+      border-color: rgba(180, 83, 9, 0.28);
+      background: rgba(180, 83, 9, 0.08);
+    }
+
+    .status-pill.error {
+      color: var(--danger);
+      border-color: rgba(220, 38, 38, 0.28);
+      background: rgba(220, 38, 38, 0.08);
+    }
+
+    .hidden { display: none !important; }
+
+    .alert {
+      border: 1px solid rgba(220, 38, 38, 0.24);
+      background: rgba(220, 38, 38, 0.08);
+      color: var(--danger);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 940px;
+      background: #fff;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 9px 10px;
+      text-align: left;
+      font-size: 0.87rem;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fbff;
+      color: #334155;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: #f8fbff;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    .status-badge.stored {
+      border-color: rgba(21, 128, 61, 0.32);
+      color: var(--success);
+      background: rgba(21, 128, 61, 0.08);
+    }
+
+    .pager {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .login-wrap {
+      max-width: 560px;
+      margin: 24px auto;
+    }
+
+    .empty {
+      padding: 16px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .settings-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .link-btn {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .link-btn:hover { text-decoration: underline; }
+
+    .config-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .config-link {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.80rem;
+      color: #1e3a8a;
+      text-decoration: none;
+      background: #eff6ff;
+      font-weight: 700;
+    }
+
+    .config-link:hover {
+      text-decoration: underline;
+      background: #dbeafe;
+    }
+
+    @media (max-width: 900px) {
+      .row { grid-template-columns: 1fr; }
+      .shell { padding: 10px; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>📷 สแกน QR Code</h2>
-    <div id="statusMessage">🎥 กำลังขออนุญาตเปิดกล้อง...</div>
-    <canvas id="canvas" hidden></canvas>
-    <button id="rescanBtn" onclick="location.reload()">สแกนรอบใหม่</button>
-    <div id="fallback-section">
-      <p style="color: #dc3545; font-size: 14px; font-weight:bold;">⚠️ เบราว์เซอร์บล็อกการเปิดกล้อง<br>กรุณากดปุ่มด้านล่างเพื่อถ่ายรูปแทนครับ</p>
-      <label class="custom-file-upload">
-        <input type="file" id="file-input" accept="image/*" capture="environment">📸 ถ่ายรูป QR Code
-      </label>
+  <div class="shell">
+    <div class="card topbar">
+      <div>
+        <h1 id="appTitle" class="title">ระบบทะเบียนคุมเอกสาร (GitHub Frontend)</h1>
+        <div id="appSubtitle" class="muted" style="font-size:0.85rem;">พร้อมใช้งานกับ Apps Script API</div>
+        <div id="configLinks" class="config-links hidden">
+          <a id="linkWebApp" class="config-link hidden" target="_blank" rel="noopener">Web App</a>
+          <a id="linkSpreadsheet" class="config-link hidden" target="_blank" rel="noopener">Spreadsheet</a>
+          <a id="linkAppsScript" class="config-link hidden" target="_blank" rel="noopener">Apps Script</a>
+          <a id="linkDriveFolder" class="config-link hidden" target="_blank" rel="noopener">Drive Folder</a>
+          <a id="linkManual" class="config-link hidden" target="_blank" rel="noopener">คู่มือ</a>
+        </div>
+      </div>
+      <div class="actions">
+        <span id="connectStatus" class="status-pill">ยังไม่ได้ตั้งค่า API</span>
+        <button id="btnOpenSettings" class="btn secondary" type="button">ตั้งค่า API</button>
+        <button id="btnLogout" class="btn danger hidden" type="button">ออกจากระบบ</button>
+      </div>
+    </div>
+
+    <div id="settingsCard" class="card hidden">
+      <div class="settings-grid">
+        <div class="field full">
+          <label for="scriptUrl">Apps Script Web App URL (/exec)</label>
+          <input id="scriptUrl" placeholder="https://script.google.com/macros/s/XXXXXXXXXXXX/exec" />
+        </div>
+        <div class="field">
+          <label for="deviceKey">Device Key (ระบบสร้างให้อัตโนมัติได้)</label>
+          <input id="deviceKey" placeholder="dk_xxxxxxxxx" />
+        </div>
+        <div class="actions">
+          <button id="btnGenerateDevice" class="btn secondary" type="button">สุ่ม Device Key</button>
+          <button id="btnSaveSettings" class="btn" type="button">บันทึกการตั้งค่า</button>
+        </div>
+        <div class="muted" style="font-size:0.82rem;">
+          ตั้งค่าครั้งเดียว ระบบจะจำไว้ในเบราว์เซอร์เครื่องนี้
+        </div>
+      </div>
+    </div>
+
+    <div id="errorBox" class="alert hidden"></div>
+
+    <div id="loginCard" class="card login-wrap hidden">
+      <div class="row">
+        <div class="field full">
+          <label for="username">Username</label>
+          <input id="username" autocomplete="username" />
+        </div>
+        <div class="field full">
+          <label for="password">Password</label>
+          <input id="password" type="password" autocomplete="current-password" />
+        </div>
+      </div>
+      <div class="actions" style="margin-top:10px;">
+        <button id="btnLogin" class="btn" type="button">เข้าสู่ระบบ</button>
+      </div>
+    </div>
+
+    <div id="appCard" class="card hidden">
+      <div class="topbar" style="margin-bottom:10px;">
+        <div>
+          <div class="muted" style="font-size:0.82rem;">ผู้ใช้งาน</div>
+          <div id="userLabel" style="font-weight:800;">-</div>
+        </div>
+        <div class="actions">
+          <button id="btnRefresh" class="btn secondary" type="button">รีเฟรช</button>
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom:10px;">
+        <div class="field">
+          <label for="searchQuery">ค้นหา</label>
+          <input id="searchQuery" placeholder="เลขที่หนังสือ, เรื่อง, ผู้ส่ง" />
+        </div>
+        <div class="field">
+          <label for="statusFilter">สถานะ</label>
+          <select id="statusFilter">
+            <option value="all">ทั้งหมด</option>
+            <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
+            <option value="มอบผู้รับผิดชอบ">มอบผู้รับผิดชอบ</option>
+            <option value="ดำเนินการเสร็จ">ดำเนินการเสร็จ</option>
+            <option value="อนุมัติแล้วส่งคืนเจ้าของเรื่อง">อนุมัติแล้วส่งคืนเจ้าของเรื่อง</option>
+            <option value="ยกเลิก">ยกเลิก</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-bottom:10px;">
+        <button id="btnSearch" class="btn" type="button">ค้นหา</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70px;">ลำดับ</th>
+              <th style="width:130px;">เลขรับ</th>
+              <th style="width:160px;">เลขที่หนังสือ</th>
+              <th>เรื่อง</th>
+              <th style="width:150px;">สถานะ</th>
+              <th style="width:130px;">สถานที่เก็บ</th>
+              <th style="width:120px;">วันที่รับ</th>
+              <th style="width:120px;">รายละเอียด</th>
+            </tr>
+          </thead>
+          <tbody id="docsBody">
+            <tr><td colspan="8" class="empty">ยังไม่มีข้อมูล</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pager">
+        <div id="pageInfo" class="muted">หน้า 1 / 1 (0 รายการ)</div>
+        <div class="actions">
+          <button id="btnPrev" class="btn secondary" type="button">ก่อนหน้า</button>
+          <button id="btnNext" class="btn secondary" type="button">ถัดไป</button>
+        </div>
+      </div>
     </div>
   </div>
 
+  <script src="./config.js"></script>
+  <script src="./api-client.js"></script>
   <script>
-    var video = document.createElement("video");
-    var canvasElement = document.getElementById("canvas");
-    var canvas = canvasElement.getContext("2d");
-    var statusMessage = document.getElementById("statusMessage");
-    var fallbackSection = document.getElementById("fallback-section");
-    var rescanBtn = document.getElementById("rescanBtn");
-    var isScanning = true;
+    (function () {
+      'use strict';
 
-    function drawLine(begin, end, color) {
-      canvas.beginPath(); canvas.moveTo(begin.x, begin.y); canvas.lineTo(end.x, end.y);
-      canvas.lineWidth = 4; canvas.strokeStyle = color; canvas.stroke();
-    }
+      var STORAGE_SCRIPT_URL = 'docControlScriptUrlV3';
+      var STORAGE_DEVICE_KEY = 'docControlDeviceKeyV3';
 
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-      .then(function(stream) {
-        video.srcObject = stream; video.setAttribute("playsinline", true); video.play();
-        requestAnimationFrame(tick);
-      })
-      .catch(function(err) {
-        statusMessage.innerText = "ไม่สามารถเปิดกล้องสดได้"; statusMessage.className = "error";
-        fallbackSection.style.display = "block";
-      });
+      var state = {
+        api: null,
+        user: null,
+        config: null,
+        page: 1,
+        itemsPerPage: 20,
+        totalPages: 1,
+        totalItems: 0,
+        searchQuery: '',
+        statusFilter: 'all',
+        loading: false
+      };
 
-    function tick() {
-      if (!isScanning) return;
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        statusMessage.innerText = "กำลังสแกนหา QR Code..."; canvasElement.hidden = false;
-        canvasElement.height = video.videoHeight; canvasElement.width = video.videoWidth;
-        canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-        var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-        var code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+      var els = {
+        appTitle: document.getElementById('appTitle'),
+        appSubtitle: document.getElementById('appSubtitle'),
+        configLinks: document.getElementById('configLinks'),
+        linkWebApp: document.getElementById('linkWebApp'),
+        linkSpreadsheet: document.getElementById('linkSpreadsheet'),
+        linkAppsScript: document.getElementById('linkAppsScript'),
+        linkDriveFolder: document.getElementById('linkDriveFolder'),
+        linkManual: document.getElementById('linkManual'),
+        connectStatus: document.getElementById('connectStatus'),
+        btnOpenSettings: document.getElementById('btnOpenSettings'),
+        btnLogout: document.getElementById('btnLogout'),
+        settingsCard: document.getElementById('settingsCard'),
+        scriptUrl: document.getElementById('scriptUrl'),
+        deviceKey: document.getElementById('deviceKey'),
+        btnGenerateDevice: document.getElementById('btnGenerateDevice'),
+        btnSaveSettings: document.getElementById('btnSaveSettings'),
+        errorBox: document.getElementById('errorBox'),
+        loginCard: document.getElementById('loginCard'),
+        username: document.getElementById('username'),
+        password: document.getElementById('password'),
+        btnLogin: document.getElementById('btnLogin'),
+        appCard: document.getElementById('appCard'),
+        userLabel: document.getElementById('userLabel'),
+        btnRefresh: document.getElementById('btnRefresh'),
+        searchQuery: document.getElementById('searchQuery'),
+        statusFilter: document.getElementById('statusFilter'),
+        btnSearch: document.getElementById('btnSearch'),
+        docsBody: document.getElementById('docsBody'),
+        pageInfo: document.getElementById('pageInfo'),
+        btnPrev: document.getElementById('btnPrev'),
+        btnNext: document.getElementById('btnNext')
+      };
 
-        if (code) {
-          isScanning = false;
-          drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
-          drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
-          drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
-          drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
-          processData(code.data);
-          video.srcObject.getTracks().forEach(track => track.stop());
-          return;
+      function safeText(value) {
+        return String(value == null ? '' : value);
+      }
+
+      function normalizeConfigObject(value) {
+        return value && typeof value === 'object' ? value : {};
+      }
+
+      function escapeHtml(value) {
+        return safeText(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function randomDeviceKey() {
+        return 'dk_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+      }
+
+      function normalizeScriptUrl(url) {
+        var raw = safeText(url).trim();
+        if (!raw) return '';
+        return raw.replace(/\s+/g, '');
+      }
+
+      function safeUrl(url) {
+        var value = safeText(url).trim();
+        if (!value) return '';
+        if (/^https?:\/\//i.test(value)) return value;
+        return '';
+      }
+
+      function readRuntimeConfig() {
+        var cfg = normalizeConfigObject(window.DOC_CONTROL_CONFIG);
+        var links = normalizeConfigObject(cfg.links);
+
+        return {
+          appName: safeText(cfg.appName).trim(),
+          subtitle: safeText(cfg.subtitle).trim(),
+          scriptUrl: normalizeScriptUrl(cfg.scriptUrl),
+          deviceKey: safeText(cfg.deviceKey).trim(),
+          lockSettings: !!cfg.lockSettings,
+          links: {
+            webApp: safeUrl(links.webApp),
+            spreadsheet: safeUrl(links.spreadsheet),
+            appsScriptProject: safeUrl(links.appsScriptProject),
+            driveFolder: safeUrl(links.driveFolder),
+            manual: safeUrl(links.manual)
+          }
+        };
+      }
+
+      function applyConfigToUI(config) {
+        if (config.appName) els.appTitle.textContent = config.appName;
+        if (config.subtitle) els.appSubtitle.textContent = config.subtitle;
+
+        var links = config.links || {};
+        var hasAnyLink = false;
+
+        function bindLink(el, url) {
+          if (!url) {
+            el.classList.add('hidden');
+            el.removeAttribute('href');
+            return;
+          }
+          hasAnyLink = true;
+          el.href = url;
+          el.classList.remove('hidden');
+        }
+
+        bindLink(els.linkWebApp, links.webApp || config.scriptUrl || '');
+        bindLink(els.linkSpreadsheet, links.spreadsheet || '');
+        bindLink(els.linkAppsScript, links.appsScriptProject || '');
+        bindLink(els.linkDriveFolder, links.driveFolder || '');
+        bindLink(els.linkManual, links.manual || '');
+
+        if (hasAnyLink) {
+          els.configLinks.classList.remove('hidden');
+        } else {
+          els.configLinks.classList.add('hidden');
         }
       }
-      requestAnimationFrame(tick);
-    }
 
-    document.getElementById('file-input').addEventListener('change', function(e) {
-      if (e.target.files.length == 0) return;
-      var file = e.target.files[0]; var reader = new FileReader();
-      statusMessage.innerText = "⏳ กำลังอ่านภาพ..."; statusMessage.className = "";
-      reader.onload = function(event) {
-        var img = new Image();
-        img.onload = function() {
-          canvasElement.hidden = false;
-          var scale = Math.min(400 / img.width, 1); 
-          canvasElement.width = img.width * scale; canvasElement.height = img.height * scale;
-          canvas.drawImage(img, 0, 0, canvasElement.width, canvasElement.height);
-          var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-          var code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
-          if(code) { processData(code.data); } else { statusMessage.innerText = "❌ ไม่พบ QR Code ในภาพ ลองถ่ายใหม่ครับ"; statusMessage.className = "error"; }
-        };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
+      function applyLockMode(config) {
+        if (!config.lockSettings) return;
+        els.btnOpenSettings.classList.add('hidden');
+        els.btnGenerateDevice.classList.add('hidden');
+        els.btnSaveSettings.classList.add('hidden');
+        els.scriptUrl.readOnly = true;
+        els.deviceKey.readOnly = true;
+        els.settingsCard.classList.add('hidden');
+      }
 
-    function processData(qrText) {
-      statusMessage.innerText = "⏳ กำลังบันทึกข้อมูล..."; statusMessage.className = "";
-      
-      const GAS_URL = "https://script.google.com/macros/s/AKfycbxCUHvan5CW8WMeSYYizumUslOEG3w3ju5UaH2KLL88brT4KT4viD7JWDrhdbjGEoYXGw/exec"; 
-      
-      fetch(GAS_URL, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ qrText: qrText })
-      })
-      .then(response => {
-        statusMessage.innerText = "✅ บันทึกสำเร็จ: " + qrText; statusMessage.className = "success";
-        rescanBtn.style.display = "inline-block"; fallbackSection.style.display = "none";
-      })
-      .catch(error => {
-        statusMessage.innerText = "❌ ส่งข้อมูลไม่สำเร็จ"; statusMessage.className = "error";
-        rescanBtn.style.display = "inline-block";
-      });
-    }
+      function showError(message) {
+        var msg = safeText(message).trim();
+        if (!msg) {
+          els.errorBox.classList.add('hidden');
+          els.errorBox.textContent = '';
+          return;
+        }
+        els.errorBox.textContent = msg;
+        els.errorBox.classList.remove('hidden');
+      }
+
+      function setStatus(label, type) {
+        els.connectStatus.textContent = label;
+        els.connectStatus.className = 'status-pill ' + (type || '');
+      }
+
+      function setLoading(isLoading) {
+        state.loading = !!isLoading;
+        els.btnLogin.disabled = state.loading;
+        els.btnSaveSettings.disabled = state.loading;
+        els.btnSearch.disabled = state.loading;
+        els.btnRefresh.disabled = state.loading;
+        els.btnPrev.disabled = state.loading || state.page <= 1;
+        els.btnNext.disabled = state.loading || state.page >= state.totalPages;
+      }
+
+      function setLoggedIn(user) {
+        state.user = user || null;
+        if (state.user) {
+          var name = safeText(state.user.displayName || state.user.username || '-');
+          var role = safeText(state.user.accessRoleLabel || '');
+          els.userLabel.textContent = role ? (name + ' (' + role + ')') : name;
+          els.loginCard.classList.add('hidden');
+          els.appCard.classList.remove('hidden');
+          els.btnLogout.classList.remove('hidden');
+          setStatus('เชื่อมต่อแล้ว', 'ok');
+        } else {
+          els.userLabel.textContent = '-';
+          els.appCard.classList.add('hidden');
+          els.loginCard.classList.remove('hidden');
+          els.btnLogout.classList.add('hidden');
+          setStatus('พร้อมเข้าสู่ระบบ', 'warn');
+        }
+      }
+
+      function buildClientOrThrow() {
+        var scriptUrl = normalizeScriptUrl(els.scriptUrl.value);
+        var deviceKey = safeText(els.deviceKey.value).trim();
+
+        if (!scriptUrl) throw new Error('กรุณาตั้งค่า Apps Script URL');
+        if (!deviceKey) throw new Error('กรุณาระบุ Device Key');
+
+        localStorage.setItem(STORAGE_SCRIPT_URL, scriptUrl);
+        localStorage.setItem(STORAGE_DEVICE_KEY, deviceKey);
+
+        state.api = new DocumentControlApi({
+          scriptUrl: scriptUrl,
+          deviceKey: deviceKey,
+          timeoutMs: 20000
+        });
+
+        return state.api;
+      }
+
+      function buildDocLink(doc) {
+        var scriptUrl = state.api ? safeText(state.api.scriptUrl) : '';
+        if (!scriptUrl) return '#';
+        var docId = safeText(doc && (doc.docId || doc.amDocNoAk || doc.receiveNo || '')).trim();
+        if (!docId) return '#';
+        var base = scriptUrl.split('?')[0];
+        var dk = state.api.defaultDeviceKey || '';
+        var url = base + '?id=' + encodeURIComponent(docId);
+        if (dk) url += '&dk=' + encodeURIComponent(dk);
+        return url;
+      }
+
+      function renderDocs(result) {
+        var docs = (result && Array.isArray(result.docs)) ? result.docs : [];
+        var pagination = result && result.pagination ? result.pagination : {};
+
+        state.totalPages = Number(pagination.totalPages || 1);
+        state.totalItems = Number(pagination.totalItems || docs.length || 0);
+
+        els.pageInfo.textContent = 'หน้า ' + state.page + ' / ' + state.totalPages + ' (' + state.totalItems + ' รายการ)';
+
+        if (!docs.length) {
+          els.docsBody.innerHTML = '<tr><td colspan="8" class="empty">ไม่พบเอกสาร</td></tr>';
+          return;
+        }
+
+        var html = '';
+        for (var i = 0; i < docs.length; i++) {
+          var d = docs[i] || {};
+          var status = safeText(d.docStatus || '-');
+          var storedLoc = safeText(d.storedLoc || '-').trim() || '-';
+          var badgeClass = storedLoc !== '-' ? 'status-badge stored' : 'status-badge';
+          var subject = safeText(d.subject || '-');
+          if (subject.length > 180) subject = subject.substring(0, 180).replace(/\s+$/, '') + '...';
+          var docNo = safeText(d.amDocNoAk || d.docNoSdh || '-');
+          var receiveNo = safeText(d.receiveNo || '-');
+          var dateRec = safeText(d.dateRec || '-');
+          var rowNo = (state.page - 1) * state.itemsPerPage + (i + 1);
+          var link = buildDocLink(d);
+
+          html += '<tr>';
+          html += '<td>' + rowNo + '</td>';
+          html += '<td>' + escapeHtml(receiveNo) + '</td>';
+          html += '<td>' + escapeHtml(docNo) + '</td>';
+          html += '<td>' + escapeHtml(subject) + '</td>';
+          html += '<td><span class="status-badge">' + escapeHtml(status) + '</span></td>';
+          html += '<td><span class="' + badgeClass + '">' + escapeHtml(storedLoc) + '</span></td>';
+          html += '<td>' + escapeHtml(dateRec) + '</td>';
+          html += '<td>' + (link === '#' ? '-' : ('<a class="link-btn" href="' + escapeHtml(link) + '" target="_blank" rel="noopener">เปิด</a>')) + '</td>';
+          html += '</tr>';
+        }
+
+        els.docsBody.innerHTML = html;
+      }
+
+      function loadDocs(resetPage) {
+        if (!state.api) return Promise.reject(new Error('ยังไม่ได้ตั้งค่า API'));
+        if (!state.user) return Promise.reject(new Error('กรุณาเข้าสู่ระบบ'));
+
+        if (resetPage) state.page = 1;
+        state.searchQuery = safeText(els.searchQuery.value).trim();
+        state.statusFilter = safeText(els.statusFilter.value || 'all').trim() || 'all';
+
+        setLoading(true);
+        showError('');
+
+        return state.api.docsList({
+          page: state.page,
+          itemsPerPage: state.itemsPerPage,
+          searchQuery: state.searchQuery,
+          statusFilter: state.statusFilter
+        }).then(function (res) {
+          renderDocs(res || {});
+          setLoading(false);
+        }).catch(function (err) {
+          setLoading(false);
+          throw err;
+        });
+      }
+
+      function trySession() {
+        if (!state.api) return Promise.resolve(false);
+        setStatus('กำลังตรวจสอบ session...', 'warn');
+        return state.api.me().then(function (res) {
+          if (res && res.success && res.user) {
+            setLoggedIn(res.user);
+            return loadDocs(true).then(function () { return true; });
+          }
+          setLoggedIn(null);
+          return false;
+        }).catch(function () {
+          setLoggedIn(null);
+          return false;
+        });
+      }
+
+      function saveSettings() {
+        showError('');
+        try {
+          buildClientOrThrow();
+          els.settingsCard.classList.add('hidden');
+          setStatus('ตั้งค่าแล้ว', 'warn');
+          return trySession();
+        } catch (err) {
+          showError(err && err.message ? err.message : String(err));
+          return Promise.resolve(false);
+        }
+      }
+
+      function login() {
+        if (!state.api) {
+          showError('กรุณาตั้งค่า API ก่อนเข้าสู่ระบบ');
+          return;
+        }
+        var username = safeText(els.username.value).trim();
+        var password = safeText(els.password.value);
+        if (!username || !password) {
+          showError('กรุณากรอก Username และ Password');
+          return;
+        }
+
+        setLoading(true);
+        showError('');
+        setStatus('กำลังเข้าสู่ระบบ...', 'warn');
+
+        state.api.login(username, password).then(function (res) {
+          if (!res || res.success === false) {
+            throw new Error(res && res.error ? res.error : 'เข้าสู่ระบบไม่สำเร็จ');
+          }
+          setLoggedIn(res.user || { username: username });
+          setLoading(false);
+          return loadDocs(true);
+        }).catch(function (err) {
+          setLoading(false);
+          setLoggedIn(null);
+          showError(err && err.message ? err.message : 'เข้าสู่ระบบไม่สำเร็จ');
+          setStatus('เข้าสู่ระบบไม่สำเร็จ', 'error');
+        });
+      }
+
+      function logout() {
+        if (!state.api) {
+          setLoggedIn(null);
+          return;
+        }
+
+        setLoading(true);
+        state.api.logout().finally(function () {
+          setLoading(false);
+          setLoggedIn(null);
+          els.docsBody.innerHTML = '<tr><td colspan="8" class="empty">ยังไม่มีข้อมูล</td></tr>';
+          els.pageInfo.textContent = 'หน้า 1 / 1 (0 รายการ)';
+        });
+      }
+
+      function init() {
+        state.config = readRuntimeConfig();
+        applyConfigToUI(state.config);
+        applyLockMode(state.config);
+
+        var savedUrl = localStorage.getItem(STORAGE_SCRIPT_URL) || '';
+        var savedDeviceKey = localStorage.getItem(STORAGE_DEVICE_KEY) || '';
+        var configUrl = safeText(state.config.scriptUrl).trim();
+        var configDeviceKey = safeText(state.config.deviceKey).trim();
+        var initialUrl = configUrl || savedUrl;
+        var initialDeviceKey = configDeviceKey || savedDeviceKey || randomDeviceKey();
+
+        if (configUrl && configUrl !== savedUrl) {
+          localStorage.setItem(STORAGE_SCRIPT_URL, configUrl);
+        }
+        if (configDeviceKey && configDeviceKey !== savedDeviceKey) {
+          localStorage.setItem(STORAGE_DEVICE_KEY, configDeviceKey);
+        }
+
+        els.scriptUrl.value = initialUrl;
+        els.deviceKey.value = initialDeviceKey;
+
+        els.btnOpenSettings.addEventListener('click', function () {
+          els.settingsCard.classList.toggle('hidden');
+        });
+
+        els.btnGenerateDevice.addEventListener('click', function () {
+          els.deviceKey.value = randomDeviceKey();
+        });
+
+        els.btnSaveSettings.addEventListener('click', function () {
+          saveSettings();
+        });
+
+        els.btnLogin.addEventListener('click', function () {
+          login();
+        });
+
+        els.password.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') login();
+        });
+
+        els.btnLogout.addEventListener('click', function () {
+          logout();
+        });
+
+        els.btnSearch.addEventListener('click', function () {
+          loadDocs(true).catch(function (err) {
+            showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+          });
+        });
+
+        els.searchQuery.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            loadDocs(true).catch(function (err) {
+              showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+            });
+          }
+        });
+
+        els.btnRefresh.addEventListener('click', function () {
+          loadDocs(false).catch(function (err) {
+            showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+          });
+        });
+
+        els.btnPrev.addEventListener('click', function () {
+          if (state.page <= 1) return;
+          state.page -= 1;
+          loadDocs(false).catch(function (err) {
+            state.page += 1;
+            showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+          });
+        });
+
+        els.btnNext.addEventListener('click', function () {
+          if (state.page >= state.totalPages) return;
+          state.page += 1;
+          loadDocs(false).catch(function (err) {
+            state.page -= 1;
+            showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+          });
+        });
+
+        if (initialUrl) {
+          try {
+            buildClientOrThrow();
+            trySession().then(function (ok) {
+              if (!ok) {
+                els.loginCard.classList.remove('hidden');
+                setStatus('พร้อมเข้าสู่ระบบ', 'warn');
+              }
+            });
+          } catch (err) {
+            showError(err && err.message ? err.message : String(err));
+            els.settingsCard.classList.remove('hidden');
+            els.loginCard.classList.remove('hidden');
+            setStatus('ตั้งค่า API ไม่ถูกต้อง', 'error');
+          }
+        } else {
+          if (!state.config.lockSettings) {
+            els.settingsCard.classList.remove('hidden');
+          }
+          els.loginCard.classList.remove('hidden');
+          if (state.config.lockSettings) {
+            setStatus('config.js ยังไม่ตั้งค่า URL', 'error');
+            showError('กรุณาตั้งค่า scriptUrl ในไฟล์ config.js ก่อนใช้งาน');
+          } else {
+            setStatus('ยังไม่ได้ตั้งค่า API', 'warn');
+          }
+        }
+      }
+
+      init();
+    })();
   </script>
 </body>
 </html>
