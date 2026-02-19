@@ -224,7 +224,6 @@
       statusMessage.className = "";
       
       // นำลิงก์ Web App URL จาก Google Apps Script มาใส่ตรงนี้
-      // ตัวอย่าง: const GAS_URL = "https://script.google.com/macros/s/AKfy.../exec";
       const GAS_URL = "https://script.google.com/macros/s/AKfycbxCUHvan5CW8WMeSYYizumUslOEG3w3ju5UaH2KLL88brT4KT4viD7JWDrhdbjGEoYXGw/exec"; 
       
       fetch(GAS_URL, {
@@ -236,8 +235,6 @@
         body: JSON.stringify({ qrText: qrText })
       })
       .then(response => {
-        // กรณี mode: 'no-cors' จะอ่าน response.text() ตรงๆ ไม่ได้
-        // แต่ถ้ามาถึงจุดนี้ได้แสดงว่าส่งข้อมูลสำเร็จแล้ว
         statusMessage.innerText = "✅ บันทึกสำเร็จ: " + qrText; 
         statusMessage.className = "success";
         rescanBtn.style.display = "inline-block"; 
