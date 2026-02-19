@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Scanner (jsQR + Canvas)</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  
+  <style>
+    body { font-family: 'Sarabun', sans-serif; text-align: center; background-color: #f4f6f9; margin: 0; padding: 20px; }
+    .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h2 { color: #333; margin-top: 0; }
+    #canvas { width: 100%; max-width: 300px; border-radius: 8px; border: 2px solid #ddd; margin-bottom: 15px; }
+    #statusMessage { font-size: 16px; font-weight: bold; color: #555; margin: 10px 0; padding: 10px; border-radius: 6px; background-color: #e9ecef; }
+    .success { background-color: #d4edda !important; color: #155724 !important; border: 1px solid #c3e6cb; }
+    .error { background-color: #f8d7da !important; color: #721c24 !important; border: 1px solid #f5c6cb; }
+    #fallback-section { display: none; margin-top: 15px; }
+    .custom-file-upload { display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+    .custom-file-upload:active { background-color: #0056b3; }
+    input[type="file"] { display: none; }
+    #rescanBtn { display: none; margin-top: 15px; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📷 สแกน QR Code</h2>
+    <div id="statusMessage">🎥 กำลังขออนุญาตเปิดกล้อง...</div>
+    <canvas id="canvas" hidden></canvas>
+    <button id="rescanBtn" onclick="location.reload()">สแกนรอบใหม่</button>
+    <div id="fallback-section">
+      <p style="color: #dc3545; font-size: 14px; font-weight:bold;">⚠️ เบราว์เซอร์บล็อกการเปิดกล้อง<br>กรุณากดปุ่มด้านล่างเพื่อถ่ายรูปแทนครับ</p>
+      <label class="custom-file-upload">
+        <input type="file" id="file-input" accept="image/*" capture="environment">📸 ถ่ายรูป QR Code
+      </label>
+    </div>
+  </div>
+
+  <script>
+    var video = document.createElement("video");
+    var canvasElement = document.getElementById("canvas");
+    var canvas = canvasElement.getContext("2d");
+    var statusMessage = document.getElementById("statusMessage");
+    var fallbackSection = document.getElementById("fallback-section");
+    var rescanBtn = document.getElementById("rescanBtn");
+    var isScanning = true;
+
+    function drawLine(begin, end, color) {
+      canvas.beginPath(); canvas.moveTo(begin.x, begin.y); canvas.lineTo(end.x, end.y);
+      canvas.lineWidth = 4; canvas.strokeStyle = color; canvas.stroke();
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(function(stream) {
+        video.srcObject = stream; video.setAttribute("playsinline", true); video.play();
+        requestAnimationFrame(tick);
+      })
+      .catch(function(err) {
+        statusMessage.innerText = "ไม่สามารถเปิดกล้องสดได้"; statusMessage.className = "error";
+        fallbackSection.style.display = "block";
+      });
+
+    function tick() {
+      if (!isScanning) return;
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        statusMessage.innerText = "กำลังสแกนหา QR Code..."; canvasElement.hidden = false;
+        canvasElement.height = video.videoHeight; canvasElement.width = video.videoWidth;
+        canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+        var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+        var code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+
+        if (code) {
+          isScanning = false;
+          drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+          drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+          drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+          drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+          processData(code.data);
+          video.srcObject.getTracks().forEach(track => track.stop());
+          return;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    document.getElementById('file-input').addEventListener('change', function(e) {
+      if (e.target.files.length == 0) return;
+      var file = e.target.files[0]; var reader = new FileReader();
+      statusMessage.innerText = "⏳ กำลังอ่านภาพ..."; statusMessage.className = "";
+      reader.onload = function(event) {
+        var img = new Image();
+        img.onload = function() {
+          canvasElement.hidden = false;
+          var scale = Math.min(400 / img.width, 1); 
+          canvasElement.width = img.width * scale; canvasElement.height = img.height * scale;
+          canvas.drawImage(img, 0, 0, canvasElement.width, canvasElement.height);
+          var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+          var code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+          if(code) { processData(code.data); } else { statusMessage.innerText = "❌ ไม่พบ QR Code ในภาพ ลองถ่ายใหม่ครับ"; statusMessage.className = "error"; }
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function processData(qrText) {
+      statusMessage.innerText = "⏳ กำลังบันทึกข้อมูล..."; statusMessage.className = "";
+      
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbxCUHvan5CW8WMeSYYizumUslOEG3w3ju5UaH2KLL88brT4KT4viD7JWDrhdbjGEoYXGw/exec"; 
+      
+      fetch(GAS_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ qrText: qrText })
+      })
+      .then(response => {
+        statusMessage.innerText = "✅ บันทึกสำเร็จ: " + qrText; statusMessage.className = "success";
+        rescanBtn.style.display = "inline-block"; fallbackSection.style.display = "none";
+      })
+      .catch(error => {
+        statusMessage.innerText = "❌ ส่งข้อมูลไม่สำเร็จ"; statusMessage.className = "error";
+        rescanBtn.style.display = "inline-block";
+      });
+    }
+  </script>
+</body>
+</html>
