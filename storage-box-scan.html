@@ -622,6 +622,31 @@
         }
       }
 
+      async function requestCameraPermissionWarmup() {
+        // ขอสิทธิ์กล้องล่วงหน้าแบบเดียวกับตัวอย่างที่ใช้ getUserMedia ตรงๆ
+        var attempts = [
+          { video: { facingMode: { ideal: 'environment' } }, audio: false },
+          { video: { facingMode: 'environment' }, audio: false },
+          { video: true, audio: false }
+        ];
+        var lastErr = null;
+        for (var i = 0; i < attempts.length; i++) {
+          try {
+            var stream = await navigator.mediaDevices.getUserMedia(attempts[i]);
+            if (stream && typeof stream.getTracks === 'function') {
+              var tracks = stream.getTracks();
+              for (var t = 0; t < tracks.length; t++) {
+                try { tracks[t].stop(); } catch (_stopErr) {}
+              }
+            }
+            return true;
+          } catch (err) {
+            lastErr = err;
+          }
+        }
+        throw (lastErr || new Error('camera_permission_failed'));
+      }
+
       function cameraLabelScore(label) {
         var text = C.safeTrim(label || '').toLowerCase();
         if (!text) return 0;
@@ -716,6 +741,7 @@
 
         try {
           ensureCameraPrerequisites();
+          await requestCameraPermissionWarmup();
           if (!state.html5Qr) {
             state.html5Qr = new Html5Qrcode('reader');
           }
