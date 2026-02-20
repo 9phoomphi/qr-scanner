@@ -164,6 +164,9 @@
       width: 100% !important;
       height: 100% !important;
       object-fit: cover !important;
+      transform: scale(1);
+      filter: saturate(1) contrast(1);
+      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), filter 0.34s ease;
     }
 
     #reader__dashboard,
@@ -281,18 +284,52 @@
       background: radial-gradient(circle at 50% 50%, rgba(52, 199, 89, 0.34), rgba(52, 199, 89, 0.1) 32%, rgba(10, 132, 255, 0.06) 58%, transparent 80%);
     }
 
+    .scan-lock {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(33%, 116px);
+      aspect-ratio: 1 / 1;
+      border-radius: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 0 1px rgba(52, 199, 89, 0.55), 0 0 28px rgba(52, 199, 89, 0.34);
+      transform: translate(-50%, -50%) scale(0.78);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 7;
+      backdrop-filter: blur(1px);
+      -webkit-backdrop-filter: blur(1px);
+    }
+
+    .scan-lock::after {
+      content: "";
+      position: absolute;
+      inset: 14%;
+      border-radius: 14px;
+      border: 1px solid rgba(134, 239, 172, 0.88);
+    }
+
     .video-shell.scan-hit .scan-flash {
-      animation: scanHitFlash 0.45s ease-out;
+      animation: scanHitFlash 0.56s ease-out;
+    }
+
+    .video-shell.scan-hit #reader video {
+      animation: scanSnapZoom 0.56s cubic-bezier(0.2, 0.84, 0.24, 1) both;
     }
 
     .video-shell.scan-hit .scan-guide {
       border-color: rgba(52, 199, 89, 0.95);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 0 0 999px rgba(2, 6, 23, 0.22), 0 0 0 4px rgba(52, 199, 89, 0.22), 0 0 30px rgba(52, 199, 89, 0.4);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 0 0 999px rgba(2, 6, 23, 0.22), 0 0 0 4px rgba(52, 199, 89, 0.24), 0 0 30px rgba(52, 199, 89, 0.4);
+      animation: scanGuideLock 0.56s cubic-bezier(0.2, 0.84, 0.24, 1) both;
     }
 
     .video-shell.scan-hit .scan-guide-line {
       background: linear-gradient(90deg, rgba(134, 239, 172, 0), #86efac, rgba(134, 239, 172, 0));
       box-shadow: 0 0 15px rgba(34, 197, 94, 0.75);
+    }
+
+    .video-shell.scan-hit .scan-lock {
+      animation: scanLockPulse 0.56s cubic-bezier(0.2, 0.84, 0.24, 1) both;
     }
 
     @keyframes scanSweep {
@@ -305,6 +342,24 @@
       0% { opacity: 0; }
       25% { opacity: 1; }
       100% { opacity: 0; }
+    }
+
+    @keyframes scanSnapZoom {
+      0% { transform: scale(1); filter: saturate(1) contrast(1); }
+      36% { transform: scale(1.17); filter: saturate(1.18) contrast(1.08); }
+      100% { transform: scale(1); filter: saturate(1) contrast(1); }
+    }
+
+    @keyframes scanGuideLock {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      36% { transform: translate(-50%, -50%) scale(0.9); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes scanLockPulse {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.78); }
+      32% { opacity: 1; transform: translate(-50%, -50%) scale(1.03); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
     }
 
     .scan-status {
@@ -352,56 +407,19 @@
       font-size: 0.82rem;
     }
 
-    .camera-picker {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 8px;
-      align-items: center;
+    .camera-auto-chip {
       margin-top: 10px;
-    }
-
-    .camera-select {
-      height: 44px;
-      border-radius: 13px;
-      border: 1px solid rgba(148, 163, 184, 0.42);
-      font-size: 0.88rem;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.76);
-      color: #0f172a;
+      min-height: 38px;
+      border-radius: 12px;
       padding: 0 12px;
-      outline: none;
-      font-family: inherit;
-    }
-
-    .camera-select:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .camera-refresh-btn {
-      height: 44px;
-      min-width: 44px;
-      padding: 0 12px;
-      border: 1px solid rgba(100, 116, 139, 0.28);
-      border-radius: 13px;
-      background: rgba(148, 163, 184, 0.18);
+      border: 1px solid rgba(148, 163, 184, 0.36);
+      background: rgba(255, 255, 255, 0.74);
       color: #334155;
-      font-weight: 900;
-      font-family: inherit;
-      cursor: pointer;
-      transition: transform 0.14s ease, box-shadow 0.18s ease;
-    }
-
-    .camera-refresh-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.16);
-    }
-
-    .camera-refresh-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 760;
     }
 
     .camera-actions {
@@ -673,16 +691,10 @@
       color: #94a3b8;
     }
 
-    body.dark-mode .camera-select {
-      background: rgba(22, 30, 44, 0.78);
-      border-color: rgba(148, 163, 184, 0.36);
-      color: #e2e8f0;
-    }
-
-    body.dark-mode .camera-refresh-btn {
-      background: rgba(100, 116, 139, 0.24);
-      border-color: rgba(148, 163, 184, 0.35);
-      color: #e2e8f0;
+    body.dark-mode .camera-auto-chip {
+      background: rgba(22, 30, 44, 0.66);
+      border-color: rgba(148, 163, 184, 0.34);
+      color: #cbd5e1;
     }
 
     body.dark-mode .status-message {
@@ -788,12 +800,10 @@
         bottom: 10px;
       }
 
-      .camera-picker {
-        grid-template-columns: 1fr;
-      }
-
-      .camera-select {
-        font-size: 16px;
+      .camera-auto-chip {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.8rem;
       }
 
       .scan-status {
@@ -889,6 +899,7 @@
               <span class="scan-guide-corner br"></span>
               <span class="scan-guide-line"></span>
             </div>
+            <div class="scan-lock" aria-hidden="true"></div>
             <div id="scanFlash" class="scan-flash" aria-hidden="true"></div>
             <div class="scan-guide-tip"><i class="bi bi-qr-code-scan"></i>วาง QR ให้อยู่ในกรอบ</div>
           </div>
@@ -898,12 +909,7 @@
           </div>
           <div id="statusMessage" class="status-message"></div>
 
-          <div class="camera-picker">
-            <select id="cameraSelect" class="camera-select" disabled>
-              <option value="">กล้องด้านหลัง (อัตโนมัติ)</option>
-            </select>
-            <button id="reloadCameraBtn" type="button" class="camera-refresh-btn" title="โหลดรายชื่อกล้องใหม่"><i class="bi bi-arrow-repeat"></i></button>
-          </div>
+          <div id="cameraAutoHint" class="camera-auto-chip"><i class="bi bi-camera-reels"></i>กล้องหลังอัตโนมัติ</div>
 
           <div class="camera-actions">
             <button id="startBtn" type="button" class="scanner-btn start"><i class="bi bi-camera-video me-2"></i>เริ่มสแกน</button>
@@ -954,7 +960,8 @@
         lastScanValue: '',
         lastScanAt: 0,
         knownCameras: [],
-        preferredCameraId: ''
+        autoCameraId: '',
+        autoCameraLabel: ''
       };
 
       var els = {
@@ -964,8 +971,7 @@
         btnReload: document.getElementById('btnReload'),
         scanStatus: document.getElementById('scanStatus'),
         statusMessage: document.getElementById('statusMessage'),
-        cameraSelect: document.getElementById('cameraSelect'),
-        reloadCameraBtn: document.getElementById('reloadCameraBtn'),
+        cameraAutoHint: document.getElementById('cameraAutoHint'),
         startBtn: document.getElementById('startBtn'),
         stopBtn: document.getElementById('stopBtn'),
         saveQueueBtn: document.getElementById('saveQueueBtn'),
@@ -1094,7 +1100,7 @@
         shell.classList.add('scan-hit');
         setTimeout(function () {
           shell.classList.remove('scan-hit');
-        }, 460);
+        }, 580);
       }
 
       function isLikelyInAppBrowser() {
@@ -1125,38 +1131,13 @@
         return list.length ? String((list[0] && list[0].id) || '') : '';
       }
 
-      function getSelectedCameraId() {
-        var fromSelect = C.safeTrim((els.cameraSelect && els.cameraSelect.value) || '');
-        if (fromSelect) return fromSelect;
-        return C.safeTrim(state.preferredCameraId || '');
-      }
-
-      function syncCameraSelectUi() {
-        if (!els.cameraSelect) return;
-
-        var selected = C.safeTrim(state.preferredCameraId || els.cameraSelect.value || '');
-        els.cameraSelect.innerHTML = '<option value="">กล้องด้านหลัง (อัตโนมัติ)</option>';
-
-        for (var i = 0; i < state.knownCameras.length; i++) {
-          var cam = state.knownCameras[i] || {};
-          var id = C.safeTrim(cam.id || '');
-          if (!id) continue;
-          var label = C.safeTrim(cam.label || ('Camera ' + (i + 1)));
-
-          var opt = document.createElement('option');
-          opt.value = id;
-          opt.textContent = label;
-          els.cameraSelect.appendChild(opt);
+      function updateCameraAutoHint() {
+        if (!els.cameraAutoHint) return;
+        if (state.autoCameraLabel) {
+          els.cameraAutoHint.innerHTML = '<i class="bi bi-camera-reels"></i>ใช้งานอัตโนมัติ: ' + escHtml(state.autoCameraLabel);
+          return;
         }
-
-        if (!selected && state.knownCameras.length) {
-          selected = pickPreferredCameraId(state.knownCameras);
-        }
-
-        if (selected) {
-          els.cameraSelect.value = selected;
-          state.preferredCameraId = selected;
-        }
+        els.cameraAutoHint.innerHTML = '<i class="bi bi-camera-reels"></i>กล้องหลังอัตโนมัติ';
       }
 
       function buildCameraErrorMessage(err) {
@@ -1252,14 +1233,6 @@
         if (els.stopBtn) {
           els.stopBtn.classList.toggle('hidden', !state.isScanning);
           els.stopBtn.disabled = !state.isScanning || state.busy || state.saving;
-        }
-
-        if (els.cameraSelect) {
-          els.cameraSelect.disabled = state.isScanning || state.busy || state.saving || !state.knownCameras.length;
-        }
-
-        if (els.reloadCameraBtn) {
-          els.reloadCameraBtn.disabled = state.isScanning || state.busy || state.saving;
         }
 
         if (els.saveQueueBtn) {
@@ -1473,8 +1446,9 @@
 
         if (typeof Html5Qrcode === 'undefined' || typeof Html5Qrcode.getCameras !== 'function') {
           state.knownCameras = [];
-          state.preferredCameraId = '';
-          syncCameraSelectUi();
+          state.autoCameraId = '';
+          state.autoCameraLabel = '';
+          updateCameraAutoHint();
           if (!quiet) setStatusMessage('สถานะ: ระบบไม่รองรับการโหลดรายชื่อกล้อง');
           refreshButtons();
           return [];
@@ -1485,32 +1459,24 @@
         try {
           var cameras = await Html5Qrcode.getCameras();
           state.knownCameras = Array.isArray(cameras) ? cameras : [];
+          state.autoCameraId = pickPreferredCameraId(state.knownCameras);
+          state.autoCameraLabel = '';
 
-          var selected = getSelectedCameraId();
-          var selectedExists = false;
-
-          if (selected) {
+          if (state.autoCameraId) {
             for (var i = 0; i < state.knownCameras.length; i++) {
-              if (String((state.knownCameras[i] && state.knownCameras[i].id) || '') === selected) {
-                selectedExists = true;
-                break;
-              }
+              var cam = state.knownCameras[i] || {};
+              var id = C.safeTrim(cam.id || '');
+              if (!id || id !== state.autoCameraId) continue;
+              state.autoCameraLabel = C.safeTrim(cam.label || '');
+              break;
             }
           }
 
-          if (selectedExists) {
-            state.preferredCameraId = selected;
-          } else if (state.knownCameras.length) {
-            state.preferredCameraId = pickPreferredCameraId(state.knownCameras);
-          } else {
-            state.preferredCameraId = '';
-          }
-
-          syncCameraSelectUi();
+          updateCameraAutoHint();
 
           if (!quiet) {
             if (state.knownCameras.length) {
-              setStatusMessage('สถานะ: พบกล้อง ' + state.knownCameras.length + ' ตัว');
+              setStatusMessage('สถานะ: พบกล้อง ' + state.knownCameras.length + ' ตัว และจะใช้กล้องหลังอัตโนมัติ');
             } else {
               setStatusMessage('สถานะ: ไม่พบรายชื่อกล้อง ลองกดเริ่มสแกนเพื่อขอสิทธิ์');
             }
@@ -1519,8 +1485,9 @@
           return state.knownCameras;
         } catch (err) {
           state.knownCameras = [];
-          state.preferredCameraId = '';
-          syncCameraSelectUi();
+          state.autoCameraId = '';
+          state.autoCameraLabel = '';
+          updateCameraAutoHint();
           if (!quiet) setStatusMessage('ข้อผิดพลาด: ' + buildCameraErrorMessage(err));
           throw err;
         } finally {
@@ -1625,7 +1592,6 @@
             state.html5QrCode = new Html5Qrcode('reader');
           }
 
-          var selectedId = getSelectedCameraId();
           var attempts = [];
           var seen = {};
 
@@ -1645,16 +1611,18 @@
             attempts.push({ target: target, label: label || 'กล้อง' });
           }
 
-          addCameraId(selectedId, 'กล้องที่เลือก');
-          addCameraId(state.preferredCameraId, 'กล้องหลัก');
-
-          if (state.knownCameras.length) {
-            addCameraId(pickPreferredCameraId(state.knownCameras), 'กล้องด้านหลัง');
+          if (state.autoCameraId) {
+            addCameraId(state.autoCameraId, 'กล้องด้านหลัง');
+          } else if (state.knownCameras.length) {
+            addCameraId(pickPreferredCameraId(state.knownCameras), 'กล้องอัตโนมัติ');
           }
 
+          addConfig('cfg:exact-env', { facingMode: { exact: 'environment' } }, 'กล้องด้านหลัง');
           addConfig('cfg:ideal-env', { facingMode: { ideal: 'environment' } }, 'กล้องด้านหลัง');
           addConfig('cfg:env', { facingMode: 'environment' }, 'กล้องด้านหลัง');
-          addConfig('cfg:user', { facingMode: 'user' }, 'กล้องด้านหน้า');
+          if (state.knownCameras.length) {
+            addCameraId(String((state.knownCameras[0] && state.knownCameras[0].id) || ''), 'กล้องสำรอง');
+          }
 
           var config = { fps: 10 };
           var lastErr = null;
@@ -1676,9 +1644,7 @@
             state.isScanning = true;
             setScanningVisual(true);
             setStatus('กำลังสแกน...', 'active');
-            setStatusMessage('สถานะ: กล้องพร้อมใช้งาน - จัด QR ให้อยู่ในกรอบ');
-
-            reloadCameraList(true).catch(function () {});
+            setStatusMessage('สถานะ: กล้องพร้อมใช้งาน (โหมดอัตโนมัติ) - จัด QR ให้อยู่ในกรอบ');
           })
           .catch(function (err) {
             state.isScanning = false;
@@ -1878,12 +1844,6 @@
 
         els.btnReload.addEventListener('click', function () {
           window.location.reload();
-        });
-
-        els.reloadCameraBtn.addEventListener('click', function () {
-          reloadCameraList(false).catch(function (err) {
-            setStatusMessage('ข้อผิดพลาด: ' + buildCameraErrorMessage(err));
-          });
         });
 
         els.startBtn.addEventListener('click', function () {
