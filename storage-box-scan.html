@@ -605,10 +605,92 @@
 
       function onScanFailure(_err) {}
 
+      function isInIframeContext() {
+        try {
+          return window.self !== window.top;
+        } catch (_e) {
+          return true;
+        }
+      }
+
+      function ensureCameraPrerequisites() {
+        if (!window.isSecureContext) {
+          throw new Error('insecure_context: ต้องเปิดผ่าน HTTPS เท่านั้น');
+        }
+        if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
+          throw new Error('media_devices_unavailable: เบราว์เซอร์นี้ไม่รองรับการเปิดกล้อง');
+        }
+      }
+
+      function cameraLabelScore(label) {
+        var text = C.safeTrim(label || '').toLowerCase();
+        if (!text) return 0;
+        var score = 0;
+        if (text.indexOf('back') !== -1) score += 6;
+        if (text.indexOf('rear') !== -1) score += 6;
+        if (text.indexOf('environment') !== -1) score += 6;
+        if (text.indexOf('หลัง') !== -1) score += 6;
+        if (text.indexOf('หน้า') !== -1) score -= 4;
+        if (text.indexOf('front') !== -1) score -= 4;
+        if (text.indexOf('user') !== -1) score -= 4;
+        return score;
+      }
+
+      async function detectPreferredCameraId() {
+        if (typeof Html5Qrcode === 'undefined' || typeof Html5Qrcode.getCameras !== 'function') return '';
+        try {
+          var cameras = await Html5Qrcode.getCameras();
+          if (!Array.isArray(cameras) || cameras.length === 0) return '';
+          var best = cameras[0];
+          var bestScore = cameraLabelScore(best && best.label);
+          for (var i = 1; i < cameras.length; i++) {
+            var score = cameraLabelScore(cameras[i] && cameras[i].label);
+            if (score > bestScore) {
+              best = cameras[i];
+              bestScore = score;
+            }
+          }
+          return C.safeTrim(best && best.id ? best.id : '');
+        } catch (_e) {
+          return '';
+        }
+      }
+
+      async function startScannerWithFallback(config) {
+        var targets = [];
+        var preferredCameraId = await detectPreferredCameraId();
+        if (preferredCameraId) {
+          targets.push(preferredCameraId);
+        }
+        targets.push({ facingMode: { ideal: 'environment' } });
+        targets.push({ facingMode: 'environment' });
+        targets.push({ facingMode: 'user' });
+
+        var lastErr = null;
+        for (var i = 0; i < targets.length; i++) {
+          try {
+            await state.html5Qr.start(targets[i], config, handleScanResult, onScanFailure);
+            return;
+          } catch (err) {
+            lastErr = err;
+          }
+        }
+        throw (lastErr || new Error('ไม่สามารถเปิดกล้องได้'));
+      }
+
       function cameraErrorMessage(err) {
         var raw = ((err && err.name) ? (err.name + ': ') : '') + ((err && err.message) ? err.message : 'ไม่สามารถเปิดกล้องได้');
         var lower = raw.toLowerCase();
+        if (lower.indexOf('insecure_context') !== -1 || lower.indexOf('secure') !== -1 || lower.indexOf('https') !== -1) {
+          return 'ต้องเปิดหน้านี้ด้วย HTTPS เท่านั้น (เช่นลิงก์ GitHub Pages แบบ https://...)';
+        }
+        if (lower.indexOf('media_devices_unavailable') !== -1 || lower.indexOf('getusermedia') !== -1 || lower.indexOf('undefined') !== -1) {
+          return 'เบราว์เซอร์นี้ไม่รองรับการเปิดกล้อง (แนะนำ Chrome/Safari รุ่นล่าสุด)';
+        }
         if (lower.indexOf('notallowederror') !== -1 || lower.indexOf('permission denied') !== -1 || lower.indexOf('denied') !== -1) {
+          if (isInIframeContext()) {
+            return 'เบราว์เซอร์บล็อกสิทธิ์กล้องในโหมด iframe ให้เปิดลิงก์หน้าเว็บโดยตรงในแท็บใหม่';
+          }
           return 'เบราว์เซอร์ยังไม่ได้อนุญาตสิทธิ์กล้องสำหรับโดเมนนี้';
         }
         if (lower.indexOf('notfounderror') !== -1 || lower.indexOf('no camera') !== -1) {
@@ -633,17 +715,13 @@
         setMessage('กำลังขอสิทธิ์กล้อง');
 
         try {
+          ensureCameraPrerequisites();
           if (!state.html5Qr) {
             state.html5Qr = new Html5Qrcode('reader');
           }
 
           var config = { fps: 10 };
-
-          try {
-            await state.html5Qr.start({ facingMode: { ideal: 'environment' } }, config, handleScanResult, onScanFailure);
-          } catch (_envErr) {
-            await state.html5Qr.start({ facingMode: 'user' }, config, handleScanResult, onScanFailure);
-          }
+          await startScannerWithFallback(config);
 
           state.isScanning = true;
           setStatus('กำลังสแกน...', 'active');
