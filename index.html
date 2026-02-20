@@ -259,8 +259,194 @@
     }
 
     .login-wrap {
-      max-width: 560px;
-      margin: 24px auto;
+      width: min(560px, 100%) !important;
+      margin: 0 auto;
+      padding: 28px 24px 22px !important;
+      border-radius: 34px !important;
+      background: rgba(255, 255, 255, 0.56) !important;
+      border: 1px solid rgba(255, 255, 255, 0.72) !important;
+      backdrop-filter: saturate(170%) blur(28px) !important;
+      -webkit-backdrop-filter: saturate(170%) blur(28px) !important;
+      box-shadow: 0 34px 78px rgba(15, 23, 42, 0.22) !important;
+    }
+
+    .login-stage {
+      width: 100%;
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+      padding: 4px 0;
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .login-shield {
+      width: 70px;
+      height: 70px;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.7rem;
+      background: linear-gradient(180deg, #2f97ff 0%, #0a84ff 62%, #0063d1 100%);
+      box-shadow: 0 20px 46px rgba(10, 132, 255, 0.35);
+      flex: 0 0 auto;
+    }
+
+    .login-kicker {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .login-title {
+      margin: 4px 0 2px;
+      color: #111827;
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1.04;
+    }
+
+    .login-subtitle {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .login-form .field {
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .login-form label {
+      color: #6b7280;
+      font-size: 0.74rem;
+      letter-spacing: 0.03em;
+      text-transform: none;
+      font-weight: 900;
+    }
+
+    .login-input {
+      height: 58px !important;
+      border-radius: 24px !important;
+      border: 1px solid rgba(148, 163, 184, 0.42) !important;
+      background: rgba(255, 255, 255, 0.72) !important;
+      color: #111827 !important;
+      padding: 0 18px !important;
+      font-size: 1.08rem;
+      font-weight: 700;
+    }
+
+    .login-input::placeholder {
+      color: rgba(17, 24, 39, 0.5) !important;
+      font-weight: 700;
+    }
+
+    .login-input:focus {
+      border-color: rgba(10, 132, 255, 0.65) !important;
+      box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.14) !important;
+    }
+
+    .pass-wrap {
+      position: relative;
+    }
+
+    .pass-wrap .login-input {
+      padding-right: 52px !important;
+    }
+
+    .pass-eye {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      color: #6b7280;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .pass-eye:hover {
+      background: rgba(10, 132, 255, 0.12);
+      color: #0a84ff;
+    }
+
+    .login-submit {
+      margin-top: 12px;
+      width: 100%;
+      height: 60px !important;
+      border-radius: 999px !important;
+      font-size: 1.02rem !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.01em;
+    }
+
+    .login-foot {
+      margin-top: 14px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      text-transform: none;
+    }
+
+    body.login-mode {
+      min-height: 100vh;
+    }
+
+    body.login-mode .shell {
+      width: min(1160px, 100%) !important;
+      max-width: none !important;
+      min-height: 100vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 12px;
+      padding: 26px 14px !important;
+    }
+
+    body.login-mode #homeTopbar {
+      display: none !important;
+    }
+
+    body.login-mode #appCard {
+      display: none !important;
+    }
+
+    body.login-mode #settingsCard,
+    body.login-mode #errorBox {
+      width: min(560px, 100%);
+      margin: 0 auto;
+    }
+
+    body.login-mode #settingsCard {
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    body.login-mode #errorBox {
+      border-radius: 14px;
+      background: rgba(220, 38, 38, 0.1);
     }
 
     .empty {
@@ -357,13 +543,41 @@
 
     @media (max-width: 560px) {
       .box-grid { grid-template-columns: 1fr; }
+      .login-wrap {
+        padding: 18px 12px 14px;
+        border-radius: 24px;
+      }
+      .login-brand {
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .login-shield {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        font-size: 1.22rem;
+      }
+      .login-title {
+        font-size: 1.2rem;
+      }
+      .login-subtitle {
+        font-size: 0.79rem;
+      }
+      .login-input {
+        height: 50px !important;
+        border-radius: 18px !important;
+      }
+      .login-submit {
+        height: 52px !important;
+        font-size: 1.02rem;
+      }
     }
   </style>
   <link rel="stylesheet" href="./theme-legacy.css">
 </head>
 <body>
   <div class="shell">
-    <div class="card topbar">
+    <div id="homeTopbar" class="card topbar">
       <div>
         <h1 id="appTitle" class="title">ระบบทะเบียนคุมเอกสาร (GitHub Frontend)</h1>
         <div id="appSubtitle" class="muted" style="font-size:0.85rem;">พร้อมใช้งานกับ Apps Script API</div>
@@ -405,18 +619,37 @@
     <div id="errorBox" class="alert hidden"></div>
 
     <div id="loginCard" class="card login-wrap hidden">
-      <div class="row">
-        <div class="field full">
-          <label for="username">Username</label>
-          <input id="username" autocomplete="username" />
+      <div class="login-stage">
+        <div class="login-brand">
+          <div class="login-shield"><i class="bi bi-shield-lock-fill"></i></div>
+          <div>
+            <p class="login-kicker">Document Control</p>
+            <h2 class="login-title">เข้าสู่ระบบ</h2>
+            <p class="login-subtitle">ยินดีต้อนรับกลับมา กรุณายืนยันตัวตนเพื่อใช้งาน</p>
+          </div>
         </div>
-        <div class="field full">
-          <label for="password">Password</label>
-          <input id="password" type="password" autocomplete="current-password" />
+
+        <div class="login-form" style="width:100%;">
+          <div class="field full">
+            <label for="username">Username</label>
+            <input id="username" class="login-input" placeholder="Username" autocomplete="username" />
+          </div>
+          <div class="field full">
+            <label for="password">Password</label>
+            <div class="pass-wrap">
+              <input id="password" class="login-input" type="password" placeholder="Password" autocomplete="current-password" />
+              <button id="btnTogglePassword" class="pass-eye" type="button" aria-label="แสดง/ซ่อนรหัสผ่าน">
+                <i id="passwordEyeIcon" class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <button id="btnLogin" class="btn login-submit" type="button">
+            <i class="bi bi-box-arrow-in-right"></i> เข้าสู่ระบบ
+          </button>
         </div>
-      </div>
-      <div class="actions" style="margin-top:10px;">
-        <button id="btnLogin" class="btn" type="button">เข้าสู่ระบบ</button>
+
+        <div class="login-foot">Secure Access</div>
       </div>
     </div>
 
@@ -547,6 +780,8 @@
         loginCard: document.getElementById('loginCard'),
         username: document.getElementById('username'),
         password: document.getElementById('password'),
+        btnTogglePassword: document.getElementById('btnTogglePassword'),
+        passwordEyeIcon: document.getElementById('passwordEyeIcon'),
         btnLogin: document.getElementById('btnLogin'),
         appCard: document.getElementById('appCard'),
         userLabel: document.getElementById('userLabel'),
@@ -592,6 +827,7 @@
       function setLoading(isLoading) {
         state.loading = !!isLoading;
         els.btnLogin.disabled = state.loading;
+        if (els.btnTogglePassword) els.btnTogglePassword.disabled = state.loading;
         els.btnSaveSettings.disabled = state.loading;
         els.btnSearch.disabled = state.loading;
         els.btnRefresh.disabled = state.loading;
@@ -653,6 +889,7 @@
         state.user = user || null;
 
         if (state.user) {
+          document.body.classList.remove('login-mode');
           var name = C.safeText(state.user.displayName || state.user.username || '-');
           var role = C.safeText(state.user.accessRoleLabel || '');
           els.userLabel.textContent = role ? (name + ' (' + role + ')') : name;
@@ -668,6 +905,7 @@
           return;
         }
 
+        document.body.classList.add('login-mode');
         els.userLabel.textContent = '-';
         els.appCard.classList.add('hidden');
         els.loginCard.classList.remove('hidden');
@@ -1091,6 +1329,7 @@
       }
 
       function init() {
+        document.body.classList.add('login-mode');
         state.config = C.readConfig();
         applyConfigToUI(state.config);
         applyLockMode(state.config);
@@ -1117,6 +1356,16 @@
         els.btnLogin.addEventListener('click', function () {
           login();
         });
+
+        if (els.btnTogglePassword) {
+          els.btnTogglePassword.addEventListener('click', function () {
+            var isHidden = els.password.type === 'password';
+            els.password.type = isHidden ? 'text' : 'password';
+            if (els.passwordEyeIcon) {
+              els.passwordEyeIcon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+            }
+          });
+        }
 
         els.password.addEventListener('keydown', function (e) {
           if (e.key === 'Enter') login();
