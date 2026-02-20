@@ -1,6 +1,62 @@
 (function (global) {
   'use strict';
 
+  var pageLeaveTimer = null;
+
+  function prefersReducedMotion() {
+    try {
+      return !!(global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  function markPageReady() {
+    if (!document.body) return;
+    document.body.classList.remove('page-leaving');
+
+    if (prefersReducedMotion()) {
+      document.body.classList.add('page-ready');
+      return;
+    }
+
+    document.body.classList.remove('page-ready');
+    if (typeof global.requestAnimationFrame === 'function') {
+      global.requestAnimationFrame(function () {
+        global.requestAnimationFrame(function () {
+          if (document.body) document.body.classList.add('page-ready');
+        });
+      });
+      return;
+    }
+
+    setTimeout(function () {
+      if (document.body) document.body.classList.add('page-ready');
+    }, 24);
+  }
+
+  function beginPageLeave(done) {
+    if (typeof done !== 'function') return;
+    if (!document.body || prefersReducedMotion()) {
+      done();
+      return;
+    }
+
+    if (document.body.classList.contains('page-leaving')) {
+      setTimeout(done, 30);
+      return;
+    }
+
+    document.body.classList.add('page-leaving');
+    document.body.classList.remove('page-ready');
+    if (pageLeaveTimer) clearTimeout(pageLeaveTimer);
+
+    pageLeaveTimer = setTimeout(function () {
+      pageLeaveTimer = null;
+      done();
+    }, 170);
+  }
+
   function normalizeDeviceKeyClient(value) {
     var key = String(value || '').trim();
     if (!key) return '';
@@ -169,7 +225,7 @@
       dest = new URL(dest, global.location.href).toString();
     } catch (_e0) {}
 
-    setTimeout(function () {
+    beginPageLeave(function () {
       try {
         global.top.location.href = dest;
       } catch (_e1) {
@@ -177,22 +233,55 @@
           global.location.href = dest;
         } catch (_e2) {
           hidePageLoader();
+          if (document.body) {
+            document.body.classList.remove('page-leaving');
+            document.body.classList.add('page-ready');
+          }
         }
       }
-    }, 50);
+    });
   }
 
   function bindPageLoaderLinks() {
     document.addEventListener('click', function (e) {
+      if (!e || e.defaultPrevented) return;
+      if (typeof e.button === 'number' && e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
       var a = e.target && e.target.closest ? e.target.closest('a') : null;
       if (!a || a.hasAttribute('data-no-loader')) return;
+      if (a.hasAttribute('download')) return;
 
       var href = a.getAttribute('href') || '';
       if (!href || href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return;
       if (a.getAttribute('target') === '_blank') return;
 
-      try { a.setAttribute('href', appendSessionKeysToUrl(href)); } catch (_err) {}
-      showPageLoader('กำลังเปลี่ยนหน้า...', true);
+      var resolved = '';
+      try {
+        resolved = a.href || href;
+      } catch (_err0) {
+        resolved = href;
+      }
+
+      try {
+        var nextUrl = new URL(resolved, global.location.href);
+        var current = new URL(global.location.href);
+        if (nextUrl.origin !== current.origin) return;
+
+        e.preventDefault();
+        navigateWithLoader(nextUrl.toString(), 'กำลังเปลี่ยนหน้า...');
+      } catch (_err1) {
+        try { a.setAttribute('href', appendSessionKeysToUrl(href)); } catch (_err2) {}
+        showPageLoader('กำลังเปลี่ยนหน้า...', true);
+      }
+    });
+  }
+
+  function bindPageTransitionLifecycle() {
+    markPageReady();
+    global.addEventListener('pageshow', function () {
+      markPageReady();
+      hidePageLoader();
     });
   }
 
@@ -237,6 +326,7 @@
     ensureDeviceKey();
     syncCurrentUrlSessionKeys();
     bindPageLoaderLinks();
+    bindPageTransitionLifecycle();
     ensurePageLoader();
     hidePageLoader();
   }
