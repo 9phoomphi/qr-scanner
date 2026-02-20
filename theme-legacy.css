@@ -317,6 +317,193 @@ body.dark-mode .search-box:focus {
   box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.16), 0 22px 54px rgba(0, 0, 0, 0.42);
 }
 
+/* Home header layout + icon alignment */
+#homeTopbar .dash-head-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 14px;
+}
+
+#homeTopbar .dash-brand {
+  gap: 14px;
+  min-width: 0;
+  align-items: center;
+}
+
+#homeTopbar .dash-brand > div {
+  min-width: 0;
+}
+
+#homeTopbar .dash-brand-icon {
+  width: 74px;
+  height: 74px;
+  border-radius: 22px;
+  box-shadow: 0 14px 30px rgba(10, 132, 255, 0.28);
+}
+
+#homeTopbar .dash-brand-icon i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: 1.72rem;
+  transform: translateY(1px);
+}
+
+#homeTopbar .dash-title {
+  font-size: clamp(2rem, 2.7vw, 3.1rem);
+  line-height: 1.02;
+  margin-bottom: 4px;
+}
+
+#homeTopbar .dash-subtitle {
+  font-size: clamp(1.06rem, 1.35vw, 1.32rem);
+  line-height: 1.26;
+}
+
+#homeTopbar #connectStatus.header-status {
+  margin-top: 4px;
+  font-size: clamp(1rem, 1.22vw, 1.18rem);
+  line-height: 1.22;
+}
+
+#homeTopbar .dash-user-wrap {
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+
+#homeTopbar #sessionUserChip {
+  min-height: 76px;
+  padding: 8px 14px 8px 10px;
+  gap: 10px;
+}
+
+#homeTopbar .session-avatar-wrap {
+  width: 56px;
+  height: 56px;
+}
+
+#homeTopbar .session-meta {
+  gap: 2px;
+}
+
+#homeTopbar .login-user-name {
+  font-size: 1.06rem;
+  line-height: 1.2;
+}
+
+#homeTopbar .login-user-pos {
+  font-size: 0.94rem;
+  line-height: 1.2;
+}
+
+#homeTopbar .logout-btn {
+  min-height: 52px;
+  padding: 0 22px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#homeTopbar .logout-btn i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: 1.16rem;
+}
+
+#homeTopbar .dash-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#homeTopbar .dash-search-wrap #searchIcon {
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.7rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#homeTopbar .search-box {
+  min-height: 74px;
+  border-radius: 24px;
+  padding: 0 24px 0 84px;
+  font-size: clamp(1.35rem, 1.6vw, 1.98rem);
+  font-weight: 540;
+}
+
+#homeTopbar .search-box::placeholder {
+  font-size: inherit;
+}
+
+/* Floating add button */
+#btnAddFab.fab {
+  position: fixed;
+  right: 22px;
+  right: calc(22px + env(safe-area-inset-right));
+  bottom: 22px;
+  bottom: calc(22px + env(safe-area-inset-bottom));
+  width: 66px;
+  height: 66px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(10, 132, 255, 0.46);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(227, 241, 255, 0.8) 100%);
+  color: #0a84ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1200;
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  box-shadow: 0 16px 36px rgba(10, 132, 255, 0.22), 0 10px 26px rgba(15, 23, 42, 0.16);
+  transition: transform var(--motion-fast) var(--ease-out-soft), box-shadow var(--motion-mid) var(--ease-out-soft), background-color var(--motion-fast) ease, border-color var(--motion-fast) ease, color var(--motion-fast) ease;
+}
+
+#btnAddFab.fab i {
+  font-size: 1.78rem;
+  line-height: 1;
+}
+
+#btnAddFab.fab:hover {
+  transform: translateY(-3px) scale(1.03);
+  border-color: rgba(10, 132, 255, 0.62);
+  color: #036fe0;
+  box-shadow: 0 22px 44px rgba(10, 132, 255, 0.26), 0 14px 32px rgba(15, 23, 42, 0.18);
+}
+
+#btnAddFab.fab:active {
+  transform: translateY(-1px) scale(0.97);
+}
+
+#btnAddFab.fab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.24), 0 18px 34px rgba(15, 23, 42, 0.18);
+}
+
+body.dark-mode #btnAddFab.fab {
+  border-color: rgba(125, 211, 252, 0.48);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.84) 100%);
+  color: #7dd3fc;
+  box-shadow: 0 18px 40px rgba(2, 8, 20, 0.58), 0 10px 24px rgba(125, 211, 252, 0.2);
+}
+
+body.dark-mode #btnAddFab.fab:hover {
+  border-color: rgba(125, 211, 252, 0.66);
+  color: #bae6fd;
+  box-shadow: 0 24px 50px rgba(2, 8, 20, 0.62), 0 14px 30px rgba(125, 211, 252, 0.24);
+}
+
 .dashboard-tabs {
   display: flex;
   gap: 6px;
@@ -2346,6 +2533,37 @@ body.dark-mode .box-card:hover {
     font-size: 1.18rem;
   }
 
+  #homeTopbar .dash-brand-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+  }
+
+  #homeTopbar .dash-brand-icon i {
+    font-size: 1.5rem;
+  }
+
+  #homeTopbar .dash-title {
+    font-size: clamp(1.56rem, 3.3vw, 2.46rem);
+  }
+
+  #homeTopbar .dash-subtitle {
+    font-size: 0.98rem;
+  }
+
+  #homeTopbar #connectStatus.header-status {
+    font-size: 0.95rem;
+  }
+
+  #homeTopbar #sessionUserChip {
+    min-height: 68px;
+  }
+
+  #homeTopbar .session-avatar-wrap {
+    width: 48px;
+    height: 48px;
+  }
+
   .docs-toolbar {
     align-items: stretch;
   }
@@ -2393,13 +2611,102 @@ body.dark-mode .box-card:hover {
     margin-bottom: 10px;
   }
 
+  #homeTopbar .dash-head-row {
+    grid-template-columns: 1fr;
+    margin-bottom: 10px;
+  }
+
   .dash-brand {
     width: 100%;
+  }
+
+  #homeTopbar .dash-brand {
+    gap: 12px;
+  }
+
+  #homeTopbar .dash-brand-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+  }
+
+  #homeTopbar .dash-brand-icon i {
+    font-size: 1.3rem;
+  }
+
+  #homeTopbar .dash-title {
+    font-size: clamp(1.38rem, 7.2vw, 1.86rem);
+    margin-bottom: 2px;
+  }
+
+  #homeTopbar .dash-subtitle {
+    font-size: 0.92rem;
+    line-height: 1.24;
+  }
+
+  #homeTopbar #connectStatus.header-status {
+    font-size: 0.9rem;
   }
 
   .dash-user-wrap {
     width: 100%;
     justify-content: flex-end;
+  }
+
+  #homeTopbar .dash-user-wrap {
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  #homeTopbar #sessionUserChip {
+    min-height: 60px;
+    max-width: 100%;
+    flex: 1 1 auto;
+  }
+
+  #homeTopbar .session-avatar-wrap {
+    width: 42px;
+    height: 42px;
+  }
+
+  #homeTopbar .login-user-name {
+    font-size: 0.9rem;
+  }
+
+  #homeTopbar .login-user-pos {
+    font-size: 0.78rem;
+  }
+
+  #homeTopbar .logout-btn {
+    min-height: 44px;
+    padding: 0 14px !important;
+    font-size: 0.9rem !important;
+    margin-left: auto;
+  }
+
+  #homeTopbar .dash-search-wrap #searchIcon {
+    left: 18px;
+    font-size: 1.3rem;
+  }
+
+  #homeTopbar .search-box {
+    min-height: 60px;
+    border-radius: 18px;
+    padding: 0 16px 0 56px;
+    font-size: 1.04rem;
+  }
+
+  #btnAddFab.fab {
+    width: 58px;
+    height: 58px;
+    right: 14px;
+    right: calc(14px + env(safe-area-inset-right));
+    bottom: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+
+  #btnAddFab.fab i {
+    font-size: 1.5rem;
   }
 
   .login-user-chip {

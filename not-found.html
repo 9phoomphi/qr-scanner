@@ -140,7 +140,9 @@
         var p = C.safeTrim(path || '');
         if (!p) return 'index.html';
         if (/^https?:\/\//i.test(p)) return 'index.html';
+        if (p.indexOf('//') === 0) return 'index.html';
         if (p.indexOf('javascript:') === 0) return 'index.html';
+        if (!/^[a-z0-9._-]+\.html(?:[?#].*)?$/i.test(p)) return 'index.html';
         return p;
       }
 
