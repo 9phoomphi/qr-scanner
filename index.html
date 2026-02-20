@@ -30,7 +30,7 @@
     }
 
     .shell {
-      max-width: 1200px;
+      max-width: 1220px;
       margin: 0 auto;
       padding: 16px;
       display: grid;
@@ -66,6 +66,10 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
+    }
+
+    .row.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .field {
@@ -106,6 +110,11 @@
     .btn.secondary { background: #334155; }
     .btn.success { background: #15803d; }
     .btn.danger { background: var(--danger); }
+    .btn.outline {
+      color: var(--primary-2);
+      background: #fff;
+      border: 1px solid #93c5fd;
+    }
 
     .btn:disabled {
       opacity: 0.6;
@@ -161,6 +170,34 @@
       font-size: 0.88rem;
     }
 
+    .tabs {
+      display: inline-flex;
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #f8fbff;
+      padding: 4px;
+      margin-bottom: 10px;
+    }
+
+    .tab-btn {
+      border: none;
+      border-radius: 999px;
+      height: 32px;
+      padding: 0 12px;
+      cursor: pointer;
+      font: inherit;
+      font-size: .86rem;
+      font-weight: 700;
+      color: #334155;
+      background: transparent;
+    }
+
+    .tab-btn.active {
+      color: #1d4ed8;
+      background: #dbeafe;
+    }
+
     .table-wrap {
       overflow: auto;
       border: 1px solid var(--border);
@@ -170,7 +207,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 940px;
+      min-width: 980px;
       background: #fff;
     }
 
@@ -272,9 +309,53 @@
       background: #dbeafe;
     }
 
+    .box-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .box-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #f8fbff;
+      padding: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .16s ease, box-shadow .2s ease;
+    }
+
+    .box-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(15,23,42,.12);
+    }
+
+    .box-name {
+      font-size: .96rem;
+      font-weight: 800;
+      color: #1d4ed8;
+      word-break: break-word;
+    }
+
+    .box-count {
+      margin-top: 3px;
+      color: #475569;
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 1100px) {
+      .box-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
     @media (max-width: 900px) {
-      .row { grid-template-columns: 1fr; }
+      .row, .row.three { grid-template-columns: 1fr; }
       .shell { padding: 10px; }
+      .box-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .box-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -303,7 +384,7 @@
       <div class="settings-grid">
         <div class="field full">
           <label for="scriptUrl">Apps Script Web App URL (/exec)</label>
-          <input id="scriptUrl" placeholder="https://script.google.com/macros/s/XXXXXXXXXXXX/exec" />
+          <input id="scriptUrl" placeholder="วางลิงก์ Web App ที่ลงท้ายด้วย /exec" />
         </div>
         <div class="field">
           <label for="deviceKey">Device Key (ระบบสร้างให้อัตโนมัติได้)</label>
@@ -344,70 +425,99 @@
           <div id="userLabel" style="font-weight:800;">-</div>
         </div>
         <div class="actions">
-          <button id="btnRefresh" class="btn secondary" type="button">รีเฟรช</button>
+          <button id="btnAdd" class="btn" type="button">เพิ่มเอกสาร</button>
+          <button id="btnBoxScan" class="btn" type="button">สแกนจัดเก็บ</button>
+          <button id="btnInspection" class="btn secondary" type="button">ตรวจสอบผลงาน</button>
+          <button id="btnRefresh" class="btn outline" type="button">รีเฟรช</button>
         </div>
       </div>
 
-      <div class="row" style="margin-bottom:10px;">
-        <div class="field">
-          <label for="searchQuery">ค้นหา</label>
-          <input id="searchQuery" placeholder="เลขที่หนังสือ, เรื่อง, ผู้ส่ง" />
+      <div class="tabs">
+        <button id="tabDocs" class="tab-btn active" type="button">รายการเอกสาร</button>
+        <button id="tabBoxes" class="tab-btn" type="button">ตรวจสอบกล่อง</button>
+      </div>
+
+      <div id="docsTab">
+        <div class="row three" style="margin-bottom:10px;">
+          <div class="field">
+            <label for="searchQuery">ค้นหา</label>
+            <input id="searchQuery" placeholder="เลขที่หนังสือ, เรื่อง, ผู้ส่ง" />
+          </div>
+          <div class="field">
+            <label for="statusFilter">สถานะ</label>
+            <select id="statusFilter">
+              <option value="all">ทั้งหมด</option>
+              <option value="inprogress">กำลังดำเนินการ</option>
+              <option value="assigned">มอบผู้รับผิดชอบ</option>
+              <option value="completed">ดำเนินการเสร็จ</option>
+              <option value="stored">จัดเก็บแล้ว</option>
+              <option value="pending">รอจัดเก็บ</option>
+              <option value="returned">อนุมัติแล้วส่งคืนเจ้าของเรื่อง</option>
+              <option value="cancelled">ยกเลิก</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="itemsPerPage">จำนวนต่อหน้า</label>
+            <select id="itemsPerPage">
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+            </select>
+          </div>
         </div>
-        <div class="field">
-          <label for="statusFilter">สถานะ</label>
-          <select id="statusFilter">
-            <option value="all">ทั้งหมด</option>
-            <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
-            <option value="มอบผู้รับผิดชอบ">มอบผู้รับผิดชอบ</option>
-            <option value="ดำเนินการเสร็จ">ดำเนินการเสร็จ</option>
-            <option value="อนุมัติแล้วส่งคืนเจ้าของเรื่อง">อนุมัติแล้วส่งคืนเจ้าของเรื่อง</option>
-            <option value="ยกเลิก">ยกเลิก</option>
-          </select>
+
+        <div class="actions" style="margin-bottom:10px;">
+          <button id="btnSearch" class="btn" type="button">ค้นหา</button>
+          <button id="btnPrintAll" class="btn success" type="button">พิมพ์รายงานทั้งหมด</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:70px;">ลำดับ</th>
+                <th style="width:130px;">เลขรับ</th>
+                <th style="width:160px;">เลขที่หนังสือ</th>
+                <th>เรื่อง</th>
+                <th style="width:150px;">สถานะ</th>
+                <th style="width:130px;">สถานที่เก็บ</th>
+                <th style="width:120px;">วันที่รับ</th>
+                <th style="width:120px;">รายละเอียด</th>
+              </tr>
+            </thead>
+            <tbody id="docsBody">
+              <tr><td colspan="8" class="empty">ยังไม่มีข้อมูล</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pager">
+          <div id="pageInfo" class="muted">หน้า 1 / 1 (0 รายการ)</div>
+          <div class="actions">
+            <button id="btnPrev" class="btn secondary" type="button">ก่อนหน้า</button>
+            <button id="btnNext" class="btn secondary" type="button">ถัดไป</button>
+          </div>
         </div>
       </div>
 
-      <div class="actions" style="margin-bottom:10px;">
-        <button id="btnSearch" class="btn" type="button">ค้นหา</button>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:70px;">ลำดับ</th>
-              <th style="width:130px;">เลขรับ</th>
-              <th style="width:160px;">เลขที่หนังสือ</th>
-              <th>เรื่อง</th>
-              <th style="width:150px;">สถานะ</th>
-              <th style="width:130px;">สถานที่เก็บ</th>
-              <th style="width:120px;">วันที่รับ</th>
-              <th style="width:120px;">รายละเอียด</th>
-            </tr>
-          </thead>
-          <tbody id="docsBody">
-            <tr><td colspan="8" class="empty">ยังไม่มีข้อมูล</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="pager">
-        <div id="pageInfo" class="muted">หน้า 1 / 1 (0 รายการ)</div>
-        <div class="actions">
-          <button id="btnPrev" class="btn secondary" type="button">ก่อนหน้า</button>
-          <button id="btnNext" class="btn secondary" type="button">ถัดไป</button>
+      <div id="boxesTab" class="hidden">
+        <div class="topbar" style="margin-bottom:10px;">
+          <div class="muted" id="boxSummaryLabel">กล่องเอกสารที่มีการจัดเก็บ</div>
+          <button id="btnReloadBoxes" class="btn outline" type="button">รีโหลดข้อมูลกล่อง</button>
         </div>
+        <div id="boxesWrap" class="box-grid"></div>
       </div>
     </div>
   </div>
 
   <script src="./config.js"></script>
   <script src="./api-client.js"></script>
+  <script src="./app-common.js"></script>
   <script>
     (function () {
       'use strict';
 
-      var STORAGE_SCRIPT_URL = 'docControlScriptUrlV3';
-      var STORAGE_DEVICE_KEY = 'docControlDeviceKeyV3';
+      var C = window.DocFrontendCommon;
 
       var state = {
         api: null,
@@ -419,7 +529,10 @@
         totalItems: 0,
         searchQuery: '',
         statusFilter: 'all',
-        loading: false
+        loading: false,
+        settings: null,
+        boxSummary: [],
+        lastSystemReport: null
       };
 
       var els = {
@@ -446,113 +559,30 @@
         btnLogin: document.getElementById('btnLogin'),
         appCard: document.getElementById('appCard'),
         userLabel: document.getElementById('userLabel'),
+        btnAdd: document.getElementById('btnAdd'),
+        btnBoxScan: document.getElementById('btnBoxScan'),
+        btnInspection: document.getElementById('btnInspection'),
         btnRefresh: document.getElementById('btnRefresh'),
+        tabDocs: document.getElementById('tabDocs'),
+        tabBoxes: document.getElementById('tabBoxes'),
+        docsTab: document.getElementById('docsTab'),
+        boxesTab: document.getElementById('boxesTab'),
         searchQuery: document.getElementById('searchQuery'),
         statusFilter: document.getElementById('statusFilter'),
+        itemsPerPage: document.getElementById('itemsPerPage'),
         btnSearch: document.getElementById('btnSearch'),
+        btnPrintAll: document.getElementById('btnPrintAll'),
         docsBody: document.getElementById('docsBody'),
         pageInfo: document.getElementById('pageInfo'),
         btnPrev: document.getElementById('btnPrev'),
-        btnNext: document.getElementById('btnNext')
+        btnNext: document.getElementById('btnNext'),
+        btnReloadBoxes: document.getElementById('btnReloadBoxes'),
+        boxSummaryLabel: document.getElementById('boxSummaryLabel'),
+        boxesWrap: document.getElementById('boxesWrap')
       };
 
-      function safeText(value) {
-        return String(value == null ? '' : value);
-      }
-
-      function normalizeConfigObject(value) {
-        return value && typeof value === 'object' ? value : {};
-      }
-
-      function escapeHtml(value) {
-        return safeText(value)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;');
-      }
-
-      function randomDeviceKey() {
-        return 'dk_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
-      }
-
-      function normalizeScriptUrl(url) {
-        var raw = safeText(url).trim();
-        if (!raw) return '';
-        return raw.replace(/\s+/g, '');
-      }
-
-      function safeUrl(url) {
-        var value = safeText(url).trim();
-        if (!value) return '';
-        if (/^https?:\/\//i.test(value)) return value;
-        return '';
-      }
-
-      function readRuntimeConfig() {
-        var cfg = normalizeConfigObject(window.DOC_CONTROL_CONFIG);
-        var links = normalizeConfigObject(cfg.links);
-
-        return {
-          appName: safeText(cfg.appName).trim(),
-          subtitle: safeText(cfg.subtitle).trim(),
-          scriptUrl: normalizeScriptUrl(cfg.scriptUrl),
-          deviceKey: safeText(cfg.deviceKey).trim(),
-          lockSettings: !!cfg.lockSettings,
-          links: {
-            webApp: safeUrl(links.webApp),
-            spreadsheet: safeUrl(links.spreadsheet),
-            appsScriptProject: safeUrl(links.appsScriptProject),
-            driveFolder: safeUrl(links.driveFolder),
-            manual: safeUrl(links.manual)
-          }
-        };
-      }
-
-      function applyConfigToUI(config) {
-        if (config.appName) els.appTitle.textContent = config.appName;
-        if (config.subtitle) els.appSubtitle.textContent = config.subtitle;
-
-        var links = config.links || {};
-        var hasAnyLink = false;
-
-        function bindLink(el, url) {
-          if (!url) {
-            el.classList.add('hidden');
-            el.removeAttribute('href');
-            return;
-          }
-          hasAnyLink = true;
-          el.href = url;
-          el.classList.remove('hidden');
-        }
-
-        bindLink(els.linkWebApp, links.webApp || config.scriptUrl || '');
-        bindLink(els.linkSpreadsheet, links.spreadsheet || '');
-        bindLink(els.linkAppsScript, links.appsScriptProject || '');
-        bindLink(els.linkDriveFolder, links.driveFolder || '');
-        bindLink(els.linkManual, links.manual || '');
-
-        if (hasAnyLink) {
-          els.configLinks.classList.remove('hidden');
-        } else {
-          els.configLinks.classList.add('hidden');
-        }
-      }
-
-      function applyLockMode(config) {
-        if (!config.lockSettings) return;
-        els.btnOpenSettings.classList.add('hidden');
-        els.btnGenerateDevice.classList.add('hidden');
-        els.btnSaveSettings.classList.add('hidden');
-        els.scriptUrl.readOnly = true;
-        els.deviceKey.readOnly = true;
-        els.settingsCard.classList.add('hidden');
-      }
-
       function showError(message) {
-        var msg = safeText(message).trim();
+        var msg = C.safeTrim(message || '');
         if (!msg) {
           els.errorBox.classList.add('hidden');
           els.errorBox.textContent = '';
@@ -573,58 +603,103 @@
         els.btnSaveSettings.disabled = state.loading;
         els.btnSearch.disabled = state.loading;
         els.btnRefresh.disabled = state.loading;
+        els.btnPrintAll.disabled = state.loading;
+        els.btnReloadBoxes.disabled = state.loading;
         els.btnPrev.disabled = state.loading || state.page <= 1;
         els.btnNext.disabled = state.loading || state.page >= state.totalPages;
       }
 
+      function bindConfigLinks(config) {
+        var links = (config && config.links) ? config.links : {};
+        var hasAnyLink = false;
+
+        function bindLink(el, url) {
+          if (!url) {
+            el.classList.add('hidden');
+            el.removeAttribute('href');
+            return;
+          }
+          hasAnyLink = true;
+          el.href = url;
+          el.classList.remove('hidden');
+        }
+
+        bindLink(els.linkWebApp, links.webApp || config.scriptUrl || '');
+        bindLink(els.linkSpreadsheet, links.spreadsheet || '');
+        bindLink(els.linkAppsScript, links.appsScriptProject || '');
+        bindLink(els.linkDriveFolder, links.driveFolder || '');
+        bindLink(els.linkManual, links.manual || '');
+
+        els.configLinks.classList.toggle('hidden', !hasAnyLink);
+      }
+
+      function applyConfigToUI(config) {
+        if (config.appName) els.appTitle.textContent = config.appName;
+        if (config.subtitle) els.appSubtitle.textContent = config.subtitle;
+        bindConfigLinks(config);
+      }
+
+      function applyLockMode(config) {
+        if (!config.lockSettings) return;
+        els.btnOpenSettings.classList.add('hidden');
+        els.btnGenerateDevice.classList.add('hidden');
+        els.btnSaveSettings.classList.add('hidden');
+        els.scriptUrl.readOnly = true;
+        els.deviceKey.readOnly = true;
+        els.settingsCard.classList.add('hidden');
+      }
+
+      function switchTab(name) {
+        var isDocs = name !== 'boxes';
+        els.tabDocs.classList.toggle('active', isDocs);
+        els.tabBoxes.classList.toggle('active', !isDocs);
+        els.docsTab.classList.toggle('hidden', !isDocs);
+        els.boxesTab.classList.toggle('hidden', isDocs);
+      }
+
       function setLoggedIn(user) {
         state.user = user || null;
+
         if (state.user) {
-          var name = safeText(state.user.displayName || state.user.username || '-');
-          var role = safeText(state.user.accessRoleLabel || '');
+          var name = C.safeText(state.user.displayName || state.user.username || '-');
+          var role = C.safeText(state.user.accessRoleLabel || '');
           els.userLabel.textContent = role ? (name + ' (' + role + ')') : name;
           els.loginCard.classList.add('hidden');
           els.appCard.classList.remove('hidden');
           els.btnLogout.classList.remove('hidden');
           setStatus('เชื่อมต่อแล้ว', 'ok');
-        } else {
-          els.userLabel.textContent = '-';
-          els.appCard.classList.add('hidden');
-          els.loginCard.classList.remove('hidden');
-          els.btnLogout.classList.add('hidden');
-          setStatus('พร้อมเข้าสู่ระบบ', 'warn');
+
+          var isReadOnly = !!(state.user.isReadOnly || state.user.canEdit === false);
+          els.btnAdd.classList.toggle('hidden', isReadOnly);
+          els.btnBoxScan.classList.toggle('hidden', isReadOnly);
+
+          return;
         }
+
+        els.userLabel.textContent = '-';
+        els.appCard.classList.add('hidden');
+        els.loginCard.classList.remove('hidden');
+        els.btnLogout.classList.add('hidden');
+        setStatus('พร้อมเข้าสู่ระบบ', 'warn');
       }
 
-      function buildClientOrThrow() {
-        var scriptUrl = normalizeScriptUrl(els.scriptUrl.value);
-        var deviceKey = safeText(els.deviceKey.value).trim();
+      function createClientFromInputs() {
+        var scriptUrl = C.normalizeScriptUrl(els.scriptUrl.value || '');
+        var deviceKey = C.safeTrim(els.deviceKey.value || '');
 
         if (!scriptUrl) throw new Error('กรุณาตั้งค่า Apps Script URL');
         if (!deviceKey) throw new Error('กรุณาระบุ Device Key');
 
-        localStorage.setItem(STORAGE_SCRIPT_URL, scriptUrl);
-        localStorage.setItem(STORAGE_DEVICE_KEY, deviceKey);
-
-        state.api = new DocumentControlApi({
-          scriptUrl: scriptUrl,
-          deviceKey: deviceKey,
-          timeoutMs: 20000
-        });
+        state.settings = C.persistSettings(scriptUrl, deviceKey);
+        state.api = C.createApiClient(state.settings);
 
         return state.api;
       }
 
       function buildDocLink(doc) {
-        var scriptUrl = state.api ? safeText(state.api.scriptUrl) : '';
-        if (!scriptUrl) return '#';
-        var docId = safeText(doc && (doc.docId || doc.amDocNoAk || doc.receiveNo || '')).trim();
+        var docId = C.safeTrim((doc && (doc.docId || doc.amDocNoAk || doc.receiveNo)) || '');
         if (!docId) return '#';
-        var base = scriptUrl.split('?')[0];
-        var dk = state.api.defaultDeviceKey || '';
-        var url = base + '?id=' + encodeURIComponent(docId);
-        if (dk) url += '&dk=' + encodeURIComponent(dk);
-        return url;
+        return C.buildPageUrl('doc-view.html', { id: docId });
       }
 
       function renderDocs(result) {
@@ -644,30 +719,90 @@
         var html = '';
         for (var i = 0; i < docs.length; i++) {
           var d = docs[i] || {};
-          var status = safeText(d.docStatus || '-');
-          var storedLoc = safeText(d.storedLoc || '-').trim() || '-';
+          var status = C.safeText(d.docStatus || '-');
+          var storedLoc = C.safeText(d.storedLoc || '-').trim() || '-';
           var badgeClass = storedLoc !== '-' ? 'status-badge stored' : 'status-badge';
-          var subject = safeText(d.subject || '-');
+          var subject = C.safeText(d.subject || '-');
           if (subject.length > 180) subject = subject.substring(0, 180).replace(/\s+$/, '') + '...';
-          var docNo = safeText(d.amDocNoAk || d.docNoSdh || '-');
-          var receiveNo = safeText(d.receiveNo || '-');
-          var dateRec = safeText(d.dateRec || '-');
+          var docNo = C.safeText(d.amDocNoAk || d.amDocNo || d.docNoSdh || '-');
+          var receiveNo = C.safeText(d.receiveNo || '-');
+          var dateRec = C.safeText(d.dateRec || '-');
           var rowNo = (state.page - 1) * state.itemsPerPage + (i + 1);
           var link = buildDocLink(d);
 
           html += '<tr>';
           html += '<td>' + rowNo + '</td>';
-          html += '<td>' + escapeHtml(receiveNo) + '</td>';
-          html += '<td>' + escapeHtml(docNo) + '</td>';
-          html += '<td>' + escapeHtml(subject) + '</td>';
-          html += '<td><span class="status-badge">' + escapeHtml(status) + '</span></td>';
-          html += '<td><span class="' + badgeClass + '">' + escapeHtml(storedLoc) + '</span></td>';
-          html += '<td>' + escapeHtml(dateRec) + '</td>';
-          html += '<td>' + (link === '#' ? '-' : ('<a class="link-btn" href="' + escapeHtml(link) + '" target="_blank" rel="noopener">เปิด</a>')) + '</td>';
+          html += '<td>' + C.escapeHtml(receiveNo) + '</td>';
+          html += '<td>' + C.escapeHtml(docNo) + '</td>';
+          html += '<td>' + C.escapeHtml(subject) + '</td>';
+          html += '<td><span class="status-badge">' + C.escapeHtml(status) + '</span></td>';
+          html += '<td><span class="' + badgeClass + '">' + C.escapeHtml(storedLoc) + '</span></td>';
+          html += '<td>' + C.escapeHtml(dateRec) + '</td>';
+          html += '<td>' + (link === '#' ? '-' : ('<a class="link-btn" href="' + C.escapeHtml(link) + '">เปิด</a>')) + '</td>';
           html += '</tr>';
         }
 
         els.docsBody.innerHTML = html;
+      }
+
+      function aggregateBoxes(reportDocs, storageOptions) {
+        var docs = Array.isArray(reportDocs) ? reportDocs : [];
+        var optionData = storageOptions && storageOptions.data ? storageOptions.data : {};
+        var knownBoxes = Array.isArray(optionData.allBoxes) ? optionData.allBoxes : [];
+
+        var map = {};
+        var i;
+
+        for (i = 0; i < knownBoxes.length; i++) {
+          var boxName = C.safeTrim(knownBoxes[i] || '');
+          if (!boxName) continue;
+          map[boxName] = 0;
+        }
+
+        for (i = 0; i < docs.length; i++) {
+          var d = docs[i] || {};
+          var storedLoc = C.safeTrim(d.storedLoc || '');
+          if (!storedLoc) continue;
+          if (!Object.prototype.hasOwnProperty.call(map, storedLoc)) map[storedLoc] = 0;
+          map[storedLoc] += 1;
+        }
+
+        var out = [];
+        for (var key in map) {
+          if (!Object.prototype.hasOwnProperty.call(map, key)) continue;
+          out.push({ name: key, count: Number(map[key] || 0) });
+        }
+
+        out.sort(function (a, b) {
+          if (b.count !== a.count) return b.count - a.count;
+          return String(a.name).localeCompare(String(b.name), 'th');
+        });
+
+        return out;
+      }
+
+      function renderBoxes() {
+        if (!state.boxSummary.length) {
+          els.boxSummaryLabel.textContent = 'ไม่พบข้อมูลกล่อง';
+          els.boxesWrap.innerHTML = '<div class="empty" style="grid-column:1 / -1;">ยังไม่มีกล่องที่บันทึกข้อมูล</div>';
+          return;
+        }
+
+        var html = '';
+        var totalDocs = 0;
+
+        for (var i = 0; i < state.boxSummary.length; i++) {
+          var box = state.boxSummary[i] || {};
+          totalDocs += Number(box.count || 0);
+          var url = C.buildPageUrl('box-view.html', { box: box.name });
+          html += '<a class="box-card" href="' + C.escapeHtml(url) + '">';
+          html += '<div class="box-name">' + C.escapeHtml(box.name || '-') + '</div>';
+          html += '<div class="box-count">' + Number(box.count || 0) + ' รายการ</div>';
+          html += '</a>';
+        }
+
+        els.boxSummaryLabel.textContent = 'รวม ' + state.boxSummary.length + ' กล่อง | เอกสารที่จัดเก็บแล้ว ' + totalDocs + ' รายการ';
+        els.boxesWrap.innerHTML = html;
       }
 
       function loadDocs(resetPage) {
@@ -675,8 +810,9 @@
         if (!state.user) return Promise.reject(new Error('กรุณาเข้าสู่ระบบ'));
 
         if (resetPage) state.page = 1;
-        state.searchQuery = safeText(els.searchQuery.value).trim();
-        state.statusFilter = safeText(els.statusFilter.value || 'all').trim() || 'all';
+        state.itemsPerPage = Number(els.itemsPerPage.value || 20) || 20;
+        state.searchQuery = C.safeText(els.searchQuery.value).trim();
+        state.statusFilter = C.safeText(els.statusFilter.value || 'all').trim() || 'all';
 
         setLoading(true);
         showError('');
@@ -695,13 +831,42 @@
         });
       }
 
+      function loadBoxes() {
+        if (!state.api || !state.user) return Promise.resolve();
+
+        setLoading(true);
+        return Promise.all([
+          state.api.systemReport(),
+          state.api.storageOptions()
+        ]).then(function (results) {
+          var report = results[0] || {};
+          var storage = results[1] || {};
+          var docs = Array.isArray(report.docs) ? report.docs : [];
+
+          state.lastSystemReport = report;
+          state.boxSummary = aggregateBoxes(docs, storage);
+          renderBoxes();
+          setLoading(false);
+        }).catch(function (err) {
+          setLoading(false);
+          showError((err && err.message) ? err.message : 'โหลดข้อมูลกล่องไม่สำเร็จ');
+        });
+      }
+
       function trySession() {
         if (!state.api) return Promise.resolve(false);
         setStatus('กำลังตรวจสอบ session...', 'warn');
+
         return state.api.me().then(function (res) {
           if (res && res.success && res.user) {
             setLoggedIn(res.user);
-            return loadDocs(true).then(function () { return true; });
+            return loadDocs(true)
+              .then(function () { return loadBoxes(); })
+              .then(function () { return true; })
+              .catch(function (err) {
+                showError((err && err.message) ? err.message : 'โหลดข้อมูลหลังเข้าสู่ระบบไม่สำเร็จ');
+                return true;
+              });
           }
           setLoggedIn(null);
           return false;
@@ -714,7 +879,7 @@
       function saveSettings() {
         showError('');
         try {
-          buildClientOrThrow();
+          createClientFromInputs();
           els.settingsCard.classList.add('hidden');
           setStatus('ตั้งค่าแล้ว', 'warn');
           return trySession();
@@ -729,8 +894,9 @@
           showError('กรุณาตั้งค่า API ก่อนเข้าสู่ระบบ');
           return;
         }
-        var username = safeText(els.username.value).trim();
-        var password = safeText(els.password.value);
+
+        var username = C.safeText(els.username.value).trim();
+        var password = C.safeText(els.password.value);
         if (!username || !password) {
           showError('กรุณากรอก Username และ Password');
           return;
@@ -744,9 +910,14 @@
           if (!res || res.success === false) {
             throw new Error(res && res.error ? res.error : 'เข้าสู่ระบบไม่สำเร็จ');
           }
+
           setLoggedIn(res.user || { username: username });
-          setLoading(false);
-          return loadDocs(true);
+          return loadDocs(true)
+            .catch(function (err) {
+              showError((err && err.message) ? err.message : 'ไม่สามารถโหลดรายการเอกสารได้');
+            })
+            .then(function () { return loadBoxes(); })
+            .finally(function () { setLoading(false); });
         }).catch(function (err) {
           setLoading(false);
           setLoggedIn(null);
@@ -762,32 +933,95 @@
         }
 
         setLoading(true);
+
         state.api.logout().finally(function () {
           setLoading(false);
           setLoggedIn(null);
+          state.boxSummary = [];
+          state.lastSystemReport = null;
+
           els.docsBody.innerHTML = '<tr><td colspan="8" class="empty">ยังไม่มีข้อมูล</td></tr>';
           els.pageInfo.textContent = 'หน้า 1 / 1 (0 รายการ)';
+          els.boxesWrap.innerHTML = '<div class="empty" style="grid-column:1 / -1;">ยังไม่มีกล่องที่บันทึกข้อมูล</div>';
+          els.boxSummaryLabel.textContent = 'ไม่พบข้อมูลกล่อง';
+        });
+      }
+
+      function printAllReport() {
+        if (!state.api) return;
+
+        var ensureReport = state.lastSystemReport && Array.isArray(state.lastSystemReport.docs)
+          ? Promise.resolve(state.lastSystemReport)
+          : state.api.systemReport();
+
+        ensureReport.then(function (res) {
+          var report = res || {};
+          var docs = Array.isArray(report.docs) ? report.docs : [];
+          if (!docs.length) {
+            showError('ไม่พบข้อมูลรายงานสำหรับพิมพ์');
+            return;
+          }
+
+          state.lastSystemReport = report;
+
+          var w = window.open('', '', 'width=1220,height=820');
+          if (!w) {
+            showError('ไม่สามารถเปิดหน้าต่างพิมพ์ (Pop-up ถูกบล็อก)');
+            return;
+          }
+
+          var esc = C.escapeHtml;
+          var h = '';
+          h += '<!doctype html><html><head><meta charset="utf-8"><title>รายงานเอกสารทั้งหมด</title>';
+          h += '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">';
+          h += '<style>@page{size:A4 landscape;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:8px;color:#0f172a}h2{margin:0 0 2px;text-align:center;font-size:21px;font-weight:800}p.sub{margin:0 0 6px;text-align:center;font-size:12px;color:#334155}p.meta{margin:0 0 8px;text-align:center;font-size:11px;color:#475569}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid #334155;padding:4px 5px;font-size:10.2px;line-height:1.28;vertical-align:top}th{background:#e2e8f0;text-align:center;font-weight:800}.text-center{text-align:center}.text-right{text-align:right}.subject,.sender,.budget,.status,.loc{white-space:normal;overflow-wrap:anywhere;word-break:break-word}.nowrap{white-space:nowrap}</style>';
+          h += '</head><body>';
+          h += '<h2>รายงานรายการเอกสารทั้งหมดในระบบ</h2>';
+          h += '<p class="sub">จำนวนทั้งหมด ' + docs.length + ' รายการ</p>';
+          h += '<p class="meta">พิมพ์เมื่อ: ' + esc(new Date().toLocaleString('th-TH')) + '</p>';
+          h += '<table><thead><tr><th style="width:4%">ลำดับ</th><th style="width:6%">ปีงบฯ</th><th style="width:11%">เลขที่หนังสือส่งกองคลัง</th><th style="width:9%">เลขที่ สธ.</th><th style="width:20%">ชื่อเรื่อง</th><th style="width:11%">ประเภทเงินงบประมาณ</th><th style="width:8%">จำนวน</th><th style="width:9%">สถานะ</th><th style="width:9%">สถานที่เก็บ</th><th style="width:8%">วันที่รับ</th><th style="width:10%">ผู้ส่ง</th></tr></thead><tbody>';
+
+          for (var i = 0; i < docs.length; i++) {
+            var d = docs[i] || {};
+            var recNo = C.safeText(d.receiveNo || '');
+            var fiscal = recNo && recNo.indexOf('/') > -1 ? recNo.split('/')[0] : '';
+            var subject = C.safeText(d.subject || '-');
+            if (subject.length > 220) subject = subject.substring(0, 220).replace(/\s+$/, '') + '...';
+
+            h += '<tr>';
+            h += '<td class="text-center nowrap">' + (i + 1) + '</td>';
+            h += '<td class="text-center nowrap">' + esc(fiscal) + '</td>';
+            h += '<td class="text-center nowrap">' + esc(d.amDocNoAk || d.amDocNo || '') + '</td>';
+            h += '<td class="text-center nowrap">' + esc(d.docNoSdh || '') + '</td>';
+            h += '<td class="subject">' + esc(subject) + '</td>';
+            h += '<td class="budget">' + esc(d.budgetType || '-') + '</td>';
+            h += '<td class="text-right nowrap">' + esc(d.amount || '-') + '</td>';
+            h += '<td class="status text-center">' + esc(d.docStatus || '-') + '</td>';
+            h += '<td class="loc text-center">' + esc(d.storedLoc || '-') + '</td>';
+            h += '<td class="text-center nowrap">' + esc(d.dateRec || '') + '</td>';
+            h += '<td class="sender">' + esc(d.sender || '') + '</td>';
+            h += '</tr>';
+          }
+
+          h += '</tbody></table>';
+          h += '<script>window.onload=function(){window.print();window.close();}<' + '/script>';
+          h += '</body></html>';
+
+          w.document.write(h);
+          w.document.close();
+        }).catch(function (err) {
+          showError((err && err.message) ? err.message : 'ไม่สามารถดึงข้อมูลรายงานได้');
         });
       }
 
       function init() {
-        state.config = readRuntimeConfig();
+        state.config = C.readConfig();
         applyConfigToUI(state.config);
         applyLockMode(state.config);
 
-        var savedUrl = localStorage.getItem(STORAGE_SCRIPT_URL) || '';
-        var savedDeviceKey = localStorage.getItem(STORAGE_DEVICE_KEY) || '';
-        var configUrl = safeText(state.config.scriptUrl).trim();
-        var configDeviceKey = safeText(state.config.deviceKey).trim();
-        var initialUrl = configUrl || savedUrl;
-        var initialDeviceKey = configDeviceKey || savedDeviceKey || randomDeviceKey();
-
-        if (configUrl && configUrl !== savedUrl) {
-          localStorage.setItem(STORAGE_SCRIPT_URL, configUrl);
-        }
-        if (configDeviceKey && configDeviceKey !== savedDeviceKey) {
-          localStorage.setItem(STORAGE_DEVICE_KEY, configDeviceKey);
-        }
+        var current = C.getStoredSettings();
+        var initialUrl = C.safeText(current.scriptUrl || '');
+        var initialDeviceKey = C.safeText(current.deviceKey || C.randomDeviceKey());
 
         els.scriptUrl.value = initialUrl;
         els.deviceKey.value = initialDeviceKey;
@@ -797,7 +1031,7 @@
         });
 
         els.btnGenerateDevice.addEventListener('click', function () {
-          els.deviceKey.value = randomDeviceKey();
+          els.deviceKey.value = C.randomDeviceKey();
         });
 
         els.btnSaveSettings.addEventListener('click', function () {
@@ -816,6 +1050,21 @@
           logout();
         });
 
+        els.tabDocs.addEventListener('click', function () { switchTab('docs'); });
+        els.tabBoxes.addEventListener('click', function () { switchTab('boxes'); });
+
+        els.btnAdd.addEventListener('click', function () {
+          C.redirect('add-edit.html', { mode: 'add' });
+        });
+
+        els.btnBoxScan.addEventListener('click', function () {
+          C.redirect('box-scan.html');
+        });
+
+        els.btnInspection.addEventListener('click', function () {
+          C.redirect('inspection.html');
+        });
+
         els.btnSearch.addEventListener('click', function () {
           loadDocs(true).catch(function (err) {
             showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
@@ -832,7 +1081,13 @@
         });
 
         els.btnRefresh.addEventListener('click', function () {
-          loadDocs(false).catch(function (err) {
+          Promise.all([loadDocs(false), loadBoxes()]).catch(function (err) {
+            showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลได้');
+          });
+        });
+
+        els.itemsPerPage.addEventListener('change', function () {
+          loadDocs(true).catch(function (err) {
             showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
           });
         });
@@ -855,9 +1110,19 @@
           });
         });
 
+        els.btnReloadBoxes.addEventListener('click', function () {
+          loadBoxes();
+        });
+
+        els.btnPrintAll.addEventListener('click', function () {
+          printAllReport();
+        });
+
+        switchTab('docs');
+
         if (initialUrl) {
           try {
-            buildClientOrThrow();
+            createClientFromInputs();
             trySession().then(function (ok) {
               if (!ok) {
                 els.loginCard.classList.remove('hidden');
@@ -874,7 +1139,9 @@
           if (!state.config.lockSettings) {
             els.settingsCard.classList.remove('hidden');
           }
+
           els.loginCard.classList.remove('hidden');
+
           if (state.config.lockSettings) {
             setStatus('config.js ยังไม่ตั้งค่า URL', 'error');
             showError('กรุณาตั้งค่า scriptUrl ในไฟล์ config.js ก่อนใช้งาน');
