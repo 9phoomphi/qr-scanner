@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ไม่มีสิทธิ์เข้าถึง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="./theme-legacy.css">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "IBM Plex Sans Thai", sans-serif;
+      background: radial-gradient(1100px 520px at 10% -14%, rgba(251, 146, 60, 0.22), rgba(251, 146, 60, 0)), var(--bg-gradient);
+      color: var(--text-color);
+      display: grid;
+      place-items: center;
+      padding: 16px;
+    }
+
+    .deny-card {
+      width: min(620px, 100%);
+      border-radius: 28px;
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      backdrop-filter: saturate(170%) blur(24px);
+      -webkit-backdrop-filter: saturate(170%) blur(24px);
+      box-shadow: var(--elev);
+      overflow: hidden;
+    }
+
+    .deny-head {
+      padding: 20px 16px 16px;
+      text-align: center;
+      background: linear-gradient(180deg, #fb923c 0%, #f59e0b 60%, #d97706 100%);
+      color: #fff;
+      position: relative;
+    }
+
+    .deny-head::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      right: -70px;
+      top: -90px;
+      background: rgba(255, 255, 255, 0.2);
+      pointer-events: none;
+    }
+
+    .deny-head i {
+      font-size: 2rem;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    .deny-head h1 {
+      margin: 0;
+      font-size: 1.28rem;
+      font-weight: 900;
+    }
+
+    .deny-head p {
+      margin: 6px 0 0;
+      font-size: 0.84rem;
+      opacity: 0.94;
+      font-weight: 650;
+    }
+
+    .deny-body {
+      padding: 18px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .deny-alert {
+      border: 1px solid rgba(217, 119, 6, 0.35);
+      background: rgba(251, 191, 36, 0.14);
+      color: var(--text-color);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      font-weight: 620;
+    }
+
+    .deny-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn {
+      border: none;
+      min-height: 44px;
+      border-radius: 999px;
+      font: inherit;
+      font-size: 0.92rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: transform .16s ease, box-shadow .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: linear-gradient(180deg, #3ea2ff, #0a84ff, #0068d9);
+      box-shadow: 0 14px 30px rgba(10, 132, 255, 0.28);
+    }
+
+    .btn.secondary {
+      color: var(--text-color);
+      background: rgba(148, 163, 184, 0.14);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    @media (max-width: 620px) {
+      .deny-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deny-card">
+    <div class="deny-head">
+      <i class="bi bi-shield-lock"></i>
+      <h1>ไม่มีสิทธิ์เข้าถึงหน้านี้</h1>
+      <p id="roleText">สิทธิ์ปัจจุบัน: กำลังโหลด...</p>
+    </div>
+    <div class="deny-body">
+      <div id="denyMessage" class="deny-alert">บัญชีนี้เป็นสิทธิ์อ่าน จึงไม่สามารถแก้ไขหรือจัดการเอกสารได้</div>
+      <div class="deny-actions">
+        <button id="btnHome" type="button" class="btn primary"><i class="bi bi-house-door"></i>กลับหน้าหลัก</button>
+        <button id="btnLogout" type="button" class="btn secondary"><i class="bi bi-box-arrow-right"></i>ออกจากระบบ</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="./config.js"></script>
+  <script src="./api-client.js"></script>
+  <script src="./theme-legacy.js"></script>
+  <script src="./app-common.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var C = window.DocFrontendCommon;
+      var q = C.parseQuery();
+      var defaultMessage = 'บัญชีนี้เป็นสิทธิ์อ่าน จึงไม่สามารถแก้ไขหรือจัดการเอกสารได้';
+
+      var state = {
+        settings: null,
+        api: null
+      };
+
+      var els = {
+        roleText: document.getElementById('roleText'),
+        denyMessage: document.getElementById('denyMessage'),
+        btnHome: document.getElementById('btnHome'),
+        btnLogout: document.getElementById('btnLogout')
+      };
+
+      function setRole(user) {
+        var roleLabel = C.safeTrim((user && user.accessRoleLabel) || '');
+        if (!roleLabel) {
+          var isReadOnly = !!(user && (user.isReadOnly || user.canEdit === false || user.accessRole === 'read_only'));
+          roleLabel = isReadOnly ? 'ผู้มีสิทธิ์อ่าน' : 'ผู้ใช้งานระบบ';
+        }
+        els.roleText.textContent = 'สิทธิ์ปัจจุบัน: ' + roleLabel;
+      }
+
+      function setMessage() {
+        var msg = C.safeTrim(q.message || '');
+        els.denyMessage.textContent = msg || defaultMessage;
+      }
+
+      function goHome() {
+        C.redirect('index.html');
+      }
+
+      function logout() {
+        if (!state.api) {
+          C.redirect('index.html', {}, true);
+          return;
+        }
+        state.api.logout({ loaderMessage: 'กำลังออกจากระบบ...' })
+          .catch(function () {})
+          .finally(function () {
+            C.redirect('index.html', {}, true);
+          });
+      }
+
+      async function init() {
+        setMessage();
+        els.btnHome.addEventListener('click', goHome);
+        els.btnLogout.addEventListener('click', logout);
+
+        try {
+          state.settings = C.ensureSettingsOrThrow();
+          state.api = C.createApiClient(state.settings);
+        } catch (_e) {
+          C.redirect('index.html', {}, true);
+          return;
+        }
+
+        try {
+          var meRes = await state.api.me({ noPageLoader: true });
+          if (!meRes || meRes.success === false || !meRes.user) {
+            C.redirect('index.html', {}, true);
+            return;
+          }
+          setRole(meRes.user);
+        } catch (_err) {
+          C.redirect('index.html', {}, true);
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

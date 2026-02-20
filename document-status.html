@@ -9,235 +9,356 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="./theme-legacy.css">
   <style>
-    :root {
-      --bg: #f3f6fb;
-      --card: rgba(255,255,255,0.92);
-      --text: #0f172a;
-      --muted: #475569;
-      --border: #dbe4f0;
-      --primary: #2563eb;
-      --primary2: #1d4ed8;
-      --success: #16a34a;
-      --danger: #dc2626;
-      --shadow: 0 18px 46px rgba(15,23,42,0.14);
+    .status-page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px;
     }
 
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: "IBM Plex Sans Thai", sans-serif;
-      color: var(--text);
-      background: radial-gradient(1200px 540px at 8% -14%, rgba(59,130,246,0.22), rgba(59,130,246,0)), var(--bg);
-    }
-
-    .shell { max-width: 980px; margin: 0 auto; padding: 14px; }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 14px;
-      margin-bottom: 12px;
-      backdrop-filter: saturate(160%) blur(8px);
-    }
-
-    .topbar {
+    .status-top {
       display: flex;
+      align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .back-btn {
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      color: var(--text-color);
+      min-height: 40px;
+      border-radius: 999px;
+      font-weight: 760;
+      padding: 0 14px;
+      cursor: pointer;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration: none;
     }
 
-    .title { margin: 0; font-size: 1.1rem; font-weight: 800; }
-    .muted { color: var(--muted); }
+    .back-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(10, 132, 255, 0.45);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+    }
 
-    .btn {
-      border: none;
-      border-radius: 999px;
-      height: 38px;
-      padding: 0 14px;
+    .main-card {
+      overflow: hidden;
+    }
+
+    .header-bg {
+      background: linear-gradient(180deg, #2f97ff 0%, #0a84ff 62%, #0071e3 100%);
       color: #fff;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(180deg, var(--primary), var(--primary2));
+      text-align: center;
+      padding: 22px 16px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .btn.secondary { background: #334155; }
-    .btn.outline { background: #fff; color: var(--primary2); border: 1px solid #93c5fd; }
-
-    .error {
-      border: 1px solid rgba(220,38,38,.35);
-      background: rgba(220,38,38,.08);
-      color: #991b1b;
-      border-radius: 10px;
-      padding: 10px;
-      font-size: 0.9rem;
+    .header-bg::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      right: -66px;
+      top: -90px;
+      background: rgba(255, 255, 255, 0.18);
+      pointer-events: none;
     }
 
-    .hidden { display: none !important; }
+    .header-bg i {
+      font-size: 2rem;
+      margin-bottom: 5px;
+      display: inline-block;
+    }
 
-    .step {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 10px;
-      background: #f8fbff;
+    .header-bg h3 {
+      margin: 0;
+      font-size: 1.18rem;
+      font-weight: 860;
+    }
+
+    .header-bg small {
+      display: block;
+      margin-top: 4px;
+      opacity: 0.94;
+      font-weight: 640;
+      font-size: 0.84rem;
+    }
+
+    .status-body {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .desc-note {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      line-height: 1.48;
+      font-weight: 610;
+    }
+
+    .form-section {
+      padding: 14px;
+      border-radius: 18px;
+    }
+
+    .form-section-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 0.94rem;
+      font-weight: 860;
+      color: var(--text-color);
     }
 
     .step-head {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-
-    .step-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: #1e3a8a;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .step-body {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-    }
-
-    .field { display: grid; gap: 4px; }
-
-    .label {
-      font-size: 0.78rem;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    input, select {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      min-height: 40px;
-      padding: 8px 10px;
-      font: inherit;
-      color: var(--text);
-      background: #fff;
-    }
-
-    .step.disabled {
-      opacity: 0.6;
-      background: #f1f5f9;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
 
     .switch {
       position: relative;
-      display: inline-block;
-      width: 56px;
-      height: 30px;
+      display: inline-flex;
+      width: 50px;
+      height: 28px;
+      flex: 0 0 auto;
     }
 
-    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
 
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #cbd5e1;
-      transition: .2s;
+      inset: 0;
+      background: rgba(148, 163, 184, 0.6);
+      transition: 0.2s;
       border-radius: 999px;
     }
 
     .slider:before {
       position: absolute;
       content: "";
-      height: 24px;
-      width: 24px;
+      width: 22px;
+      height: 22px;
       left: 3px;
       top: 3px;
-      background-color: #fff;
-      transition: .2s;
+      background: #fff;
+      transition: 0.2s;
       border-radius: 50%;
-      box-shadow: 0 2px 8px rgba(0,0,0,.24);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .switch input:checked + .slider {
-      background-color: var(--success);
+      background: #16a34a;
     }
 
     .switch input:checked + .slider:before {
-      transform: translateX(26px);
+      transform: translateX(22px);
     }
 
-    .member-row {
+    .status-detail {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      transition: opacity 0.2s ease;
+    }
+
+    .status-detail.disabled {
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.8rem;
+      font-weight: 760;
+      color: var(--text-muted);
+    }
+
+    .form-control,
+    .form-select {
+      width: 100%;
+      min-height: 40px;
+      border-radius: 14px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-color);
+      font: inherit;
+      padding: 8px 12px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-weight: 550;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px var(--primary-color-soft);
+    }
+
+    .thai-date-input .form-control {
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+      padding-right: 36px;
+      font-weight: 650;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .member-select-wrap {
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .member-avatar {
-      width: 30px;
-      height: 30px;
+    .member-avatar-sm {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      border: 1px solid #93c5fd;
-      object-fit: cover;
-      background: #e2e8f0;
-      flex-shrink: 0;
-    }
-
-    .doc-chip {
+      flex: 0 0 auto;
+      overflow: hidden;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      border: 1px solid var(--border);
+      justify-content: center;
+      background: rgba(10, 132, 255, 0.12);
+      border: 1px solid rgba(10, 132, 255, 0.24);
+      color: #007aff;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .member-avatar-sm img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .submit-btn {
+      border: none;
+      width: 100%;
+      min-height: 48px;
       border-radius: 999px;
-      padding: 6px 12px;
-      background: #eef4ff;
-      color: #334155;
-      font-size: .82rem;
-      font-weight: 700;
+      font: inherit;
+      font-weight: 860;
+      color: #fff;
+      background: linear-gradient(180deg, #2f97ff 0%, #0a84ff 62%, #0071e3 100%);
+      cursor: pointer;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.25s ease;
+      box-shadow: 0 16px 34px rgba(10, 132, 255, 0.26);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 22px 42px rgba(10, 132, 255, 0.32);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .error-box {
+      display: none;
+      border: 1px solid rgba(239, 68, 68, 0.36);
+      background: rgba(239, 68, 68, 0.12);
+      color: #991b1b;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-weight: 650;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    .error-box.show {
+      display: block;
+    }
+
+    .loading-row {
+      display: none;
+      text-align: center;
+      padding: 10px 0 2px;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      font-weight: 630;
+    }
+
+    .loading-row .spinner {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 3px solid rgba(10, 132, 255, 0.22);
+      border-top-color: var(--primary-color);
+      animation: spin 0.72s linear infinite;
+      margin-bottom: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     @media (max-width: 900px) {
-      .step-body { grid-template-columns: 1fr; }
+      .status-detail {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
-  <link rel="stylesheet" href="./theme-legacy.css">
 </head>
 <body>
-  <div class="shell">
-    <div class="card topbar">
-      <div>
-        <h1 class="title">จัดการสถานะเอกสาร</h1>
-        <div id="docHead" class="muted" style="font-size:0.84rem">กำลังโหลด...</div>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button id="btnBack" class="btn secondary" type="button"><i class="bi bi-arrow-left"></i> กลับ</button>
-        <button id="btnReload" class="btn outline" type="button"><i class="bi bi-arrow-clockwise"></i> โหลดใหม่</button>
-      </div>
+  <div class="status-page">
+    <div class="status-top">
+      <button id="btnBack" type="button" class="back-btn"><i class="bi bi-arrow-left"></i> กลับ</button>
     </div>
 
-    <div id="errBox" class="error hidden"></div>
+    <div id="errBox" class="error-box"></div>
 
-    <div id="mainWrap" class="hidden">
-      <div class="card">
-        <div class="doc-chip"><i class="bi bi-file-earmark-text"></i> <span id="docChip">-</span></div>
+    <div id="mainCard" class="main-card" style="display:none;">
+      <div class="header-bg">
+        <i class="bi bi-list-check"></i>
+        <h3>จัดการสถานะการดำเนินการ</h3>
+        <small id="docHead">กำลังโหลด...</small>
       </div>
 
-      <div id="stepsWrap" class="card"></div>
+      <div class="status-body">
+        <p class="desc-note"><i class="bi bi-info-circle me-1"></i>เปิด-ปิดสวิตช์เพื่อบันทึกสถานะแต่ละขั้นตอน วันที่จะเติมอัตโนมัติเมื่อเปิดสวิตช์</p>
+        <div id="stepsWrap"></div>
 
-      <div class="card" style="text-align:center;">
-        <button id="btnSubmit" class="btn" type="button"><i class="bi bi-save-fill"></i> บันทึกสถานะ</button>
+        <div id="loadingMsg" class="loading-row">
+          <div class="spinner"></div>
+          <div>กำลังบันทึก...</div>
+        </div>
+
+        <button id="btnSubmit" type="button" class="submit-btn"><i class="bi bi-save-fill"></i>บันทึกสถานะ</button>
       </div>
     </div>
   </div>
@@ -251,16 +372,8 @@
       'use strict';
 
       var C = window.DocFrontendCommon;
-      var query = C.parseQuery();
-      var docId = C.safeTrim(query.id || '');
-
-      var STEP_META = [
-        { key: 'return', label: 'ส่งกลับแก้ไข', icon: 'bi-arrow-return-right' },
-        { key: 'receiveBack', label: 'รับคืนเอกสารที่ส่งกลับ', icon: 'bi-box-arrow-in-down' },
-        { key: 'verify', label: 'ตรวจสอบ', icon: 'bi-search' },
-        { key: 'boss', label: 'หัวหน้าผ่านงาน', icon: 'bi-person-check' },
-        { key: 'sign', label: 'เสนอลงนาม', icon: 'bi-pen' }
-      ];
+      var q = C.parseQuery();
+      var docId = C.safeTrim(q.id || '');
 
       var state = {
         settings: null,
@@ -269,248 +382,302 @@
         doc: null,
         statusData: {},
         members: [],
-        memberImageMap: {}
+        memberImgMap: {}
       };
 
+      var steps = [
+        { key: 'return', label: 'ส่งกลับแก้ไข', icon: 'bi-arrow-return-right' },
+        { key: 'receiveBack', label: 'รับคืนเอกสารที่ส่งกลับ', icon: 'bi-box-arrow-in-down' },
+        { key: 'verify', label: 'ตรวจสอบ', icon: 'bi-search' },
+        { key: 'boss', label: 'หัวหน้าผ่านงาน', icon: 'bi-person-check' },
+        { key: 'sign', label: 'เสนอลงนาม', icon: 'bi-pen' }
+      ];
+
       var els = {
-        docHead: document.getElementById('docHead'),
         btnBack: document.getElementById('btnBack'),
-        btnReload: document.getElementById('btnReload'),
         errBox: document.getElementById('errBox'),
-        mainWrap: document.getElementById('mainWrap'),
-        docChip: document.getElementById('docChip'),
+        mainCard: document.getElementById('mainCard'),
+        docHead: document.getElementById('docHead'),
         stepsWrap: document.getElementById('stepsWrap'),
-        btnSubmit: document.getElementById('btnSubmit')
+        btnSubmit: document.getElementById('btnSubmit'),
+        loadingMsg: document.getElementById('loadingMsg')
       };
 
       function showError(message) {
         var msg = C.safeTrim(message || '');
         if (!msg) {
-          els.errBox.classList.add('hidden');
+          els.errBox.classList.remove('show');
           els.errBox.textContent = '';
           return;
         }
         els.errBox.textContent = msg;
-        els.errBox.classList.remove('hidden');
+        els.errBox.classList.add('show');
       }
 
-      function normalizeMemberImageMap(members) {
+      function setSaving(isSaving) {
+        els.btnSubmit.disabled = !!isSaving;
+        els.loadingMsg.style.display = isSaving ? 'block' : 'none';
+      }
+
+      function mapMemberImages(members) {
         var map = {};
         var list = Array.isArray(members) ? members : [];
         for (var i = 0; i < list.length; i++) {
           var m = list[i] || {};
           var name = C.safeTrim(m.name || '');
-          var image = C.safeTrim(m.image || '');
-          if (!name || !image) continue;
-          map[name] = image;
-          map[name.toLowerCase()] = image;
+          var img = C.safeTrim(m.image || '');
+          if (!name || !img) continue;
+          map[name] = img;
+          map[name.toLowerCase()] = img;
         }
         return map;
       }
 
-      function memberOptionsHtml(selectedValue) {
-        var selected = C.safeTrim(selectedValue || '');
+      function memberSelectHtml(fieldId, currentVal, disabled) {
         var html = '<option value="">เลือกชื่อ...</option>';
+        var selected = C.safeTrim(currentVal || '');
+
         for (var i = 0; i < state.members.length; i++) {
           var m = state.members[i] || {};
           var name = C.safeTrim(m.name || '');
           if (!name) continue;
           var pos = C.safeTrim(m.position || '');
           var label = pos ? (name + ' (' + pos + ')') : name;
-          html += '<option value="' + C.escapeHtml(name) + '"' + (name === selected ? ' selected' : '') + '>' + C.escapeHtml(label) + '</option>';
+          html += '<option value="' + C.escapeHtml(name) + '"' + (selected === name ? ' selected' : '') + '>' + C.escapeHtml(label) + '</option>';
         }
-        return html;
+
+        return '<select id="' + C.escapeHtml(fieldId) + '" class="form-select"' + (disabled ? ' disabled' : '') + '>' + html + '</select>';
       }
 
-      function avatarHtml(name) {
-        var key = C.safeTrim(name || '');
-        var img = state.memberImageMap[key] || state.memberImageMap[key.toLowerCase()] || '';
+      function memberAvatarHtml(fieldId, memberName) {
+        var key = C.safeTrim(memberName || '');
+        var img = state.memberImgMap[key] || state.memberImgMap[key.toLowerCase()] || '';
         if (img) {
-          return '<img class="member-avatar" src="' + C.escapeHtml(img) + '" alt="u">';
+          return '<img src="' + C.escapeHtml(img) + '" alt="u">';
         }
-        return '<img class="member-avatar" src="https://dummyimage.com/30x30/e2e8f0/64748b.png&text=' + encodeURIComponent((key.charAt(0) || '?').toUpperCase()) + '" alt="u">';
-      }
-
-      function stepValueKey(baseKey, suffix) {
-        return baseKey + suffix;
-      }
-
-      function fieldId(baseKey, name) {
-        return 'step_' + baseKey + '_' + name;
-      }
-
-      function toggleStep(baseKey) {
-        var checkEl = document.getElementById(fieldId(baseKey, 'check'));
-        var dateEl = document.getElementById(fieldId(baseKey, 'date'));
-        var userEl = document.getElementById(fieldId(baseKey, 'user'));
-        var blockEl = document.getElementById(fieldId(baseKey, 'block'));
-
-        if (!checkEl || !dateEl || !userEl || !blockEl) return;
-
-        var checked = !!checkEl.checked;
-        dateEl.disabled = !checked;
-        userEl.disabled = !checked;
-        blockEl.classList.toggle('disabled', !checked);
-
-        if (checked && !C.safeTrim(dateEl.value || '')) {
-          var now = new Date();
-          var mm = String(now.getMonth() + 1).padStart(2, '0');
-          var dd = String(now.getDate()).padStart(2, '0');
-          dateEl.value = now.getFullYear() + '-' + mm + '-' + dd;
-        }
-      }
-
-      function updateMemberAvatar(baseKey) {
-        var userEl = document.getElementById(fieldId(baseKey, 'user'));
-        var avatarEl = document.getElementById(fieldId(baseKey, 'avatar'));
-        if (!userEl || !avatarEl) return;
-        avatarEl.innerHTML = avatarHtml(userEl.value || '');
+        return '<i class="bi bi-person-fill"></i>';
       }
 
       function renderSteps() {
         var s = state.statusData || {};
         var html = '';
 
-        for (var i = 0; i < STEP_META.length; i++) {
-          var meta = STEP_META[i];
-          var checkKey = stepValueKey(meta.key, 'Check');
-          var dateKey = stepValueKey(meta.key, 'DateInput');
-          var userKey = stepValueKey(meta.key, 'User');
+        for (var i = 0; i < steps.length; i++) {
+          var step = steps[i];
+          var checked = !!s[step.key + 'Check'];
+          var dateVal = C.safeTrim(s[step.key + 'DateInput'] || '');
+          var userVal = C.safeTrim(s[step.key + 'User'] || '');
 
-          var checked = !!s[checkKey];
-          var dateVal = C.safeTrim(s[dateKey] || '');
-          var userVal = C.safeTrim(s[userKey] || '');
-
-          html += '<div id="' + fieldId(meta.key, 'block') + '" class="step ' + (checked ? '' : 'disabled') + '">';
+          html += '<section class="form-section">';
           html += '<div class="step-head">';
-          html += '<div class="step-title"><i class="bi ' + C.escapeHtml(meta.icon) + '"></i> ' + C.escapeHtml(meta.label) + '</div>';
-          html += '<label class="switch"><input id="' + fieldId(meta.key, 'check') + '" type="checkbox"' + (checked ? ' checked' : '') + '><span class="slider"></span></label>';
+          html += '<label class="switch"><input type="checkbox" id="' + step.key + 'Check"' + (checked ? ' checked' : '') + '><span class="slider"></span></label>';
+          html += '<h4 class="form-section-title"><i class="bi ' + C.escapeHtml(step.icon) + '"></i>' + C.escapeHtml(step.label) + '</h4>';
           html += '</div>';
 
-          html += '<div class="step-body">';
-          html += '<div class="field">';
-          html += '<div class="label">วันที่</div>';
-          html += '<input id="' + fieldId(meta.key, 'date') + '" type="date" value="' + C.escapeHtml(dateVal) + '"' + (checked ? '' : ' disabled') + '>';
+          html += '<div id="' + step.key + 'Detail" class="status-detail' + (checked ? '' : ' disabled') + '">';
+
+          html += '<div>';
+          html += '<label class="form-label">วันที่</label>';
+          html += '<div class="thai-date-input" onclick="if(document.getElementById(\'' + step.key + 'Check\').checked){openCalendar(\'' + step.key + 'Date\')}">';
+          html += '<input type="hidden" id="' + step.key + 'Date" value="' + C.escapeHtml(dateVal) + '">';
+          html += '<div id="' + step.key + 'DateDisplay" class="form-control" style="color:var(--text-muted)">เลือกวันที่...</div>';
+          html += '<i class="bi bi-calendar3 cal-icon"></i>';
+          html += '</div>';
           html += '</div>';
 
-          html += '<div class="field">';
-          html += '<div class="label">ผู้ดำเนินการ</div>';
-          html += '<div class="member-row">';
-          html += '<div id="' + fieldId(meta.key, 'avatar') + '">' + avatarHtml(userVal) + '</div>';
-          html += '<select id="' + fieldId(meta.key, 'user') + '"' + (checked ? '' : ' disabled') + '>' + memberOptionsHtml(userVal) + '</select>';
+          html += '<div>';
+          html += '<label class="form-label">ชื่อผู้ดำเนินการ</label>';
+          html += '<div class="member-select-wrap">';
+          html += '<div id="' + step.key + 'UserImg" class="member-avatar-sm">' + memberAvatarHtml(step.key + 'User', userVal) + '</div>';
+          html += memberSelectHtml(step.key + 'User', userVal, !checked);
           html += '</div>';
           html += '</div>';
+
           html += '</div>';
-          html += '</div>';
+          html += '</section>';
         }
 
         els.stepsWrap.innerHTML = html;
 
-        for (var j = 0; j < STEP_META.length; j++) {
-          (function bind(meta) {
-            var checkEl = document.getElementById(fieldId(meta.key, 'check'));
-            var userEl = document.getElementById(fieldId(meta.key, 'user'));
+        for (var j = 0; j < steps.length; j++) {
+          (function bindStep(step) {
+            var checkEl = document.getElementById(step.key + 'Check');
+            var userEl = document.getElementById(step.key + 'User');
             if (checkEl) {
               checkEl.addEventListener('change', function () {
-                toggleStep(meta.key);
+                toggleStep(step.key);
               });
             }
             if (userEl) {
               userEl.addEventListener('change', function () {
-                updateMemberAvatar(meta.key);
+                updateMemberImage(step.key + 'User');
               });
             }
-          })(STEP_META[j]);
+            if (typeof window.updDD === 'function') {
+              window.updDD(step.key + 'Date');
+            }
+          })(steps[j]);
+        }
+      }
+
+      function updateMemberImage(fieldId) {
+        var sel = document.getElementById(fieldId);
+        var imgWrap = document.getElementById(fieldId + 'Img');
+        if (!sel || !imgWrap) return;
+        var name = C.safeTrim(sel.value || '');
+        var img = state.memberImgMap[name] || state.memberImgMap[name.toLowerCase()] || '';
+        if (img) {
+          imgWrap.innerHTML = '<img src="' + C.escapeHtml(img) + '" alt="u">';
+        } else {
+          imgWrap.innerHTML = '<i class="bi bi-person-fill"></i>';
+        }
+      }
+
+      function toggleStep(key) {
+        var checkEl = document.getElementById(key + 'Check');
+        var detailEl = document.getElementById(key + 'Detail');
+        var dateEl = document.getElementById(key + 'Date');
+        var userEl = document.getElementById(key + 'User');
+
+        if (!checkEl || !detailEl || !dateEl || !userEl) return;
+
+        if (checkEl.checked) {
+          detailEl.classList.remove('disabled');
+          userEl.disabled = false;
+          if (!C.safeTrim(dateEl.value || '')) {
+            var now = new Date();
+            var mm = String(now.getMonth() + 1).padStart(2, '0');
+            var dd = String(now.getDate()).padStart(2, '0');
+            dateEl.value = now.getFullYear() + '-' + mm + '-' + dd;
+          }
+        } else {
+          detailEl.classList.add('disabled');
+          userEl.disabled = true;
+        }
+
+        if (typeof window.updDD === 'function') {
+          window.updDD(key + 'Date');
         }
       }
 
       function collectStatusData() {
-        var payload = {};
-
-        for (var i = 0; i < STEP_META.length; i++) {
-          var meta = STEP_META[i];
-          var checked = !!(document.getElementById(fieldId(meta.key, 'check')) || {}).checked;
-          var dateVal = C.safeTrim((document.getElementById(fieldId(meta.key, 'date')) || {}).value || '');
-          var userVal = C.safeTrim((document.getElementById(fieldId(meta.key, 'user')) || {}).value || '');
-
-          payload[stepValueKey(meta.key, 'Check')] = checked;
-          payload[stepValueKey(meta.key, 'Date')] = dateVal;
-          payload[stepValueKey(meta.key, 'User')] = userVal;
-        }
-
-        return payload;
+        return {
+          returnCheck: !!(document.getElementById('returnCheck') || {}).checked,
+          returnDate: C.safeTrim((document.getElementById('returnDate') || {}).value || ''),
+          returnUser: C.safeTrim((document.getElementById('returnUser') || {}).value || ''),
+          receiveBackCheck: !!(document.getElementById('receiveBackCheck') || {}).checked,
+          receiveBackDate: C.safeTrim((document.getElementById('receiveBackDate') || {}).value || ''),
+          receiveBackUser: C.safeTrim((document.getElementById('receiveBackUser') || {}).value || ''),
+          verifyCheck: !!(document.getElementById('verifyCheck') || {}).checked,
+          verifyDate: C.safeTrim((document.getElementById('verifyDate') || {}).value || ''),
+          verifyUser: C.safeTrim((document.getElementById('verifyUser') || {}).value || ''),
+          bossCheck: !!(document.getElementById('bossCheck') || {}).checked,
+          bossDate: C.safeTrim((document.getElementById('bossDate') || {}).value || ''),
+          bossUser: C.safeTrim((document.getElementById('bossUser') || {}).value || ''),
+          signCheck: !!(document.getElementById('signCheck') || {}).checked,
+          signDate: C.safeTrim((document.getElementById('signDate') || {}).value || ''),
+          signUser: C.safeTrim((document.getElementById('signUser') || {}).value || '')
+        };
       }
 
       async function submitStatus() {
         if (!state.user || state.user.isReadOnly || state.user.canEdit === false) {
-          Swal.fire('สิทธิ์ไม่เพียงพอ', 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถแก้ไขสถานะได้', 'warning');
+          C.redirect('access-denied.html', {
+            message: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถจัดการสถานะเอกสารได้'
+          }, true);
           return;
         }
 
-        var payload = collectStatusData();
+        var statusData = collectStatusData();
+        setSaving(true);
 
-        els.btnSubmit.disabled = true;
         try {
-          var res = await state.api.docUpdateStatus(state.doc.docId || docId, payload);
-          if (!res || res.success === false) throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
-          await Swal.fire('บันทึกสำเร็จ', 'อัปเดตสถานะเรียบร้อย', 'success');
+          var res = await state.api.docUpdateStatus(state.doc.docId || docId, statusData);
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'ไม่สามารถบันทึกสถานะได้');
+          }
+
+          await Swal.fire({
+            icon: 'success',
+            title: 'บันทึกสถานะสำเร็จ',
+            confirmButtonText: 'ดูรายละเอียดเอกสาร',
+            confirmButtonColor: '#007AFF',
+            allowOutsideClick: false
+          });
+
           C.redirect('document-view.html', { id: state.doc.docId || docId }, true);
         } catch (err) {
           Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
-        } finally {
-          els.btnSubmit.disabled = false;
+          setSaving(false);
+          return;
         }
+
+        setSaving(false);
       }
 
       async function loadData() {
         showError('');
-        els.mainWrap.classList.add('hidden');
 
-        try {
-          var responses = await Promise.all([
-            state.api.me(),
-            state.api.docDetail(docId),
-            state.api.optionsMembers()
-          ]);
+        var res = await Promise.all([
+          state.api.me(),
+          state.api.docDetail(docId),
+          state.api.optionsMembers()
+        ]);
 
-          var meRes = responses[0] || {};
-          var detailRes = responses[1] || {};
-          var membersRes = responses[2] || {};
+        var meRes = res[0] || {};
+        var docRes = res[1] || {};
+        var memberRes = res[2] || {};
 
-          if (!meRes || meRes.success === false || !meRes.user) {
-            C.redirect('index.html', {}, true);
-            return;
-          }
-
-          if (!detailRes || detailRes.success === false || !detailRes.doc) {
-            throw new Error((detailRes && detailRes.error) ? detailRes.error : 'ไม่พบข้อมูลเอกสาร');
-          }
-
-          state.user = meRes.user;
-          state.doc = detailRes.doc;
-          state.statusData = detailRes.statusData || {};
-          state.members = (membersRes && Array.isArray(membersRes.data)) ? membersRes.data : [];
-          state.memberImageMap = normalizeMemberImageMap(state.members);
-
-          els.docHead.textContent = (state.doc.docId || '-') + ' | เลขรับ ' + (state.doc.receiveNo || '-');
-          els.docChip.textContent = (state.doc.docStatus || '-') + (state.user.isReadOnly ? ' | สิทธิ์อ่านเท่านั้น' : '');
-
-          renderSteps();
-
-          if (state.user.isReadOnly || state.user.canEdit === false) {
-            els.btnSubmit.disabled = true;
-            els.btnSubmit.textContent = 'บัญชีนี้ไม่สามารถแก้ไขสถานะ';
-          }
-
-          els.mainWrap.classList.remove('hidden');
-        } catch (err) {
-          showError((err && err.message) ? err.message : 'โหลดข้อมูลสถานะไม่สำเร็จ');
+        if (!meRes || meRes.success === false || !meRes.user) {
+          C.redirect('index.html', {}, true);
+          return false;
         }
+        if (!docRes || docRes.success === false || !docRes.doc) {
+          C.redirect('not-found.html', {
+            message: 'ไม่พบเอกสาร',
+            detail: docId,
+            back: 'index.html'
+          }, true);
+          return false;
+        }
+
+        state.user = meRes.user;
+        state.doc = docRes.doc;
+        state.statusData = docRes.statusData || {};
+        state.members = (memberRes && Array.isArray(memberRes.data)) ? memberRes.data : [];
+        state.memberImgMap = mapMemberImages(state.members);
+
+        if (state.user.isReadOnly || state.user.canEdit === false) {
+          C.redirect('access-denied.html', {
+            message: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถจัดการสถานะเอกสารได้'
+          }, true);
+          return false;
+        }
+
+        var headText = (state.doc.docId || '-') + ' | เลขรับ ' + (state.doc.receiveNo || '-');
+        els.docHead.textContent = headText;
+
+        renderSteps();
+
+        els.mainCard.style.display = 'block';
+        return true;
       }
 
-      function init() {
+      function bindEvents() {
+        els.btnBack.addEventListener('click', function () {
+          C.redirect('document-view.html', { id: docId });
+        });
+
+        els.btnSubmit.addEventListener('click', submitStatus);
+      }
+
+      async function init() {
         if (!docId) {
-          showError('ไม่พบพารามิเตอร์ id');
+          C.redirect('not-found.html', {
+            message: 'ไม่พบเอกสาร',
+            detail: '',
+            back: 'index.html'
+          }, true);
           return;
         }
 
@@ -522,19 +689,13 @@
           return;
         }
 
-        els.btnBack.onclick = function () {
-          C.redirect('document-view.html', { id: docId });
-        };
+        bindEvents();
 
-        els.btnReload.onclick = function () {
-          loadData();
-        };
-
-        els.btnSubmit.onclick = function () {
-          submitStatus();
-        };
-
-        loadData();
+        try {
+          await loadData();
+        } catch (err) {
+          showError((err && err.message) ? err.message : 'โหลดหน้าจัดการสถานะไม่สำเร็จ');
+        }
       }
 
       init();

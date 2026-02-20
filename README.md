@@ -4,6 +4,9 @@
 
 ## ไฟล์ที่ต้องมีบน GitHub
 - `index.html`
+- `welcome.html`
+- `access-denied.html`
+- `not-found.html`
 - `document-form.html`
 - `document-view.html`
 - `document-status.html`
@@ -13,6 +16,8 @@
 - `api-client.js`
 - `app-common.js`
 - `config.js`
+- `theme-legacy.css`
+- `theme-legacy.js`
 
 ## ตั้งค่าก่อนใช้งาน
 1. แก้ `config.js`
@@ -30,3 +35,4 @@
 - หน้าเว็บทุกหน้าจะเรียก API ตัวเดิมของ Google Apps Script
 - Logic จัดการ Google Sheet ยังคงอยู่ใน `.gs` เดิม
 - ถ้าเบราว์เซอร์มีข้อจำกัด CORS ระบบ `api-client.js` จะ fallback เป็น JSONP อัตโนมัติ
+- `index.html` รองรับ query เดิมแบบระบบ Apps Script (`?mode=...`, `?id=...`, `?box=...`) และจะ redirect ไปหน้าใหม่ที่ตรงกันอัตโนมัติ

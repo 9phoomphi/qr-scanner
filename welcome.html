@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ยินดีต้อนรับ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="./theme-legacy.css">
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    body.welcome-page {
+      margin: 0;
+      padding-bottom: 0 !important;
+      overflow: hidden !important;
+      font-family: "IBM Plex Sans Thai", sans-serif;
+    }
+
+    .welcome-shell {
+      position: relative;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: calc(18px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) calc(16px + env(safe-area-inset-left, 0px));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      background: radial-gradient(1200px 680px at 12% -20%, rgba(90, 200, 250, 0.28), rgba(90, 200, 250, 0) 62%), radial-gradient(1200px 680px at 92% -22%, rgba(10, 132, 255, 0.22), rgba(10, 132, 255, 0) 60%), linear-gradient(180deg, #f7fbff 0%, #eef4fb 52%, #e9f0f8 100%);
+    }
+
+    body.dark-mode .welcome-shell {
+      background: radial-gradient(1200px 680px at 12% -20%, rgba(90, 200, 250, 0.22), rgba(90, 200, 250, 0) 62%), radial-gradient(1200px 680px at 92% -22%, rgba(10, 132, 255, 0.2), rgba(10, 132, 255, 0) 60%), linear-gradient(180deg, #060b14 0%, #0d1524 52%, #141f30 100%);
+    }
+
+    .welcome-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(44px);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .welcome-orb.orb-a {
+      width: 260px;
+      height: 260px;
+      left: -70px;
+      top: -40px;
+      background: rgba(90, 200, 250, 0.45);
+    }
+
+    .welcome-orb.orb-b {
+      width: 280px;
+      height: 280px;
+      right: -80px;
+      bottom: -60px;
+      background: rgba(10, 132, 255, 0.38);
+    }
+
+    .welcome-panel {
+      position: relative;
+      z-index: 2;
+      width: min(520px, 100%);
+      padding: 30px 24px 24px;
+      text-align: center;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      backdrop-filter: saturate(180%) blur(28px);
+      -webkit-backdrop-filter: saturate(180%) blur(28px);
+      box-shadow: 0 34px 84px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    body.dark-mode .welcome-panel {
+      background: rgba(19, 28, 42, 0.62);
+      border-color: rgba(148, 163, 184, 0.34);
+      box-shadow: 0 40px 96px rgba(2, 8, 20, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .welcome-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(34, 197, 94, 0.32);
+      color: #15803d;
+      font-size: 0.78rem;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    body.dark-mode .welcome-chip {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: rgba(74, 222, 128, 0.36);
+      color: #bbf7d0;
+    }
+
+    .welcome-avatar-ring {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      padding: 6px;
+      background: linear-gradient(160deg, #67c9ff, #0a84ff, #0071e3);
+      box-shadow: 0 22px 54px rgba(10, 132, 255, 0.3);
+    }
+
+    .welcome-avatar-img,
+    .welcome-avatar-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: block;
+      border: 3px solid rgba(255, 255, 255, 0.74);
+      object-fit: cover;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .welcome-avatar-fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: linear-gradient(180deg, #0a84ff, #007aff, #0063d1);
+    }
+
+    .welcome-title {
+      margin: 2px 0 2px;
+      font-size: 1.58rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .welcome-name {
+      font-size: 1.34rem;
+      font-weight: 900;
+      line-height: 1.25;
+      color: var(--primary-color);
+      word-break: break-word;
+    }
+
+    .welcome-position {
+      margin-top: 3px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .welcome-note {
+      margin: 14px auto 0;
+      max-width: 430px;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .welcome-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .welcome-btn {
+      border: none;
+      font: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.16s ease, filter 0.2s ease;
+    }
+
+    .welcome-btn-primary {
+      height: 50px;
+      padding: 0 22px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.98rem;
+      background: linear-gradient(180deg, #2f97ff 0%, #0a84ff 58%, #0071e3 100%);
+      border: 1px solid rgba(10, 132, 255, 0.54);
+      color: #fff;
+      box-shadow: 0 20px 48px rgba(10, 132, 255, 0.32);
+    }
+
+    .welcome-btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+    }
+
+    .welcome-btn-secondary {
+      height: 50px;
+      padding: 0 20px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.96rem;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(148, 163, 184, 0.36);
+      color: var(--text-main);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    .welcome-btn-secondary:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    body.dark-mode .welcome-btn-secondary {
+      background: rgba(22, 30, 44, 0.72);
+      border-color: rgba(148, 163, 184, 0.4);
+      color: #e8f1ff;
+      box-shadow: 0 18px 34px rgba(2, 8, 20, 0.5);
+    }
+
+    body.dark-mode .welcome-btn-secondary:hover {
+      background: rgba(22, 30, 44, 0.88);
+    }
+
+    .state-error {
+      margin-top: 12px;
+      border: 1px solid rgba(239, 68, 68, 0.38);
+      border-radius: 12px;
+      background: rgba(239, 68, 68, 0.12);
+      color: #991b1b;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      font-weight: 650;
+      display: none;
+    }
+
+    .state-error.show {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .welcome-shell {
+        align-items: flex-start;
+        justify-content: center;
+      }
+
+      .welcome-panel {
+        width: min(520px, 100%);
+      }
+
+      .welcome-orb {
+        opacity: 0.34;
+        filter: blur(52px);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .welcome-shell {
+        padding: calc(12px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-left, 0px));
+      }
+
+      .welcome-panel {
+        padding: 20px 14px 16px;
+        border-radius: 22px;
+        backdrop-filter: saturate(170%) blur(22px);
+        -webkit-backdrop-filter: saturate(170%) blur(22px);
+      }
+
+      .welcome-chip {
+        font-size: 0.72rem;
+        padding: 6px 11px;
+        margin-bottom: 11px;
+      }
+
+      .welcome-avatar-ring {
+        width: 102px;
+        height: 102px;
+        margin-bottom: 11px;
+      }
+
+      .welcome-title {
+        font-size: 1.3rem;
+      }
+
+      .welcome-name {
+        font-size: 1.05rem;
+      }
+
+      .welcome-position {
+        font-size: 0.84rem;
+      }
+
+      .welcome-note {
+        font-size: 0.84rem;
+        margin-top: 10px;
+      }
+
+      .welcome-actions {
+        flex-direction: column;
+      }
+
+      .welcome-btn-primary,
+      .welcome-btn-secondary {
+        width: 100%;
+        height: 50px;
+        font-size: 0.95rem;
+      }
+
+      .welcome-orb {
+        display: none;
+      }
+    }
+
+    @media (max-height: 700px) {
+      .welcome-shell {
+        align-items: flex-start;
+      }
+
+      .welcome-panel {
+        margin-top: 6px;
+      }
+    }
+  </style>
+</head>
+<body class="welcome-page">
+  <div class="welcome-shell">
+    <div class="welcome-orb orb-a"></div>
+    <div class="welcome-orb orb-b"></div>
+    <div class="welcome-panel">
+      <div class="welcome-chip"><i class="bi bi-check-circle-fill"></i><span>เข้าสู่ระบบสำเร็จ</span></div>
+      <div class="welcome-avatar-ring" id="avatarWrap">
+        <div class="welcome-avatar-fallback">?</div>
+      </div>
+      <h1 class="welcome-title">ยินดีต้อนรับเข้าสู่ระบบ</h1>
+      <div class="welcome-name" id="welcomeName">-</div>
+      <div class="welcome-position" id="welcomePosition">ผู้ใช้งานระบบ</div>
+      <p class="welcome-note">กรุณากดปุ่มด้านล่างเพื่อเข้าสู่หน้าเอกสาร</p>
+      <div id="stateError" class="state-error"></div>
+      <div class="welcome-actions">
+        <button id="btnDashboard" type="button" class="welcome-btn welcome-btn-primary"><i class="bi bi-speedometer2"></i>เข้าสู่หน้าเอกสาร</button>
+        <button id="btnLogout" type="button" class="welcome-btn welcome-btn-secondary"><i class="bi bi-box-arrow-right"></i>ออกจากระบบ</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./api-client.js"></script>
+  <script src="./theme-legacy.js"></script>
+  <script src="./app-common.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var C = window.DocFrontendCommon;
+      var state = {
+        settings: null,
+        api: null,
+        user: null
+      };
+
+      var els = {
+        avatarWrap: document.getElementById('avatarWrap'),
+        welcomeName: document.getElementById('welcomeName'),
+        welcomePosition: document.getElementById('welcomePosition'),
+        stateError: document.getElementById('stateError'),
+        btnDashboard: document.getElementById('btnDashboard'),
+        btnLogout: document.getElementById('btnLogout')
+      };
+
+      function showError(message) {
+        var msg = C.safeTrim(message || '');
+        if (!msg) {
+          els.stateError.classList.remove('show');
+          els.stateError.textContent = '';
+          return;
+        }
+        els.stateError.textContent = msg;
+        els.stateError.classList.add('show');
+      }
+
+      function renderUser(user) {
+        var u = user || {};
+        var name = C.safeTrim(u.displayName || u.username || 'ผู้ใช้งาน');
+        var position = C.safeTrim(u.position || 'ผู้ใช้งานระบบ');
+        var imageUrl = C.safeTrim(u.imageUrl || '');
+        var initial = C.escapeHtml(name.charAt(0) || '?');
+
+        els.welcomeName.textContent = name;
+        els.welcomePosition.textContent = position;
+
+        if (imageUrl) {
+          els.avatarWrap.innerHTML = '<img class="welcome-avatar-img" src="' + C.escapeHtml(imageUrl) + '" alt="user">';
+        } else {
+          els.avatarWrap.innerHTML = '<div class="welcome-avatar-fallback">' + initial + '</div>';
+        }
+      }
+
+      function goDashboard() {
+        C.redirect('index.html');
+      }
+
+      function goLogout() {
+        if (!state.api) {
+          C.redirect('index.html', {}, true);
+          return;
+        }
+
+        state.api.logout({ loaderMessage: 'กำลังออกจากระบบ...' })
+          .catch(function () {})
+          .finally(function () {
+            C.redirect('index.html', {}, true);
+          });
+      }
+
+      function setBusy(isBusy) {
+        els.btnDashboard.disabled = !!isBusy;
+        els.btnLogout.disabled = !!isBusy;
+      }
+
+      async function init() {
+        try {
+          state.settings = C.ensureSettingsOrThrow();
+          state.api = C.createApiClient(state.settings);
+        } catch (_e) {
+          C.redirect('index.html', {}, true);
+          return;
+        }
+
+        els.btnDashboard.addEventListener('click', goDashboard);
+        els.btnLogout.addEventListener('click', goLogout);
+
+        showError('');
+        setBusy(true);
+
+        try {
+          var res = await state.api.me({ noPageLoader: true });
+          if (!res || res.success === false || !res.user) {
+            C.redirect('index.html', {}, true);
+            return;
+          }
+
+          state.user = res.user;
+          renderUser(state.user);
+        } catch (err) {
+          showError((err && err.message) ? err.message : 'ไม่สามารถโหลดข้อมูลผู้ใช้งานได้');
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

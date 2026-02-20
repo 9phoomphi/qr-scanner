@@ -379,7 +379,300 @@
     document.body.appendChild(btn);
   }
 
+  var THAI_M = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+  var THAI_MS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  var calYear;
+  var calMonth;
+  var calTarget;
+  var calView = 'day';
+
+  function ensureCalendarDom() {
+    if (document.getElementById('calOverlay') && document.getElementById('calPopup')) return;
+
+    var wrap = document.createElement('div');
+    wrap.innerHTML = '<div class=\"thai-cal-overlay\" id=\"calOverlay\"></div>' +
+      '<div class=\"thai-cal-popup\" id=\"calPopup\">' +
+      '<div class=\"thai-cal-header\"><div class=\"thai-cal-nav\">' +
+      '<button id=\"btnCalPrev\" type=\"button\"><i class=\"bi bi-chevron-left\"></i></button>' +
+      '<span class=\"thai-cal-title\" id=\"calTitle\"></span>' +
+      '<button id=\"btnCalNext\" type=\"button\"><i class=\"bi bi-chevron-right\"></i></button>' +
+      '</div></div>' +
+      '<div id=\"calMonthView\" style=\"display:none\"></div>' +
+      '<div id=\"calDayView\">' +
+      '<div class=\"thai-cal-weekdays\"><span>อา</span><span>จ</span><span>อ</span><span>พ</span><span>พฤ</span><span>ศ</span><span>ส</span></div>' +
+      '<div class=\"thai-cal-days\" id=\"calDays\"></div>' +
+      '</div>' +
+      '<div class=\"thai-cal-footer\">' +
+      '<button class=\"thai-cal-btn-clear\" id=\"btnCalClear\" type=\"button\">ล้าง</button>' +
+      '<button class=\"thai-cal-btn-today\" id=\"btnCalToday\" type=\"button\">วันนี้</button>' +
+      '</div>' +
+      '</div>';
+
+    while (wrap.firstChild) {
+      document.body.appendChild(wrap.firstChild);
+    }
+
+    var overlay = document.getElementById('calOverlay');
+    var title = document.getElementById('calTitle');
+    var btnPrev = document.getElementById('btnCalPrev');
+    var btnNext = document.getElementById('btnCalNext');
+    var btnToday = document.getElementById('btnCalToday');
+    var btnClear = document.getElementById('btnCalClear');
+
+    if (overlay) overlay.addEventListener('click', closeCalendar);
+    if (title) title.addEventListener('click', toggleMonthView);
+    if (btnPrev) btnPrev.addEventListener('click', calPrev);
+    if (btnNext) btnNext.addEventListener('click', calNext);
+    if (btnToday) btnToday.addEventListener('click', calToday);
+    if (btnClear) btnClear.addEventListener('click', calClear);
+  }
+
+  function setCalView(view) {
+    calView = view;
+    var monthView = document.getElementById('calMonthView');
+    var dayView = document.getElementById('calDayView');
+    if (monthView) monthView.style.display = view === 'day' ? 'none' : 'block';
+    if (dayView) dayView.style.display = view === 'day' ? 'block' : 'none';
+    if (view === 'day') renderCal();
+    else if (view === 'month') renderMonthView();
+    else renderYearView();
+  }
+
+  function openCalendar(inputId) {
+    ensureCalendarDom();
+    calTarget = inputId;
+    var input = document.getElementById(inputId);
+    if (!input) return;
+
+    var value = String(input.value || '');
+    var now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+
+    if (value) {
+      var parts = value.split('-');
+      if (parts.length === 3) {
+        var yy = parseInt(parts[0], 10);
+        if (yy > 2400) yy -= 543;
+        if (!isNaN(yy)) calYear = yy;
+        var mm = parseInt(parts[1], 10) - 1;
+        if (!isNaN(mm) && mm >= 0 && mm <= 11) calMonth = mm;
+      }
+    }
+
+    setCalView('day');
+
+    var overlay = document.getElementById('calOverlay');
+    var popup = document.getElementById('calPopup');
+    if (overlay) overlay.style.display = 'block';
+    if (popup) popup.style.display = 'block';
+  }
+
+  function closeCalendar() {
+    var overlay = document.getElementById('calOverlay');
+    var popup = document.getElementById('calPopup');
+    if (overlay) overlay.style.display = 'none';
+    if (popup) popup.style.display = 'none';
+  }
+
+  function renderCal() {
+    var title = document.getElementById('calTitle');
+    var days = document.getElementById('calDays');
+    if (!title || !days) return;
+
+    var thaiY = calYear < 2400 ? calYear + 543 : calYear;
+    title.textContent = THAI_M[calMonth] + ' ' + thaiY;
+
+    var firstDay = new Date(calYear, calMonth, 1).getDay();
+    var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    var prevDays = new Date(calYear, calMonth, 0).getDate();
+    var html = '';
+    var today = new Date();
+    var selectedVal = '';
+    var targetEl = document.getElementById(calTarget);
+    if (targetEl) selectedVal = String(targetEl.value || '');
+    var sp = selectedVal.split('-');
+    if (sp.length === 3 && parseInt(sp[0], 10) > 2400) {
+      selectedVal = (parseInt(sp[0], 10) - 543) + '-' + sp[1] + '-' + sp[2];
+    }
+
+    var i;
+    for (i = firstDay - 1; i >= 0; i--) {
+      var prevDate = prevDays - i;
+      html += '<div class=\"thai-cal-day other-month\" onclick=\"pickDay(' + (calMonth - 1) + ',' + prevDate + ')\">' + prevDate + '</div>';
+    }
+    for (var d = 1; d <= daysInMonth; d++) {
+      var cls = 'thai-cal-day';
+      if (d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear()) cls += ' today';
+      var cv = calYear + '-' + ('0' + (calMonth + 1)).slice(-2) + '-' + ('0' + d).slice(-2);
+      if (selectedVal === cv) cls += ' selected';
+      html += '<div class=\"' + cls + '\" onclick=\"pickDay(' + calMonth + ',' + d + ')\">' + d + '</div>';
+    }
+
+    var totalCells = firstDay + daysInMonth;
+    var remain = 7 - (totalCells % 7);
+    if (remain < 7) {
+      for (var r = 1; r <= remain; r++) {
+        html += '<div class=\"thai-cal-day other-month\" onclick=\"pickDay(' + (calMonth + 1) + ',' + r + ')\">' + r + '</div>';
+      }
+    }
+
+    days.innerHTML = html;
+  }
+
+  function pickDay(monthValue, dayValue) {
+    if (monthValue < 0) {
+      calMonth = 11;
+      calYear -= 1;
+    } else if (monthValue > 11) {
+      calMonth = 0;
+      calYear += 1;
+    } else {
+      calMonth = monthValue;
+    }
+
+    var val = calYear + '-' + ('0' + (calMonth + 1)).slice(-2) + '-' + ('0' + dayValue).slice(-2);
+    var targetEl = document.getElementById(calTarget);
+    if (targetEl) targetEl.value = val;
+    updDD(calTarget);
+    closeCalendar();
+  }
+
+  function calPrev() {
+    if (calView === 'year') {
+      calYear -= 12;
+      renderYearView();
+      return;
+    }
+    if (calView === 'month') {
+      calYear -= 1;
+      renderMonthView();
+      return;
+    }
+    calMonth -= 1;
+    if (calMonth < 0) {
+      calMonth = 11;
+      calYear -= 1;
+    }
+    renderCal();
+  }
+
+  function calNext() {
+    if (calView === 'year') {
+      calYear += 12;
+      renderYearView();
+      return;
+    }
+    if (calView === 'month') {
+      calYear += 1;
+      renderMonthView();
+      return;
+    }
+    calMonth += 1;
+    if (calMonth > 11) {
+      calMonth = 0;
+      calYear += 1;
+    }
+    renderCal();
+  }
+
+  function calToday() {
+    var now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+    var val = calYear + '-' + ('0' + (calMonth + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
+    var targetEl = document.getElementById(calTarget);
+    if (targetEl) targetEl.value = val;
+    updDD(calTarget);
+    closeCalendar();
+  }
+
+  function calClear() {
+    var targetEl = document.getElementById(calTarget);
+    if (targetEl) targetEl.value = '';
+    updDD(calTarget);
+    closeCalendar();
+  }
+
+  function toggleMonthView() {
+    if (calView === 'day') setCalView('month');
+    else if (calView === 'month') setCalView('year');
+    else setCalView('day');
+  }
+
+  function renderMonthView() {
+    var title = document.getElementById('calTitle');
+    var monthView = document.getElementById('calMonthView');
+    if (!title || !monthView) return;
+    var thaiY = calYear < 2400 ? calYear + 543 : calYear;
+    title.textContent = 'พ.ศ. ' + thaiY + ' (เลือกเดือน)';
+    var html = '';
+    THAI_MS.forEach(function (m, i) {
+      var cls = 'thai-cal-month';
+      if (i === calMonth) cls += ' active';
+      html += '<div class=\"' + cls + '\" onclick=\"pickMon(' + i + ')\">' + m + '</div>';
+    });
+    monthView.innerHTML = '<div class=\"thai-cal-months\">' + html + '</div>';
+  }
+
+  function renderYearView() {
+    var title = document.getElementById('calTitle');
+    var monthView = document.getElementById('calMonthView');
+    if (!title || !monthView) return;
+    title.textContent = 'เลือกปี พ.ศ.';
+    var start = calYear - 6;
+    var html = '';
+    for (var y = start; y < start + 12; y++) {
+      var cls = 'thai-cal-year';
+      if (y === calYear) cls += ' active';
+      html += '<div class=\"' + cls + '\" onclick=\"pickYear(' + y + ')\">' + (y + 543) + '</div>';
+    }
+    monthView.innerHTML = '<div class=\"thai-cal-year-head\">ช่วงปี พ.ศ. ' + (start + 543) + ' - ' + (start + 554) + '</div><div class=\"thai-cal-years\">' + html + '</div>';
+  }
+
+  function pickMon(m) {
+    calMonth = m;
+    setCalView('day');
+  }
+
+  function pickYear(y) {
+    calYear = y;
+    setCalView('month');
+  }
+
+  function updDD(inputId) {
+    if (!inputId) return;
+    var el = document.getElementById(inputId);
+    var disp = document.getElementById(inputId + 'Display');
+    if (!disp) return;
+    if (!el || !el.value) {
+      disp.textContent = 'เลือกวันที่...';
+      disp.style.color = 'var(--text-muted)';
+      return;
+    }
+    var p = String(el.value).split('-');
+    var y = parseInt(p[0], 10);
+    var m = parseInt(p[1], 10) - 1;
+    var d = parseInt(p[2], 10);
+    if (isNaN(y) || isNaN(m) || isNaN(d) || m < 0 || m > 11) {
+      disp.textContent = 'เลือกวันที่...';
+      disp.style.color = 'var(--text-muted)';
+      return;
+    }
+    var ty = y < 2400 ? y + 543 : y;
+    disp.textContent = ('0' + d).slice(-2) + ' ' + THAI_M[m] + ' ' + ty;
+    disp.style.color = 'var(--text-main)';
+  }
+
+  function initDateDisplays() {
+    var dateInputs = document.querySelectorAll('.thai-date-input input[type=hidden]');
+    for (var i = 0; i < dateInputs.length; i++) {
+      updDD(dateInputs[i].id);
+    }
+  }
+
   function bootstrapLegacyTheme() {
+    ensureCalendarDom();
     ensureThemeToggleButton();
     initTheme();
     ensureDeviceKey();
@@ -388,6 +681,7 @@
     bindPageLoaderForms();
     bindPageTransitionLifecycle();
     ensurePageLoader();
+    initDateDisplays();
     resetPageLoading();
   }
 
@@ -410,6 +704,17 @@
   global.navigateWithLoader = navigateWithLoader;
   global.initTheme = initTheme;
   global.toggleTheme = toggleTheme;
+  global.openCalendar = openCalendar;
+  global.closeCalendar = closeCalendar;
+  global.calPrev = calPrev;
+  global.calNext = calNext;
+  global.calToday = calToday;
+  global.calClear = calClear;
+  global.toggleMonthView = toggleMonthView;
+  global.pickDay = pickDay;
+  global.pickMon = pickMon;
+  global.pickYear = pickYear;
+  global.updDD = updDD;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bootstrapLegacyTheme);

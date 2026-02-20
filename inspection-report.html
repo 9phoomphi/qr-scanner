@@ -9,302 +9,480 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="./theme-legacy.css">
   <style>
-    :root {
-      --bg: #f3f6fb;
-      --card: rgba(255,255,255,0.9);
-      --text: #0f172a;
-      --muted: #475569;
-      --border: #dbe4f0;
-      --primary: #2563eb;
-      --primary2: #1d4ed8;
-      --success: #16a34a;
-      --shadow: 0 18px 46px rgba(15,23,42,0.14);
+    .insp-page {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 16px;
     }
 
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: "IBM Plex Sans Thai", sans-serif;
-      color: var(--text);
-      background: radial-gradient(1200px 540px at 8% -14%, rgba(59,130,246,0.22), rgba(59,130,246,0)), var(--bg);
-    }
-
-    .shell { max-width: 1080px; margin: 0 auto; padding: 14px; }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 14px;
-      margin-bottom: 12px;
-      backdrop-filter: saturate(160%) blur(8px);
-    }
-
-    .topbar {
+    .insp-top {
       display: flex;
+      align-items: center;
       justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .back-btn {
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      color: var(--text-color);
+      min-height: 40px;
+      border-radius: 999px;
+      font-weight: 760;
+      padding: 0 14px;
+      cursor: pointer;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration: none;
     }
 
-    .title { margin: 0; font-size: 1.1rem; font-weight: 800; }
-    .muted { color: var(--muted); }
+    .back-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(10, 132, 255, 0.45);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+    }
 
-    .btn {
-      border: none;
-      border-radius: 999px;
-      height: 38px;
-      padding: 0 14px;
+    .hero {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .hero-icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      margin: 0 auto 12px;
+      background: linear-gradient(180deg, #2f97ff, #0a84ff, #0071e3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: #fff;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(180deg, var(--primary), var(--primary2));
+      font-size: 1.7rem;
+      box-shadow: 0 16px 34px rgba(10, 132, 255, 0.28);
     }
 
-    .btn.secondary { background: #334155; }
-    .btn.outline { background: #fff; color: var(--primary2); border: 1px solid #93c5fd; }
-    .btn.success { background: linear-gradient(180deg, #10b981, #0f9f6e); }
-
-    .error {
-      border: 1px solid rgba(220,38,38,.35);
-      background: rgba(220,38,38,.08);
-      color: #991b1b;
-      border-radius: 10px;
-      padding: 10px;
-      font-size: 0.9rem;
+    .hero h1 {
+      margin: 0;
+      font-size: 1.26rem;
+      font-weight: 860;
+      color: var(--text-color);
     }
 
-    .hidden { display: none !important; }
+    .inspector-card {
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 22px;
+    }
+
+    .filter-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 840;
+      color: var(--text-color);
+      margin-bottom: 10px;
+    }
 
     .row {
       display: grid;
       gap: 10px;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
-    .field { display: grid; gap: 4px; }
-
-    .label {
-      font-size: 0.78rem;
-      color: var(--muted);
-      font-weight: 700;
+    .row.three {
+      grid-template-columns: 2fr 1fr auto;
+      align-items: end;
     }
 
-    input, select {
+    .form-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.8rem;
+      font-weight: 760;
+      color: var(--text-muted);
+    }
+
+    .form-control,
+    .form-select {
       width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      min-height: 40px;
-      padding: 8px 10px;
+      min-height: 42px;
+      border-radius: 14px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-color);
       font: inherit;
-      color: var(--text);
-      background: #fff;
+      padding: 8px 12px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-weight: 550;
     }
 
-    .filters-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 8px;
+    .form-control:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px var(--primary-color-soft);
     }
 
-    .filter-badge {
+    .search-btn,
+    .print-btn,
+    .adv-btn,
+    .light-btn {
+      border: none;
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 0 16px;
+      font: inherit;
+      font-weight: 820;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      border: 1px solid #93c5fd;
-      background: #eff6ff;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.2s ease, box-shadow 0.24s ease;
+    }
+
+    .search-btn {
+      color: #fff;
+      background: linear-gradient(180deg, #2f97ff, #0a84ff, #0071e3);
+      box-shadow: 0 12px 28px rgba(10, 132, 255, 0.26);
+      min-width: 126px;
+    }
+
+    .search-btn:hover,
+    .print-btn:hover,
+    .adv-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .adv-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .adv-btn {
+      border: 1px solid rgba(37, 99, 235, 0.42);
+      background: rgba(37, 99, 235, 0.12);
       color: #1d4ed8;
-      padding: 6px 12px;
-      font-size: .78rem;
-      font-weight: 700;
+    }
+
+    .adv-badge {
+      display: none;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 0.77rem;
+      font-weight: 780;
+      background: rgba(10, 132, 255, 0.14);
+      border: 1px solid rgba(10, 132, 255, 0.32);
+      color: #075985;
     }
 
     .stat-box {
-      border: 1px solid rgba(37,99,235,.24);
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(37,99,235,.10), rgba(37,99,235,.04));
-      padding: 14px;
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(145deg, rgba(10, 132, 255, 0.14), rgba(10, 132, 255, 0.06));
+      border: 1px solid rgba(10, 132, 255, 0.22);
+      text-align: center;
+    }
+
+    .stat-head {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 8px;
       flex-wrap: wrap;
     }
 
     .stat-number {
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       font-weight: 900;
       line-height: 1;
-      color: #1d4ed8;
+      color: #007aff;
+    }
+
+    .stat-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(10, 132, 255, 0.26);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+      display: none;
+    }
+
+    .docs-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 840;
+      color: var(--text-color);
+    }
+
+    .print-btn {
+      color: #fff;
+      background: linear-gradient(180deg, #34d399, #30d158, #24b74a);
+      box-shadow: 0 12px 28px rgba(48, 209, 88, 0.26);
+    }
+
+    .light-btn {
+      color: #475569;
+      background: rgba(148, 163, 184, 0.18);
+      border: 1px solid rgba(100, 116, 139, 0.28);
     }
 
     .doc-item {
-      border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      background: var(--card-bg);
       padding: 12px;
-      margin-bottom: 8px;
-      background: #f8fbff;
-      transition: transform .16s ease, box-shadow .2s ease;
-      cursor: pointer;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
     }
 
     .doc-item:hover {
       transform: translateY(-2px);
-      box-shadow: 0 14px 26px rgba(15,23,42,.12);
+      border-color: rgba(10, 132, 255, 0.35);
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.14);
     }
 
-    .doc-top {
+    .doc-head {
       display: flex;
-      justify-content: space-between;
       align-items: flex-start;
-      gap: 8px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
       margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .doc-badges {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      font-weight: 780;
+      border: 1px solid transparent;
+      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip.blue {
+      background: rgba(37, 99, 235, 0.14);
+      border-color: rgba(37, 99, 235, 0.36);
+      color: #1d4ed8;
+    }
+
+    .chip.gray {
+      background: rgba(148, 163, 184, 0.2);
+      border-color: rgba(100, 116, 139, 0.3);
+      color: #334155;
     }
 
     .doc-title {
-      font-size: .96rem;
-      font-weight: 800;
+      font-size: 1.02rem;
+      font-weight: 860;
       color: #1d4ed8;
+      line-height: 1.24;
       word-break: break-word;
     }
 
     .doc-sub {
-      font-size: .78rem;
-      color: #64748b;
+      font-size: 0.78rem;
+      font-weight: 640;
+      color: var(--text-muted);
+      margin-top: 2px;
+      word-break: break-word;
     }
 
     .doc-subject {
       margin: 0 0 8px;
-      font-size: .9rem;
-      line-height: 1.35;
-      color: #0f172a;
+      color: var(--text-color);
+      font-size: 0.9rem;
+      line-height: 1.44;
+      word-break: break-word;
     }
 
     .doc-meta {
       display: flex;
-      gap: 10px;
       flex-wrap: wrap;
-      font-size: .78rem;
-      color: #475569;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.79rem;
+      color: var(--text-muted);
     }
 
-    .chip {
+    .doc-checker {
+      margin-left: auto;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      border-radius: 999px;
-      padding: 4px 10px;
-      border: 1px solid var(--border);
-      background: #eef4ff;
-      color: #334155;
-      font-size: .72rem;
-      font-weight: 800;
+      gap: 7px;
+      font-weight: 700;
+      color: var(--text-color);
     }
 
-    .empty {
+    .doc-checker img,
+    .doc-checker .fallback {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(10, 132, 255, 0.22);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.11);
+      flex: 0 0 auto;
+    }
+
+    .doc-checker .fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 132, 255, 0.12);
+      color: #007aff;
+      font-size: 0.74rem;
+      font-weight: 860;
+    }
+
+    .empty-state {
       text-align: center;
-      color: #64748b;
-      font-weight: 600;
-      padding: 20px;
+      color: var(--text-muted);
+      padding: 42px 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.34);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.3);
+      font-weight: 620;
+      line-height: 1.45;
     }
 
-    @media (max-width: 960px) {
-      .row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .empty-state i {
+      font-size: 2.8rem;
+      display: block;
+      margin-bottom: 10px;
+      color: rgba(10, 132, 255, 0.32);
     }
 
-    @media (max-width: 640px) {
-      .row { grid-template-columns: 1fr; }
-      .doc-top { flex-direction: column; }
+    .loading-state {
+      text-align: center;
+      padding: 24px 10px;
+      color: var(--text-muted);
+      font-weight: 630;
+    }
+
+    .loading-spinner {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 3px solid rgba(10, 132, 255, 0.2);
+      border-top-color: var(--primary-color);
+      margin: 0 auto 10px;
+      animation: spin 0.72s linear infinite;
+    }
+
+    @media (max-width: 980px) {
+      .row.three {
+        grid-template-columns: 1fr;
+      }
+
+      .search-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .doc-meta {
+        gap: 7px;
+      }
+
+      .doc-checker {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
+      }
     }
   </style>
-  <link rel="stylesheet" href="./theme-legacy.css">
 </head>
 <body>
-  <div class="shell">
-    <div class="card topbar">
-      <div>
-        <h1 class="title">เครื่องมือตรวจสอบผลงาน</h1>
-        <div id="pageSub" class="muted" style="font-size:0.84rem">ค้นหาผลงานเจ้าหน้าที่จากขั้นตอนตรวจสอบเอกสาร</div>
+  <div class="insp-page">
+    <div class="insp-top">
+      <button id="btnBack" type="button" class="back-btn"><i class="bi bi-arrow-left"></i> กลับ</button>
+    </div>
+
+    <div class="hero">
+      <div class="hero-icon"><i class="bi bi-clipboard-check-fill"></i></div>
+      <h1>เครื่องมือตรวจสอบผลงาน</h1>
+    </div>
+
+    <div class="inspector-card" id="filterCard">
+      <div class="filter-title"><i class="bi bi-funnel-fill"></i>ตัวกรอง</div>
+
+      <div class="row three">
+        <div>
+          <label class="form-label">เจ้าหน้าที่</label>
+          <select id="mainOfficer" class="form-select"></select>
+        </div>
+        <div>
+          <label class="form-label">ปีงบประมาณ</label>
+          <select id="mainFiscal" class="form-select"></select>
+        </div>
+        <button id="btnSearchInspector" type="button" class="search-btn"><i class="bi bi-search"></i>ค้นหา</button>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button id="btnBack" class="btn secondary" type="button"><i class="bi bi-arrow-left"></i> กลับ</button>
-        <button id="btnReload" class="btn outline" type="button"><i class="bi bi-arrow-clockwise"></i> โหลดใหม่</button>
+
+      <div class="adv-row">
+        <button id="btnAdvFilter" type="button" class="adv-btn"><i class="bi bi-plus-circle"></i>เพิ่มตัวกรอง</button>
+        <span id="activeFilterBadge" class="adv-badge">1 ตัวกรอง</span>
       </div>
     </div>
 
-    <div id="errBox" class="error hidden"></div>
-
-    <div id="mainWrap" class="hidden">
-      <div class="card">
-        <div class="row">
-          <div class="field">
-            <div class="label">เจ้าหน้าที่ *</div>
-            <select id="officer"></select>
-          </div>
-          <div class="field">
-            <div class="label">ปีงบประมาณ</div>
-            <select id="fiscal"></select>
-          </div>
-          <div class="field">
-            <div class="label">กลุ่ม/ศูนย์</div>
-            <select id="group"></select>
-          </div>
-          <div class="field">
-            <div class="label">เวลาเริ่ม-สิ้นสุด</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <input id="startTime" type="time">
-              <input id="endTime" type="time">
-            </div>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:8px;grid-template-columns:repeat(2,minmax(0,1fr));">
-          <div class="field">
-            <div class="label">วันที่เริ่มต้น</div>
-            <input id="startDate" type="date">
-          </div>
-          <div class="field">
-            <div class="label">วันที่สิ้นสุด</div>
-            <input id="endDate" type="date">
-          </div>
-        </div>
-
-        <div class="filters-actions">
-          <button id="btnSearch" class="btn" type="button"><i class="bi bi-search"></i> ค้นหา</button>
-          <button id="btnReset" class="btn outline" type="button"><i class="bi bi-arrow-counterclockwise"></i> ล้างตัวกรอง</button>
-          <span id="activeFilterBadge" class="filter-badge hidden"><i class="bi bi-funnel"></i> 0 ตัวกรอง</span>
-        </div>
-      </div>
-
-      <div id="statWrap" class="card hidden">
-        <div class="stat-box">
+    <div id="statArea" class="inspector-card" style="display:none;">
+      <div class="stat-box">
+        <div class="stat-head">
+          <img id="officerImg" class="stat-avatar" alt="u">
           <div>
-            <div class="muted" style="font-size:.82rem;font-weight:700;">เอกสารที่ตรวจสอบ</div>
-            <div id="statTotal" class="stat-number">0</div>
-          </div>
-          <div>
-            <div id="statOfficer" style="font-weight:800">-</div>
-            <div id="statFiscal" class="muted" style="font-size:.82rem">ปีงบประมาณ: ทั้งหมด</div>
-            <div id="statDateRange" class="muted" style="font-size:.8rem"></div>
+            <div id="totalCount" class="stat-number">0</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);font-weight:740;">เอกสารที่ตรวจสอบ</div>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="topbar" style="margin-bottom:8px;">
-          <div class="title" style="font-size:1rem;">รายการเอกสารที่ตรวจสอบ</div>
-          <button id="btnPrint" class="btn success hidden" type="button"><i class="bi bi-printer-fill"></i> พิมพ์รายงาน</button>
+        <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:0.8rem;color:var(--text-muted);font-weight:680;">
+          <div><i class="bi bi-person-fill me-1"></i><span id="officerName">-</span></div>
+          <div><i class="bi bi-calendar3 me-1"></i><span id="fiscalYear">ทั้งหมด</span></div>
         </div>
-        <div id="docsWrap" class="empty">เลือกตัวกรองและกดค้นหาเพื่อดูรายงาน</div>
       </div>
+    </div>
+
+    <div class="inspector-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        <div class="docs-title"><i class="bi bi-list-check text-primary"></i>รายการเอกสารที่ตรวจสอบ</div>
+        <button id="btnPrint" type="button" class="print-btn" style="display:none;"><i class="bi bi-printer-fill"></i>พิมพ์รายงาน</button>
+      </div>
+      <div id="docsList" class="empty-state">
+        <i class="bi bi-clipboard-data"></i>
+        <p style="margin:0;">เลือกเจ้าหน้าที่และคลิก "ค้นหา" เพื่อดูรายงานผลงาน</p>
+      </div>
+    </div>
+
+    <div id="printSection" style="display:none;">
+      <h2 style="text-align:center;margin-bottom:4px;">รายงานผลงานการตรวจสอบเอกสาร</h2>
+      <p id="printSubtitle" style="text-align:center;margin-top:0;font-size:14px;"></p>
     </div>
   </div>
 
@@ -321,345 +499,474 @@
       var state = {
         settings: null,
         api: null,
-        user: null,
-        options: null,
         members: [],
-        docs: [],
-        reportMeta: {
-          officerName: '',
-          fiscalYear: 'ทั้งหมด'
+        memberImgMap: {},
+        currentData: [],
+        reportReqId: 0,
+        reportTimeout: null,
+        advFilters: {
+          officer: '',
+          selectedFiscalYears: [],
+          startDate: '',
+          endDate: '',
+          startDateText: '',
+          endDateText: '',
+          startTime: '',
+          endTime: '',
+          group: ''
         }
       };
 
       var els = {
-        pageSub: document.getElementById('pageSub'),
         btnBack: document.getElementById('btnBack'),
-        btnReload: document.getElementById('btnReload'),
-        errBox: document.getElementById('errBox'),
-        mainWrap: document.getElementById('mainWrap'),
-        officer: document.getElementById('officer'),
-        fiscal: document.getElementById('fiscal'),
-        group: document.getElementById('group'),
-        startDate: document.getElementById('startDate'),
-        endDate: document.getElementById('endDate'),
-        startTime: document.getElementById('startTime'),
-        endTime: document.getElementById('endTime'),
-        btnSearch: document.getElementById('btnSearch'),
-        btnReset: document.getElementById('btnReset'),
+        mainOfficer: document.getElementById('mainOfficer'),
+        mainFiscal: document.getElementById('mainFiscal'),
+        btnSearchInspector: document.getElementById('btnSearchInspector'),
+        btnAdvFilter: document.getElementById('btnAdvFilter'),
         activeFilterBadge: document.getElementById('activeFilterBadge'),
-        statWrap: document.getElementById('statWrap'),
-        statTotal: document.getElementById('statTotal'),
-        statOfficer: document.getElementById('statOfficer'),
-        statFiscal: document.getElementById('statFiscal'),
-        statDateRange: document.getElementById('statDateRange'),
+        statArea: document.getElementById('statArea'),
+        officerImg: document.getElementById('officerImg'),
+        totalCount: document.getElementById('totalCount'),
+        officerName: document.getElementById('officerName'),
+        fiscalYear: document.getElementById('fiscalYear'),
+        docsList: document.getElementById('docsList'),
         btnPrint: document.getElementById('btnPrint'),
-        docsWrap: document.getElementById('docsWrap')
+        printSubtitle: document.getElementById('printSubtitle')
       };
 
-      function showError(message) {
-        var msg = C.safeTrim(message || '');
-        if (!msg) {
-          els.errBox.classList.add('hidden');
-          els.errBox.textContent = '';
-          return;
-        }
-        els.errBox.textContent = msg;
-        els.errBox.classList.remove('hidden');
+      function esc(v) {
+        return C.escapeHtml(v == null ? '' : String(v));
       }
 
-      function fillOptions() {
-        var members = Array.isArray(state.members) ? state.members : [];
-        var info = (state.options && state.options.data) ? state.options.data : { fiscalYears: [], groups: [] };
-        var fiscalYears = Array.isArray(info.fiscalYears) ? info.fiscalYears : [];
-        var groups = Array.isArray(info.groups) ? info.groups : [];
+      function updateActiveFilterBadge() {
+        var count = 0;
+        if (state.advFilters.startDate || state.advFilters.endDate || state.advFilters.startTime || state.advFilters.endTime) count++;
+        if (state.advFilters.selectedFiscalYears && state.advFilters.selectedFiscalYears.length > 0) count++;
+        if (state.advFilters.group) count++;
 
-        var officerHtml = '<option value="">เลือกเจ้าหน้าที่...</option>';
-        for (var i = 0; i < members.length; i++) {
-          var m = members[i] || {};
-          var name = C.safeTrim(m.name || '');
-          if (!name) continue;
-          var pos = C.safeTrim(m.position || '');
-          var label = pos ? (name + ' (' + pos + ')') : name;
-          officerHtml += '<option value="' + C.escapeHtml(name) + '">' + C.escapeHtml(label) + '</option>';
+        if (count > 0) {
+          els.activeFilterBadge.style.display = 'inline-flex';
+          els.activeFilterBadge.textContent = count + ' ตัวกรอง';
+        } else {
+          els.activeFilterBadge.style.display = 'none';
         }
-        els.officer.innerHTML = officerHtml;
+      }
 
-        var fiscalHtml = '<option value="">ทั้งหมด</option>';
-        for (var f = 0; f < fiscalYears.length; f++) {
-          fiscalHtml += '<option value="' + C.escapeHtml(fiscalYears[f]) + '">' + C.escapeHtml(fiscalYears[f]) + '</option>';
+      function getDateRangeText() {
+        var s = state.advFilters.startDate || '';
+        var e = state.advFilters.endDate || '';
+        var st = state.advFilters.startTime || '';
+        var et = state.advFilters.endTime || '';
+
+        var sTxt = state.advFilters.startDateText || s;
+        var eTxt = state.advFilters.endDateText || e;
+
+        var dateText = '';
+        if (s || e) {
+          if (s && e) dateText = 'ช่วงวันที่: ' + sTxt + ' - ' + eTxt;
+          else if (s) dateText = 'ตั้งแต่วันที่: ' + sTxt;
+          else dateText = 'ถึงวันที่: ' + eTxt;
         }
-        els.fiscal.innerHTML = fiscalHtml;
 
-        var groupHtml = '<option value="">ทั้งหมด</option>';
-        for (var g = 0; g < groups.length; g++) {
-          groupHtml += '<option value="' + C.escapeHtml(groups[g]) + '">' + C.escapeHtml(groups[g]) + '</option>';
+        var timeText = '';
+        if (st || et) {
+          if (st && et) timeText = 'ช่วงเวลา: ' + st + ' - ' + et;
+          else if (st) timeText = 'ตั้งแต่เวลา: ' + st;
+          else timeText = 'ถึงเวลา: ' + et;
         }
-        els.group.innerHTML = groupHtml;
 
-        var preferredName = C.safeTrim((state.user && state.user.displayName) || '');
-        if (preferredName) {
-          for (var p = 0; p < els.officer.options.length; p++) {
-            if (els.officer.options[p].value === preferredName) {
-              els.officer.selectedIndex = p;
-              break;
+        if (dateText && timeText) return dateText + ' | ' + timeText;
+        return dateText || timeText || '';
+      }
+
+      function showLoadingState() {
+        els.docsList.className = 'loading-state';
+        els.docsList.innerHTML = '<div class="loading-spinner"></div><div>กำลังโหลด...</div>';
+      }
+
+      function showEmptyState(message) {
+        els.docsList.className = 'empty-state';
+        els.docsList.innerHTML = '<i class="bi bi-inbox"></i><p style="margin:0;">' + esc(message || 'ไม่พบข้อมูล') + '</p>';
+      }
+
+      function goDoc(docId) {
+        var id = C.safeTrim(docId || '');
+        if (!id) return;
+        C.redirect('document-view.html', { id: id });
+      }
+
+      function applyMainFilters() {
+        var officer = C.safeTrim(els.mainOfficer.value || '');
+        if (!officer) {
+          Swal.fire('กรุณาเลือกเจ้าหน้าที่', '', 'warning');
+          return;
+        }
+
+        var fy = C.safeTrim(els.mainFiscal.value || '');
+        state.advFilters.officer = officer;
+        state.advFilters.selectedFiscalYears = fy ? [fy] : [];
+
+        updateActiveFilterBadge();
+        loadReport();
+      }
+
+      function openAdvancedFilter() {
+        var htmlContent = ''
+          + '<div class="text-start">'
+          + '<label class="form-label">ช่วงวันที่ตรวจสอบ</label>'
+          + '<div style="display:flex;gap:8px;margin-bottom:10px;">'
+          + '<div class="thai-date-input" style="flex:1;" onclick="openCalendar(\'inspStart\')">'
+          + '<input type="hidden" id="inspStart" value="">'
+          + '<div id="inspStartDisplay" class="form-control" style="font-weight:650;">เริ่ม...</div>'
+          + '<i class="bi bi-calendar3 cal-icon"></i>'
+          + '</div>'
+          + '<div class="thai-date-input" style="flex:1;" onclick="openCalendar(\'inspEnd\')">'
+          + '<input type="hidden" id="inspEnd" value="">'
+          + '<div id="inspEndDisplay" class="form-control" style="font-weight:650;">ถึง...</div>'
+          + '<i class="bi bi-calendar3 cal-icon"></i>'
+          + '</div>'
+          + '</div>'
+          + '<div style="display:flex;gap:8px;">'
+          + '<button type="button" id="btnClearDateFilter" class="light-btn" style="flex:1;"><i class="bi bi-x-circle"></i>ล้าง</button>'
+          + '<button type="button" id="btnApplyDateFilter" class="search-btn" style="flex:1;"><i class="bi bi-plus-circle"></i>เพิ่มตัวกรอง</button>'
+          + '</div>'
+          + '</div>';
+
+        Swal.fire({
+          title: 'ตัวกรองขั้นสูง',
+          html: htmlContent,
+          showConfirmButton: false,
+          showCloseButton: true,
+          didOpen: function () {
+            var startEl = document.getElementById('inspStart');
+            var endEl = document.getElementById('inspEnd');
+            if (startEl) startEl.value = state.advFilters.startDate || '';
+            if (endEl) endEl.value = state.advFilters.endDate || '';
+
+            if (typeof window.updDD === 'function') {
+              window.updDD('inspStart');
+              window.updDD('inspEnd');
+            }
+
+            var clearBtn = document.getElementById('btnClearDateFilter');
+            var applyBtn = document.getElementById('btnApplyDateFilter');
+
+            if (clearBtn) {
+              clearBtn.addEventListener('click', function () {
+                if (startEl) startEl.value = '';
+                if (endEl) endEl.value = '';
+                state.advFilters.startDate = '';
+                state.advFilters.endDate = '';
+                state.advFilters.startDateText = '';
+                state.advFilters.endDateText = '';
+                if (typeof window.updDD === 'function') {
+                  window.updDD('inspStart');
+                  window.updDD('inspEnd');
+                }
+                updateActiveFilterBadge();
+                if (state.advFilters.officer) loadReport();
+              });
+            }
+
+            if (applyBtn) {
+              applyBtn.addEventListener('click', function () {
+                var sd = C.safeTrim((startEl && startEl.value) || '');
+                var ed = C.safeTrim((endEl && endEl.value) || '');
+
+                if (sd && ed && sd > ed) {
+                  var tmp = sd;
+                  sd = ed;
+                  ed = tmp;
+                  if (startEl) startEl.value = sd;
+                  if (endEl) endEl.value = ed;
+                  if (typeof window.updDD === 'function') {
+                    window.updDD('inspStart');
+                    window.updDD('inspEnd');
+                  }
+                }
+
+                state.advFilters.startDate = sd;
+                state.advFilters.endDate = ed;
+
+                var sdTxt = (document.getElementById('inspStartDisplay') || {}).textContent || '';
+                var edTxt = (document.getElementById('inspEndDisplay') || {}).textContent || '';
+                state.advFilters.startDateText = (sd && sdTxt && sdTxt !== 'เริ่ม...' && sdTxt !== 'เลือกวันที่...') ? sdTxt : '';
+                state.advFilters.endDateText = (ed && edTxt && edTxt !== 'ถึง...' && edTxt !== 'เลือกวันที่...') ? edTxt : '';
+
+                Swal.close();
+                updateActiveFilterBadge();
+                if (state.advFilters.officer) loadReport();
+              });
             }
           }
-        }
+        });
       }
 
-      function selectedFiltersCount() {
-        var count = 0;
-        if (C.safeTrim(els.fiscal.value)) count++;
-        if (C.safeTrim(els.group.value)) count++;
-        if (C.safeTrim(els.startDate.value) || C.safeTrim(els.endDate.value)) count++;
-        if (C.safeTrim(els.startTime.value) || C.safeTrim(els.endTime.value)) count++;
-        return count;
-      }
-
-      function renderActiveFilterBadge() {
-        var count = selectedFiltersCount();
-        if (count <= 0) {
-          els.activeFilterBadge.classList.add('hidden');
-          return;
-        }
-        els.activeFilterBadge.classList.remove('hidden');
-        els.activeFilterBadge.innerHTML = '<i class="bi bi-funnel"></i> ' + count + ' ตัวกรอง';
-      }
-
-      function dateRangeText() {
-        var startDate = C.safeTrim(els.startDate.value || '');
-        var endDate = C.safeTrim(els.endDate.value || '');
-        var startTime = C.safeTrim(els.startTime.value || '');
-        var endTime = C.safeTrim(els.endTime.value || '');
-
-        var text = '';
-        if (startDate && endDate) text = 'ช่วงวันที่: ' + startDate + ' - ' + endDate;
-        else if (startDate) text = 'ตั้งแต่วันที่: ' + startDate;
-        else if (endDate) text = 'ถึงวันที่: ' + endDate;
-
-        var t = '';
-        if (startTime && endTime) t = 'เวลา: ' + startTime + ' - ' + endTime;
-        else if (startTime) t = 'ตั้งแต่เวลา: ' + startTime;
-        else if (endTime) t = 'ถึงเวลา: ' + endTime;
-
-        if (text && t) return text + ' | ' + t;
-        return text || t;
-      }
-
-      function goDoc(id) {
-        var docId = C.safeTrim(id || '');
-        if (!docId) return;
-        C.redirect('document-view.html', { id: docId });
-      }
-
-      function renderDocs() {
-        var docs = Array.isArray(state.docs) ? state.docs : [];
-        if (!docs.length) {
-          els.docsWrap.className = 'empty';
-          els.docsWrap.textContent = 'ไม่พบเอกสารที่ตรงเงื่อนไข';
-          els.btnPrint.classList.add('hidden');
+      async function loadReport() {
+        var officer = state.advFilters.officer || '';
+        if (!officer) {
+          Swal.fire('กรุณาเลือกเจ้าหน้าที่', '', 'warning');
           return;
         }
 
-        var html = '';
-        for (var i = 0; i < docs.length; i++) {
-          var d = docs[i] || {};
-          var title = C.safeTrim(d.amDocNo || '') || C.safeTrim(d.docId || '-') || '-';
-          var sdh = C.safeTrim(d.docNoSdh || '');
-          var subject = C.safeTrim(d.subject || '-') || '-';
-          var sender = C.safeTrim(d.sender || '-') || '-';
-          var group = C.safeTrim(d.group || '-') || '-';
-          var fiscal = C.safeTrim(d.fiscalYear || '-') || '-';
-          var verifyDate = C.safeTrim(d.verifyDate || '-') || '-';
-
-          html += '<div class="doc-item" data-doc-id="' + C.escapeHtml(d.docId || '') + '">';
-          html += '<div class="doc-top">';
-          html += '<div>';
-          html += '<div class="doc-title">' + C.escapeHtml(title) + '</div>';
-          if (sdh && sdh !== title) html += '<div class="doc-sub">สธ ' + C.escapeHtml(sdh) + '</div>';
-          html += '</div>';
-          html += '<div class="chip"><i class="bi bi-calendar-check"></i> ' + C.escapeHtml(verifyDate) + '</div>';
-          html += '</div>';
-          html += '<p class="doc-subject">' + C.escapeHtml(subject) + '</p>';
-          html += '<div class="doc-meta">';
-          html += '<span><i class="bi bi-building me-1"></i>' + C.escapeHtml(group) + '</span>';
-          html += '<span><i class="bi bi-person me-1"></i>' + C.escapeHtml(sender) + '</span>';
-          html += '<span><i class="bi bi-calendar3 me-1"></i>ปีงบฯ ' + C.escapeHtml(fiscal) + '</span>';
-          if (C.safeTrim(d.purpose || '')) html += '<span><i class="bi bi-tag me-1"></i>' + C.escapeHtml(d.purpose) + '</span>';
-          html += '</div>';
-          html += '</div>';
+        var reqId = ++state.reportReqId;
+        if (state.reportTimeout) {
+          clearTimeout(state.reportTimeout);
+          state.reportTimeout = null;
         }
 
-        els.docsWrap.className = '';
-        els.docsWrap.innerHTML = html;
-        els.btnPrint.classList.remove('hidden');
+        showLoadingState();
+        els.btnSearchInspector.disabled = true;
 
-        var items = els.docsWrap.querySelectorAll('.doc-item');
-        for (var j = 0; j < items.length; j++) {
-          items[j].addEventListener('click', function () {
-            goDoc(this.getAttribute('data-doc-id') || '');
+        state.reportTimeout = setTimeout(function () {
+          if (reqId !== state.reportReqId) return;
+          els.docsList.className = 'empty-state';
+          els.docsList.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i><p style="margin:0;">โหลดรายงานนานกว่าปกติ</p><button type="button" class="light-btn" onclick="window.__reloadInspectorReport()" style="margin-top:8px;">ลองใหม่</button>';
+        }, 15000);
+
+        try {
+          var res = await state.api.inspectionReport({
+            officerName: officer,
+            selectedFiscalYears: state.advFilters.selectedFiscalYears || [],
+            startDate: state.advFilters.startDate || '',
+            endDate: state.advFilters.endDate || '',
+            startTime: state.advFilters.startTime || '',
+            endTime: state.advFilters.endTime || '',
+            group: state.advFilters.group || ''
           });
-        }
-      }
 
-      function buildSearchPayload() {
-        var officerName = C.safeTrim(els.officer.value || '');
-        var fiscal = C.safeTrim(els.fiscal.value || '');
-        var group = C.safeTrim(els.group.value || '');
-        var startDate = C.safeTrim(els.startDate.value || '');
-        var endDate = C.safeTrim(els.endDate.value || '');
-        var startTime = C.safeTrim(els.startTime.value || '');
-        var endTime = C.safeTrim(els.endTime.value || '');
+          if (reqId !== state.reportReqId) return;
 
-        if (!officerName) {
-          throw new Error('กรุณาเลือกเจ้าหน้าที่');
-        }
-
-        if (startDate && endDate && startDate > endDate) {
-          var tmpDate = startDate;
-          startDate = endDate;
-          endDate = tmpDate;
-          els.startDate.value = startDate;
-          els.endDate.value = endDate;
-        }
-
-        return {
-          officerName: officerName,
-          selectedFiscalYears: fiscal ? [fiscal] : [],
-          startDate: startDate,
-          endDate: endDate,
-          startTime: startTime,
-          endTime: endTime,
-          group: group
-        };
-      }
-
-      async function searchReport() {
-        showError('');
-        renderActiveFilterBadge();
-
-        var payload;
-        try {
-          payload = buildSearchPayload();
-        } catch (err) {
-          Swal.fire('ข้อมูลไม่ครบ', err.message || 'กรุณาตรวจสอบตัวกรอง', 'warning');
-          return;
-        }
-
-        els.btnSearch.disabled = true;
-        els.docsWrap.className = 'empty';
-        els.docsWrap.textContent = 'กำลังโหลดข้อมูล...';
-
-        try {
-          var res = await state.api.inspectionReport(payload);
           if (!res || res.success === false) {
             throw new Error((res && res.error) ? res.error : 'ไม่สามารถดึงรายงานได้');
           }
 
-          state.docs = Array.isArray(res.documents) ? res.documents : [];
-          state.reportMeta.officerName = C.safeTrim(res.officerName || payload.officerName);
-          state.reportMeta.fiscalYear = C.safeTrim(res.fiscalYear || (payload.selectedFiscalYears.length ? payload.selectedFiscalYears.join(', ') : 'ทั้งหมด'));
-
-          els.statWrap.classList.remove('hidden');
-          els.statTotal.textContent = String(Number(res.totalCount || state.docs.length || 0));
-          els.statOfficer.textContent = state.reportMeta.officerName || '-';
-          els.statFiscal.textContent = 'ปีงบประมาณ: ' + (state.reportMeta.fiscalYear || 'ทั้งหมด');
-          els.statDateRange.textContent = dateRangeText();
-
-          renderDocs();
-        } catch (err2) {
-          els.docsWrap.className = 'empty';
-          els.docsWrap.textContent = 'ไม่สามารถโหลดรายงานได้';
-          showError((err2 && err2.message) ? err2.message : 'ไม่สามารถโหลดรายงานได้');
+          renderReport(res);
+        } catch (err) {
+          if (reqId !== state.reportReqId) return;
+          showEmptyState('ไม่สามารถดึงรายงานได้');
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'ไม่สามารถดึงรายงานได้', 'error');
         } finally {
-          els.btnSearch.disabled = false;
+          if (reqId !== state.reportReqId) return;
+          els.btnSearchInspector.disabled = false;
+          if (state.reportTimeout) {
+            clearTimeout(state.reportTimeout);
+            state.reportTimeout = null;
+          }
         }
       }
 
-      function resetFilters() {
-        if (els.fiscal.options.length > 0) els.fiscal.value = '';
-        if (els.group.options.length > 0) els.group.value = '';
-        els.startDate.value = '';
-        els.endDate.value = '';
-        els.startTime.value = '';
-        els.endTime.value = '';
-        renderActiveFilterBadge();
+      function renderReport(data) {
+        state.currentData = Array.isArray(data.documents) ? data.documents : [];
+
+        els.statArea.style.display = 'block';
+        els.btnPrint.style.display = state.currentData.length ? 'inline-flex' : 'none';
+
+        els.totalCount.textContent = String(Number(data.totalCount || state.currentData.length || 0));
+        els.officerName.textContent = C.safeTrim(data.officerName || '-') || '-';
+        els.fiscalYear.textContent = C.safeTrim(data.fiscalYear || 'ทั้งหมด') || 'ทั้งหมด';
+
+        var dr = getDateRangeText();
+        els.printSubtitle.textContent = 'เจ้าหน้าที่: ' + (data.officerName || '-') + ' | ปีงบประมาณ: ' + (data.fiscalYear || 'ทั้งหมด') + (dr ? (' | ' + dr) : '') + ' | จำนวน ' + (data.totalCount || 0) + ' ฉบับ';
+
+        var img = state.memberImgMap[data.officerName || ''] || '';
+        if (img) {
+          els.officerImg.src = img;
+          els.officerImg.style.display = 'inline-block';
+        } else {
+          els.officerImg.style.display = 'none';
+        }
+
+        if (!state.currentData.length) {
+          showEmptyState('ไม่พบเอกสารที่ตรวจสอบ');
+          return;
+        }
+
+        var html = '';
+
+        for (var i = 0; i < state.currentData.length; i++) {
+          var d = state.currentData[i] || {};
+          var am = C.safeTrim(d.amDocNo || '');
+          var sdh = C.safeTrim(d.docNoSdh || '');
+          var title = am || C.safeTrim(d.docId || '-') || '-';
+          var sub = (sdh && sdh !== title) ? ('สธ ' + sdh) : '';
+          var docHref = C.buildPageUrl('document-view.html', { id: d.docId || '' });
+
+          var checkerHtml = '';
+          if (img) {
+            checkerHtml = '<span class="doc-checker"><img src="' + esc(img) + '" alt="u"><span>' + esc(data.officerName || '-') + '</span></span>';
+          } else {
+            var first = (C.safeTrim(data.officerName || '').charAt(0) || '?').toUpperCase();
+            checkerHtml = '<span class="doc-checker"><span class="fallback">' + esc(first) + '</span><span>' + esc(data.officerName || '-') + '</span></span>';
+          }
+
+          html += '<a class="doc-item" href="' + esc(docHref) + '" data-doc-id="' + esc(d.docId || '') + '">';
+          html += '<div class="doc-head">';
+          html += '<div style="min-width:0;">';
+          html += '<div class="doc-badges">';
+          html += '<span class="chip blue">' + esc(d.fiscalYear || '-') + '</span>';
+          html += '</div>';
+          html += '<div class="doc-title">' + esc(title) + '</div>';
+          if (sub) html += '<div class="doc-sub">' + esc(sub) + '</div>';
+          html += '</div>';
+          html += '<span class="chip gray"><i class="bi bi-calendar-check"></i>' + esc(d.verifyDate || '-') + '</span>';
+          html += '</div>';
+
+          html += '<p class="doc-subject">' + esc(d.subject || '-') + '</p>';
+
+          html += '<div class="doc-meta">';
+          html += '<span><i class="bi bi-building me-1"></i>' + esc(d.group || '-') + '</span>';
+          html += '<span><i class="bi bi-person me-1"></i>' + esc(d.sender || '-') + '</span>';
+          if (C.safeTrim(d.purpose || '')) {
+            html += '<span><i class="bi bi-tag me-1"></i>' + esc(d.purpose) + '</span>';
+          }
+          html += checkerHtml;
+          html += '</div>';
+
+          html += '</a>';
+        }
+
+        els.docsList.className = '';
+        els.docsList.innerHTML = html;
+
+        var links = els.docsList.querySelectorAll('.doc-item');
+        for (var j = 0; j < links.length; j++) {
+          links[j].addEventListener('click', function (e) {
+            e.preventDefault();
+            var id = this.getAttribute('data-doc-id') || '';
+            goDoc(id);
+          });
+        }
       }
 
       function printReport() {
-        if (!state.docs.length) {
+        if (!state.currentData.length) {
           Swal.fire('ไม่มีข้อมูล', 'ไม่พบเอกสารสำหรับพิมพ์', 'warning');
           return;
         }
 
         var w = window.open('', '', 'width=1220,height=820');
         if (!w) {
-          Swal.fire('ไม่สามารถเปิดหน้าต่างพิมพ์', 'กรุณาอนุญาต Pop-up', 'info');
+          Swal.fire('ไม่สามารถเปิดหน้าต่างพิมพ์', 'กรุณาอนุญาตป๊อปอัป (Pop-up) สำหรับหน้านี้', 'info');
           return;
         }
 
-        var esc = C.escapeHtml;
-        var officer = state.reportMeta.officerName || '-';
-        var fiscal = state.reportMeta.fiscalYear || 'ทั้งหมด';
-        var dr = dateRangeText();
+        var officer = els.officerName.textContent || '-';
+        var fiscal = els.fiscalYear.textContent || 'ทั้งหมด';
+        var dr = getDateRangeText();
+        var total = els.totalCount.textContent || String(state.currentData.length);
 
         var h = '';
-        h += '<!doctype html><html><head><meta charset="utf-8"><title>รายงานผลงาน</title>';
-        h += '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">';
-        h += '<style>@page{size:A4 landscape;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:8px;color:#0f172a}h2{margin:0 0 2px;text-align:center;font-size:21px;font-weight:800}.sub{margin:0 0 8px;text-align:center;font-size:12px;color:#1f2937}.meta{margin:0 0 8px;text-align:center;font-size:11px;color:#334155}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid #334155;padding:4px 5px;font-size:10.2px;line-height:1.28;vertical-align:top}th{background:#e2e8f0;text-align:center;font-weight:800}.text-center{text-align:center}.text-right{text-align:right}.subject,.group,.sender{white-space:normal;overflow-wrap:anywhere;word-break:break-word}@media print{button{display:none!important}}</style>';
+        h += '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>รายงานผลงาน</title>';
+        h += '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
+        h += '<style>@page{size:A4 landscape;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:8px;color:#0F172A}h2{margin:0 0 2px;text-align:center;font-size:21px;line-height:1.2;font-weight:800}.meta{margin:0 0 8px;text-align:center;font-size:11px;color:#334155}.sub{margin:0 0 8px;text-align:center;font-size:12px;color:#1F2937}table{width:100%;border-collapse:collapse;table-layout:fixed}thead{display:table-header-group}tbody tr{break-inside:avoid;page-break-inside:avoid}th,td{border:1px solid #334155;padding:4px 5px;font-size:10.2px;line-height:1.28;vertical-align:top}th{background:#E2E8F0;text-align:center;font-weight:800}.text-center{text-align:center}.text-right{text-align:right}.subject-cell,.group-cell,.sender-cell{white-space:normal;overflow-wrap:anywhere;word-break:break-word}.subject-cell{line-height:1.3}.index,.fiscal,.am-doc,.doc-sdh,.verify-date,.amount,.diff{white-space:nowrap}.btn-print{padding:10px 28px;background:#0A84FF;color:#fff;border:none;border-radius:999px;font-weight:900}.no-print{text-align:center;margin-top:14px}@media print{.no-print{display:none!important}}</style>';
         h += '</head><body>';
         h += '<h2>รายงานผลงานการตรวจสอบเอกสาร</h2>';
-        h += '<p class="sub">เจ้าหน้าที่: <strong>' + esc(officer) + '</strong> | ปีงบประมาณ: <strong>' + esc(fiscal) + '</strong>' + (dr ? (' | ' + esc(dr)) : '') + ' | จำนวนรวม: <strong>' + state.docs.length + ' ฉบับ</strong></p>';
+        h += '<p class="sub">เจ้าหน้าที่: <strong>' + esc(officer) + '</strong> | ปีงบประมาณ: <strong>' + esc(fiscal) + '</strong>' + (dr ? (' | ' + esc(dr)) : '') + ' | จำนวนรวม: <strong>' + esc(total) + ' ฉบับ</strong></p>';
         h += '<p class="meta">พิมพ์เมื่อ: ' + esc(new Date().toLocaleString('th-TH')) + '</p>';
-        h += '<table><thead><tr><th style="width:4%">ลำดับ</th><th style="width:6%">ปีงบฯ</th><th style="width:11%">เลขที่หนังสือส่งกองคลัง</th><th style="width:9%">เลขที่ สธ.</th><th style="width:25%">ชื่อเรื่อง</th><th style="width:10%">วันที่ตรวจสอบ</th><th style="width:11%">กลุ่ม/ศูนย์</th><th style="width:14%">ผู้ส่ง</th><th style="width:5%">จำนวน</th><th style="width:5%">ส่วนต่าง</th></tr></thead><tbody>';
+        h += '<table><colgroup><col style="width:4%"><col style="width:5%"><col style="width:10%"><col style="width:8%"><col style="width:24%"><col style="width:9%"><col style="width:10%"><col style="width:14%"><col style="width:8%"><col style="width:8%"></colgroup><thead><tr><th>ลำดับ</th><th>ปีงบฯ</th><th>เลขที่หนังสือส่งกองคลัง</th><th>เลขที่ สธ. (กลุ่มงาน)</th><th>ชื่อเรื่อง</th><th>วันที่ตรวจสอบ</th><th>กลุ่ม/ศูนย์</th><th>ชื่อผู้ส่ง/ชื่อผู้ยืม/ชื่อผู้ใช้หนี้/ชื่อผู้ประสานงาน</th><th>จำนวนเบิก/ยืม/คืน</th><th>ส่วนต่าง/เงินเหลือคืน</th></tr></thead><tbody>';
 
-        for (var i = 0; i < state.docs.length; i++) {
-          var d = state.docs[i] || {};
-          var subject = C.safeText(d.subject || '-');
-          if (subject.length > 240) subject = subject.substring(0, 240).replace(/\s+$/, '') + '...';
+        for (var i = 0; i < state.currentData.length; i++) {
+          var d = state.currentData[i] || {};
+          var subjectText = String(d.subject || '');
+          if (subjectText.length > 240) {
+            subjectText = subjectText.substring(0, 240).replace(/\s+$/, '') + '...';
+          }
           h += '<tr>';
-          h += '<td class="text-center">' + (i + 1) + '</td>';
-          h += '<td class="text-center">' + esc(d.fiscalYear || '') + '</td>';
-          h += '<td class="text-center">' + esc(d.amDocNo || '') + '</td>';
-          h += '<td class="text-center">' + esc(d.docNoSdh || '') + '</td>';
-          h += '<td class="subject">' + esc(subject) + '</td>';
-          h += '<td class="text-center">' + esc(d.verifyDate || '') + '</td>';
-          h += '<td class="group">' + esc(d.group || '') + '</td>';
-          h += '<td class="sender">' + esc(d.sender || '') + '</td>';
-          h += '<td class="text-right">' + esc(d.amount || '') + '</td>';
-          h += '<td class="text-right">' + esc(d.difference || '') + '</td>';
+          h += '<td class="text-center index">' + (i + 1) + '</td>';
+          h += '<td class="text-center fiscal">' + esc(d.fiscalYear || '') + '</td>';
+          h += '<td class="text-center am-doc">' + esc(d.amDocNo || '') + '</td>';
+          h += '<td class="text-center doc-sdh">' + esc(d.docNoSdh || '') + '</td>';
+          h += '<td class="subject-cell">' + esc(subjectText || '-') + '</td>';
+          h += '<td class="text-center verify-date">' + esc(d.verifyDate || '-') + '</td>';
+          h += '<td class="group-cell">' + esc(d.group || '-') + '</td>';
+          h += '<td class="sender-cell">' + esc(d.sender || '-') + '</td>';
+          h += '<td class="text-right amount">' + esc(d.amount || '-') + '</td>';
+          h += '<td class="text-right diff">' + esc(d.difference || '-') + '</td>';
           h += '</tr>';
         }
 
         h += '</tbody></table>';
-        h += '<script>window.onload=function(){window.print();window.close();}<' + '/script>';
+        h += '<div class="no-print"><button class="btn-print" onclick="window.print()">พิมพ์รายงาน</button></div>';
         h += '</body></html>';
 
         w.document.write(h);
         w.document.close();
       }
 
+      function fillFilters(infoData, membersData, meUser) {
+        var info = infoData || { fiscalYears: [], groups: [] };
+        var members = Array.isArray(membersData) ? membersData : [];
+
+        var officerHtml = '<option value="" selected disabled>เลือกเจ้าหน้าที่...</option>';
+        for (var i = 0; i < members.length; i++) {
+          var m = members[i] || {};
+          var name = C.safeTrim(m.name || '');
+          if (!name) continue;
+          var pos = C.safeTrim(m.position || '');
+          officerHtml += '<option value="' + esc(name) + '">' + esc(name + (pos ? (' (' + pos + ')') : '')) + '</option>';
+        }
+        els.mainOfficer.innerHTML = officerHtml;
+
+        var fiscalHtml = '<option value="" selected>ทั้งหมด</option>';
+        var fiscalYears = Array.isArray(info.fiscalYears) ? info.fiscalYears : [];
+        for (var f = 0; f < fiscalYears.length; f++) {
+          fiscalHtml += '<option value="' + esc(fiscalYears[f]) + '">' + esc(fiscalYears[f]) + '</option>';
+        }
+        els.mainFiscal.innerHTML = fiscalHtml;
+
+        var myName = C.safeTrim((meUser && (meUser.displayName || meUser.username)) || '');
+        if (myName) {
+          for (var k = 0; k < els.mainOfficer.options.length; k++) {
+            if (els.mainOfficer.options[k].value === myName) {
+              els.mainOfficer.selectedIndex = k;
+              state.advFilters.officer = myName;
+              break;
+            }
+          }
+        }
+      }
+
       async function initData() {
-        var data = await Promise.all([
+        var res = await Promise.all([
           state.api.me(),
           state.api.optionsInfo(),
           state.api.optionsMembers()
         ]);
 
-        var meRes = data[0] || {};
-        var infoRes = data[1] || {};
-        var membersRes = data[2] || {};
+        var meRes = res[0] || {};
+        var infoRes = res[1] || {};
+        var memberRes = res[2] || {};
 
         if (!meRes || meRes.success === false || !meRes.user) {
           C.redirect('index.html', {}, true);
           return false;
         }
 
-        state.user = meRes.user;
-        state.options = infoRes || { data: { fiscalYears: [], groups: [] } };
-        state.members = (membersRes && Array.isArray(membersRes.data)) ? membersRes.data : [];
+        state.members = Array.isArray(memberRes.data) ? memberRes.data : [];
+        state.memberImgMap = {};
+        for (var i = 0; i < state.members.length; i++) {
+          var mem = state.members[i] || {};
+          var name = C.safeTrim(mem.name || '');
+          var img = C.safeTrim(mem.image || '');
+          if (!name || !img) continue;
+          state.memberImgMap[name] = img;
+          state.memberImgMap[name.toLowerCase()] = img;
+        }
 
+        fillFilters((infoRes && infoRes.data) ? infoRes.data : {}, state.members, meRes.user);
+        updateActiveFilterBadge();
         return true;
+      }
+
+      function bindEvents() {
+        els.btnBack.addEventListener('click', function () {
+          C.redirect('index.html');
+        });
+
+        els.btnSearchInspector.addEventListener('click', applyMainFilters);
+        els.btnAdvFilter.addEventListener('click', openAdvancedFilter);
+        els.btnPrint.addEventListener('click', printReport);
       }
 
       async function init() {
@@ -667,30 +974,27 @@
           state.settings = C.ensureSettingsOrThrow();
           state.api = C.createApiClient(state.settings);
         } catch (_e) {
-          showError('กรุณาตั้งค่า scriptUrl และ deviceKey ที่หน้า index ก่อน');
+          Swal.fire('ตั้งค่าไม่ครบ', 'กรุณาตั้งค่า scriptUrl และ deviceKey ที่หน้า index ก่อน', 'warning');
           return;
         }
 
-        els.btnBack.onclick = function () { C.redirect('index.html'); };
-        els.btnReload.onclick = function () { searchReport(); };
-        els.btnSearch.onclick = function () { searchReport(); };
-        els.btnReset.onclick = function () { resetFilters(); };
-        els.btnPrint.onclick = function () { printReport(); };
+        bindEvents();
 
         try {
           var ok = await initData();
           if (!ok) return;
-          fillOptions();
-          renderActiveFilterBadge();
-          els.mainWrap.classList.remove('hidden');
 
-          if (C.safeTrim(els.officer.value || '')) {
-            searchReport();
+          if (state.advFilters.officer) {
+            loadReport();
           }
         } catch (err) {
-          showError((err && err.message) ? err.message : 'โหลดข้อมูลหน้าเครื่องมือตรวจสอบไม่สำเร็จ');
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'โหลดข้อมูลหน้าเครื่องมือตรวจสอบไม่สำเร็จ', 'error');
         }
       }
+
+      window.__reloadInspectorReport = function () {
+        loadReport();
+      };
 
       init();
     })();

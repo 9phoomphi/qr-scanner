@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ไม่พบข้อมูล</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="./theme-legacy.css">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      font-family: "IBM Plex Sans Thai", sans-serif;
+      background: radial-gradient(1100px 520px at 12% -12%, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0)), var(--bg-gradient);
+      color: var(--text-color);
+    }
+
+    .nf-card {
+      width: min(580px, 100%);
+      border-radius: 26px;
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      box-shadow: var(--elev);
+      backdrop-filter: saturate(170%) blur(24px);
+      -webkit-backdrop-filter: saturate(170%) blur(24px);
+      padding: 26px 18px 18px;
+      text-align: center;
+    }
+
+    .nf-icon {
+      width: 78px;
+      height: 78px;
+      border-radius: 24px;
+      margin: 0 auto 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.9rem;
+      background: linear-gradient(180deg, #3ea2ff, #0a84ff, #0068d9);
+      box-shadow: 0 16px 36px rgba(10, 132, 255, 0.3);
+    }
+
+    .nf-title {
+      margin: 0;
+      font-size: 1.46rem;
+      line-height: 1.25;
+      font-weight: 900;
+      color: var(--text-color);
+      word-break: break-word;
+    }
+
+    .nf-detail {
+      margin: 8px auto 0;
+      max-width: 460px;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      font-weight: 620;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .nf-actions {
+      margin-top: 14px;
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      border: none;
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 0 15px;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .18s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: linear-gradient(180deg, #3ea2ff, #0a84ff, #0068d9);
+      box-shadow: 0 14px 30px rgba(10, 132, 255, 0.28);
+    }
+
+    .btn.secondary {
+      color: var(--text-color);
+      background: rgba(148, 163, 184, 0.14);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <main class="nf-card">
+    <div class="nf-icon"><i class="bi bi-search"></i></div>
+    <h1 id="nfTitle" class="nf-title">ไม่พบเอกสาร</h1>
+    <p id="nfDetail" class="nf-detail"></p>
+    <div class="nf-actions">
+      <a id="btnBack" class="btn primary" href="./index.html"><i class="bi bi-house-door"></i>กลับหน้าหลัก</a>
+      <a class="btn secondary" href="./index.html"><i class="bi bi-arrow-repeat"></i>เริ่มใหม่</a>
+    </div>
+  </main>
+
+  <script src="./theme-legacy.js"></script>
+  <script src="./app-common.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var C = window.DocFrontendCommon;
+      var q = C.parseQuery();
+
+      var title = C.safeTrim(q.message || 'ไม่พบเอกสาร');
+      var detail = C.safeTrim(q.detail || '');
+      var back = C.safeTrim(q.back || 'index.html');
+
+      var titleEl = document.getElementById('nfTitle');
+      var detailEl = document.getElementById('nfDetail');
+      var backEl = document.getElementById('btnBack');
+
+      function safeBackPath(path) {
+        var p = C.safeTrim(path || '');
+        if (!p) return 'index.html';
+        if (/^https?:\/\//i.test(p)) return 'index.html';
+        if (p.indexOf('javascript:') === 0) return 'index.html';
+        return p;
+      }
+
+      titleEl.textContent = title;
+      detailEl.textContent = detail ? ('รายละเอียด: "' + detail + '"') : '';
+      backEl.setAttribute('href', safeBackPath(back));
+    })();
+  </script>
+</body>
+</html>

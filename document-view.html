@@ -9,507 +9,687 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="./theme-legacy.css">
   <style>
-    :root {
-      --bg: #f3f6fb;
-      --card: rgba(255,255,255,0.9);
-      --text: #0f172a;
-      --muted: #475569;
-      --border: #dbe4f0;
-      --primary: #2563eb;
-      --primary2: #1d4ed8;
-      --success: #16a34a;
-      --danger: #dc2626;
-      --warn: #d97706;
-      --shadow: 0 18px 46px rgba(15,23,42,0.14);
+    .doc-page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 16px;
     }
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "IBM Plex Sans Thai", sans-serif;
-      color: var(--text);
-      background: radial-gradient(1200px 540px at 8% -14%, rgba(59,130,246,0.22), rgba(59,130,246,0)), var(--bg);
-    }
-
-    .shell { max-width: 1120px; margin: 0 auto; padding: 14px; }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      padding: 14px 16px;
-      margin-bottom: 12px;
-      backdrop-filter: saturate(160%) blur(8px);
-    }
-
-    .topbar {
+    .doc-top {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .back-btn {
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      color: var(--text-color);
+      min-height: 40px;
+      border-radius: 999px;
+      font-weight: 760;
+      padding: 0 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(10, 132, 255, 0.45);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+    }
+
+    .main-card {
+      overflow: hidden;
+    }
+
+    .header-bg {
+      background: linear-gradient(180deg, #2f97ff 0%, #0a84ff 62%, #0071e3 100%);
+      color: #fff;
+      text-align: center;
+      padding: 22px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-bg::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      right: -80px;
+      top: -94px;
+      background: rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+    }
+
+    .doc-id-kicker {
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.88;
+      font-weight: 760;
+      margin-bottom: 4px;
+    }
+
+    .doc-id-title {
+      margin: 0;
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      font-weight: 900;
+      line-height: 1.1;
+      word-break: break-word;
+    }
+
+    .doc-id-sub {
+      margin-top: 4px;
+      font-size: 0.84rem;
+      opacity: 0.94;
+      font-weight: 640;
+      word-break: break-word;
+    }
+
+    .header-badges {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
-    .page-header {
-      padding: 12px 14px !important;
+    .h-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 780;
+      border: 1px solid transparent;
+      line-height: 1.2;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
     }
 
-    .title {
+    .h-badge.success {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: rgba(34, 197, 94, 0.38);
+    }
+
+    .h-badge.warn {
+      background: rgba(251, 146, 60, 0.22);
+      border-color: rgba(217, 119, 6, 0.38);
+    }
+
+    .h-badge.info {
+      background: rgba(56, 189, 248, 0.24);
+      border-color: rgba(14, 165, 233, 0.4);
+    }
+
+    .h-badge.gray {
+      background: rgba(148, 163, 184, 0.3);
+      border-color: rgba(100, 116, 139, 0.42);
+    }
+
+    .h-badge.pink {
+      background: rgba(244, 114, 182, 0.28);
+      border-color: rgba(236, 72, 153, 0.42);
+    }
+
+    .h-badge.red {
+      background: rgba(239, 68, 68, 0.28);
+      border-color: rgba(220, 38, 38, 0.42);
+    }
+
+    .doc-body {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-size: 0.92rem;
+      font-weight: 840;
+      color: var(--text-color);
+      margin: 0 0 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .info-group {
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      margin-bottom: 10px;
+    }
+
+    .info-label {
       margin: 0;
-      font-size: clamp(1.15rem, 2vw, 1.35rem);
-      font-weight: 820;
-      letter-spacing: 0.005em;
-      color: #0f172a;
+      font-size: 0.76rem;
+      font-weight: 760;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
     }
 
-    .page-subtitle {
-      margin-top: 2px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #64748b;
+    .info-value {
+      margin: 2px 0 0;
+      font-size: 0.92rem;
+      font-weight: 650;
+      color: var(--text-color);
+      line-height: 1.4;
+      word-break: break-word;
     }
 
-    .muted { color: var(--muted); }
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 10px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .row-full {
+      grid-column: 1 / -1;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
 
     .btn {
       border: none;
       border-radius: 999px;
-      height: 38px;
+      min-height: 40px;
       padding: 0 14px;
-      color: #fff;
       font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(180deg, var(--primary), var(--primary2));
-    }
-    .btn.secondary { background: #334155; }
-    .btn.success { background: #15803d; }
-    .btn.warn { background: #d97706; }
-    .btn.danger { background: #dc2626; }
-    .btn.outline {
-      background: #fff;
-      color: var(--primary2);
-      border: 1px solid #93c5fd;
-    }
-
-    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-
-    .section-title {
-      font-size: 0.98rem;
-      font-weight: 800;
-      color: #334155;
-      letter-spacing: 0.01em;
-    }
-
-    .section-note {
-      margin-top: 6px;
-      font-size: 0.88rem;
-      color: #64748b;
-      font-weight: 560;
-    }
-
-    .card.doc-hero {
-      border-radius: 24px;
-      background:
-        radial-gradient(220px 160px at 94% -12%, rgba(59,130,246,0.16), rgba(59,130,246,0)),
-        linear-gradient(145deg, rgba(255,255,255,0.78), rgba(255,255,255,0.5)) !important;
-      border: 1px solid rgba(148, 163, 184, 0.34) !important;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.11) !important;
-      padding: 16px 18px !important;
-    }
-
-    .doc-hero-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .doc-hero-copy {
-      min-width: 0;
-      display: grid;
-      gap: 4px;
-    }
-
-    .doc-hero-kicker {
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.13em;
-      color: #64748b;
-    }
-
-    .doc-hero-title {
-      margin: 0;
-      font-size: clamp(1.36rem, 2.7vw, 2rem);
-      line-height: 1.08;
-      font-weight: 900;
-      color: #0f172a;
-      word-break: break-word;
-    }
-
-    .doc-hero-meta {
-      font-size: 0.9rem;
-      line-height: 1.35;
-      color: #475569;
-      font-weight: 620;
-      word-break: break-word;
-    }
-
-    .doc-hero-badges {
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    .subject-block {
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      background: rgba(255, 255, 255, 0.66);
-    }
-
-    .section-label {
-      font-size: 0.74rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      font-weight: 800;
-      color: #64748b !important;
-      margin-bottom: 4px;
-    }
-
-    .subject-text {
-      font-size: clamp(0.98rem, 1.4vw, 1.12rem);
-      font-weight: 650;
-      line-height: 1.45;
-      word-break: break-word;
-      color: #0f172a;
-    }
-
-    .info-grid {
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .info-item {
-      min-height: 68px;
-      border: 1px solid rgba(203, 213, 225, 0.92);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.72);
-      padding: 10px 12px;
-      display: grid;
-      align-content: start;
-      gap: 4px;
-    }
-
-    .label {
-      font-size: 0.76rem;
-      color: #64748b;
       font-weight: 760;
-      margin-bottom: 0;
-      letter-spacing: 0.01em;
-    }
-
-    .value {
-      font-size: 0.95rem;
-      font-weight: 650;
-      line-height: 1.35;
-      color: #0f172a;
-      word-break: break-word;
-    }
-
-    .badge {
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      padding: 6px 11px;
-      font-size: 0.78rem;
-      font-weight: 760;
-      border: 1px solid var(--border);
-      background: #eef4ff;
-      color: #334155;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.2s ease, box-shadow 0.24s ease;
     }
 
-    .badge.ok { color: #166534; border-color: rgba(22,163,74,.45); background: rgba(22,163,74,.13); }
-    .badge.warn { color: #92400e; border-color: rgba(217,119,6,.45); background: rgba(217,119,6,.12); }
-    .badge.err { color: #991b1b; border-color: rgba(220,38,38,.45); background: rgba(220,38,38,.12); }
-    .badge.info { color: #075985; border-color: rgba(14,165,233,.45); background: rgba(14,165,233,.12); }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
 
-    .doc-no-head {
-      margin-bottom: 8px;
-      padding: 0 !important;
-      border: none !important;
-      background: transparent !important;
-      box-shadow: none !important;
+    .btn.primary {
+      color: #fff;
+      background: linear-gradient(180deg, #2f97ff, #0a84ff, #0071e3);
+      box-shadow: 0 12px 28px rgba(10, 132, 255, 0.24);
+    }
+
+    .btn.green {
+      color: #fff;
+      background: linear-gradient(180deg, #34d399, #30d158, #24b74a);
+      box-shadow: 0 12px 28px rgba(48, 209, 88, 0.24);
+    }
+
+    .btn.gray {
+      color: #fff;
+      background: linear-gradient(180deg, #64748b, #475569);
+      box-shadow: 0 12px 26px rgba(51, 65, 85, 0.24);
+    }
+
+    .btn.outline {
+      color: #075985;
+      background: rgba(10, 132, 255, 0.12);
+      border: 1px solid rgba(10, 132, 255, 0.25);
+    }
+
+    .btn.danger {
+      color: #fff;
+      background: linear-gradient(180deg, #ef4444, #dc2626);
+      box-shadow: 0 12px 24px rgba(239, 68, 68, 0.26);
     }
 
     .step-track {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 10px;
+      gap: 8px;
     }
 
-    .step-track .step {
-      border: 1px solid var(--border) !important;
-      border-radius: 14px !important;
-      padding: 10px 9px !important;
-      text-align: left;
-      background: rgba(248, 251, 255, 0.9) !important;
-      min-height: 88px;
+    .step-item {
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      background: rgba(148, 163, 184, 0.16);
+      text-align: center;
+      padding: 10px 8px;
+      color: var(--text-muted);
+      font-size: 0.77rem;
+      font-weight: 700;
+      min-height: 110px;
       display: grid;
-      gap: 3px;
       align-content: start;
+      gap: 4px;
     }
 
-    .step-track .step.done {
-      border-color: rgba(22,163,74,.45) !important;
-      background: rgba(22,163,74,.12) !important;
+    .step-item i {
+      font-size: 1rem;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+
+    .step-item.done {
+      border-color: rgba(34, 197, 94, 0.42);
+      background: rgba(34, 197, 94, 0.16);
       color: #166534;
     }
 
-    .step-name {
-      font-weight: 800;
-      font-size: 0.8rem;
-      line-height: 1.2;
-      color: #334155;
-    }
-
-    .step.done .step-name {
-      color: #166534;
-    }
-
-    .step-meta {
-      font-size: 0.74rem;
-      line-height: 1.24;
-      color: inherit;
-      word-break: break-word;
-    }
-
-    .step-pending {
-      font-size: 0.74rem;
-      margin-top: 3px;
-      color: #64748b;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      min-height: 40px;
-      padding: 8px 10px;
-      font: inherit;
-      color: var(--text);
-      background: #fff;
-    }
-
-    .row { display: grid; gap: 10px; }
-    .row.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-    .avatar-chip {
+    .step-user-chip {
+      margin: 2px auto 0;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      border: 1px solid var(--border);
+      gap: 5px;
       border-radius: 999px;
-      padding: 4px 10px 4px 4px;
-      background: #f8fbff;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #334155;
+      padding: 2px 7px;
+      border: 1px solid rgba(52, 199, 89, 0.3);
+      background: rgba(255, 255, 255, 0.6);
+      font-size: 0.68rem;
+      font-weight: 730;
       max-width: 100%;
     }
-    .avatar-chip img {
-      width: 24px;
-      height: 24px;
+
+    .step-user-chip img,
+    .step-user-chip .fallback {
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       object-fit: cover;
-      border: 1px solid rgba(37,99,235,.35);
-      flex-shrink: 0;
-    }
-    .avatar-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    .error {
-      border: 1px solid rgba(220,38,38,.35);
-      background: rgba(220,38,38,.08);
-      color: #991b1b;
-      border-radius: 10px;
-      padding: 10px;
-      font-size: 0.9rem;
+      flex: 0 0 auto;
     }
 
-    .hidden { display: none !important; }
+    .step-user-chip .fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(34, 197, 94, 0.18);
+      color: #166534;
+      font-size: 0.62rem;
+      font-weight: 860;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
 
-    .qr-card {
+    .readonly-box,
+    .notice-box {
       text-align: center;
-    }
-
-    #docQr {
-      width: min(72vw, 260px);
-      max-width: 260px;
-      aspect-ratio: 1 / 1;
-      border: 1px solid var(--border);
+      padding: 14px;
       border-radius: 14px;
-      padding: 4px;
-      background: #fff;
+      border: 1px solid transparent;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      font-weight: 640;
+    }
+
+    .readonly-box {
+      background: rgba(217, 119, 6, 0.12);
+      border-color: rgba(217, 119, 6, 0.3);
+      color: var(--text-color);
+    }
+
+    .notice-box.red {
+      background: rgba(239, 68, 68, 0.14);
+      border-color: rgba(239, 68, 68, 0.28);
+      color: #991b1b;
+    }
+
+    .notice-box.gray {
+      background: rgba(148, 163, 184, 0.22);
+      border-color: rgba(100, 116, 139, 0.32);
+      color: var(--text-color);
+    }
+
+    .notice-box.blue {
+      background: rgba(90, 200, 250, 0.14);
+      border-color: rgba(90, 200, 250, 0.34);
+      color: var(--text-color);
+    }
+
+    .notice-box.pink {
+      background: rgba(244, 114, 182, 0.16);
+      border-color: rgba(236, 72, 153, 0.3);
+      color: var(--text-color);
+    }
+
+    .notice-box.green {
+      background: rgba(34, 197, 94, 0.14);
+      border-color: rgba(34, 197, 94, 0.28);
+      color: var(--text-color);
+    }
+
+    .storage-form {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--input-border);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .storage-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 12px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+    }
+
+    .storage-user img,
+    .storage-user .fallback {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: 0 0 auto;
+    }
+
+    .storage-user .fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 132, 255, 0.12);
+      border: 1px solid rgba(10, 132, 255, 0.26);
+      color: #007aff;
+      font-weight: 860;
+    }
+
+    .storage-note {
+      margin-top: 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(10, 132, 255, 0.26);
+      background: rgba(10, 132, 255, 0.1);
+      color: #0c4a6e;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-weight: 660;
+    }
+
+    .storage-detail {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.13), rgba(34, 197, 94, 0.04)), var(--card-bg);
+    }
+
+    .storage-detail .chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 10px;
+      padding: 5px 11px;
+      background: linear-gradient(180deg, #2f97ff, #0a84ff, #0071e3);
+      color: #fff;
+      font-size: 0.74rem;
+      font-weight: 780;
+      margin-bottom: 8px;
+    }
+
+    .storage-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-items: start;
+    }
+
+    .storage-owner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .storage-owner img,
+    .storage-owner .fallback {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: 0 0 auto;
+      border: 2px solid rgba(34, 197, 94, 0.3);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .storage-owner .fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(34, 197, 94, 0.18);
+      color: #166534;
+      font-weight: 860;
+      border: 1px solid rgba(34, 197, 94, 0.26);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .destroy-line {
+      margin-top: 8px;
+      border-radius: 10px;
+      border: 1px dashed rgba(239, 68, 68, 0.32);
+      background: rgba(239, 68, 68, 0.1);
+      color: #b91c1c;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 760;
+      padding: 6px 8px;
+    }
+
+    .state-row {
+      display: none;
+      text-align: center;
+      padding: 10px 0 4px;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      font-weight: 640;
+    }
+
+    .state-row.show {
+      display: block;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 3px solid rgba(10, 132, 255, 0.22);
+      border-top-color: var(--primary-color);
+      margin: 0 auto 8px;
+      animation: spin 0.72s linear infinite;
+    }
+
+    .qr-wrap {
+      text-align: center;
+      padding: 16px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      margin-top: 4px;
+    }
+
+    .qr-img {
+      width: min(72vw, 250px);
+      max-width: 250px;
+      aspect-ratio: 1/1;
       object-fit: contain;
-      image-rendering: pixelated;
+      border-radius: 16px;
+      border: 1px solid var(--input-border);
+      background: #fff;
+      padding: 2px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14);
     }
 
-    body.dark-mode .page-subtitle {
-      color: rgba(203, 213, 225, 0.86);
+    .error-box {
+      display: none;
+      border: 1px solid rgba(239, 68, 68, 0.36);
+      background: rgba(239, 68, 68, 0.12);
+      color: #991b1b;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-weight: 650;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      margin-bottom: 12px;
     }
 
-    body.dark-mode .card.doc-hero {
-      background:
-        radial-gradient(240px 180px at 95% -18%, rgba(56, 189, 248, 0.16), rgba(56, 189, 248, 0)),
-        linear-gradient(145deg, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.72)) !important;
-      border-color: rgba(148, 163, 184, 0.34) !important;
-      box-shadow: 0 22px 48px rgba(2, 8, 20, 0.5) !important;
+    .error-box.show {
+      display: block;
     }
 
-    body.dark-mode .doc-hero-kicker {
-      color: rgba(203, 213, 225, 0.72);
+    .thai-date-input {
+      position: relative;
+      cursor: pointer;
     }
 
-    body.dark-mode .doc-hero-title {
-      color: #f8fafc;
+    .thai-date-input .form-control {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      padding-right: 36px;
+      font-weight: 650;
+      border: 1px solid var(--input-border);
+      border-radius: 14px;
+      background: var(--input-bg);
+      color: var(--text-color);
     }
 
-    body.dark-mode .doc-hero-meta {
-      color: rgba(226, 232, 240, 0.82);
+    .thai-date-input .cal-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
     }
 
-    body.dark-mode .subject-block {
-      background: rgba(15, 23, 42, 0.68);
-      border-color: rgba(148, 163, 184, 0.32);
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
 
-    body.dark-mode .subject-text,
-    body.dark-mode .value,
-    body.dark-mode .section-title {
-      color: #e2e8f0;
+    @media (max-width: 980px) {
+      .grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .step-track {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
     }
 
-    body.dark-mode .info-item {
-      background: rgba(15, 23, 42, 0.74);
-      border-color: rgba(148, 163, 184, 0.3);
+    @media (max-width: 760px) {
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .step-track {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .storage-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
-    body.dark-mode .label,
-    body.dark-mode .section-label,
-    body.dark-mode .section-note {
-      color: rgba(203, 213, 225, 0.74) !important;
-    }
-
-    body.dark-mode .step-track .step {
-      background: rgba(15, 23, 42, 0.74) !important;
-      border-color: rgba(148, 163, 184, 0.34) !important;
-      color: #e2e8f0;
-    }
-
-    body.dark-mode .step-track .step.done {
-      border-color: rgba(74, 222, 128, 0.46) !important;
-      background: rgba(22, 163, 74, 0.2) !important;
-      color: #86efac;
-    }
-
-    body.dark-mode .step-name {
-      color: #e2e8f0;
-    }
-
-    body.dark-mode .step-track .step.done .step-name {
-      color: #86efac;
-    }
-
-    body.dark-mode .step-pending {
-      color: rgba(203, 213, 225, 0.66);
-    }
-
-    @media (max-width: 900px) {
-      .grid-2, .grid-3, .row.two { grid-template-columns: 1fr; }
-      .step-track { grid-template-columns: 1fr 1fr; }
-      .doc-hero { padding: 14px !important; }
-      .doc-hero-badges { width: 100%; justify-content: flex-start; }
-      .info-item { min-height: 0; }
-    }
-
-    @media (max-width: 560px) {
-      .card { padding: 12px; border-radius: 18px; }
-      .page-header { padding: 10px 12px !important; }
-      .page-subtitle { font-size: 0.82rem; }
-      .section-title { font-size: 0.9rem; }
-      .subject-text { font-size: 0.94rem; }
-      .step-track { grid-template-columns: 1fr; }
+    @media (max-width: 520px) {
+      .step-track {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
-  <link rel="stylesheet" href="./theme-legacy.css">
 </head>
 <body>
-  <div class="shell">
-    <div class="card topbar page-header">
-      <div>
-        <h1 class="title">รายละเอียดเอกสาร</h1>
-        <div class="page-subtitle">Document Control / ข้อมูลแบบละเอียด</div>
-      </div>
-      <div class="actions">
-        <button id="btnBack" class="btn secondary" type="button"><i class="bi bi-arrow-left"></i> กลับ</button>
-        <button id="btnReload" class="btn outline" type="button"><i class="bi bi-arrow-clockwise"></i> โหลดใหม่</button>
-      </div>
+  <div class="doc-page">
+    <div class="doc-top">
+      <button id="btnBack" type="button" class="back-btn"><i class="bi bi-arrow-left"></i> กลับ</button>
     </div>
 
-    <div id="errBox" class="error hidden"></div>
+    <div id="errBox" class="error-box"></div>
 
-    <div id="mainWrap" class="hidden">
-      <div class="card doc-hero">
-        <div class="doc-hero-head">
-          <div class="doc-hero-copy">
-            <div class="doc-hero-kicker">DOCUMENT DETAIL</div>
-            <h2 id="docHeroTitle" class="doc-hero-title">-</h2>
-            <div id="docHead" class="doc-hero-meta">กำลังโหลด...</div>
+    <div id="mainCard" class="main-card" style="display:none;">
+      <div class="header-bg">
+        <div class="doc-id-kicker">เลขที่หนังสือ</div>
+        <h2 id="docIdTitle" class="doc-id-title">-</h2>
+        <div id="docIdSub" class="doc-id-sub">-</div>
+        <div id="statusBadges" class="header-badges"></div>
+      </div>
+
+      <div class="doc-body">
+        <div id="actionButtons" class="action-row"></div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-info-circle"></i>ข้อมูลทั่วไป</h3>
+          <div id="generalInfo" class="grid-2"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-card-text"></i>รายละเอียด</h3>
+          <div id="detailInfo" class="grid-2"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-wallet2"></i>ประเภทเงินงบประมาณ</h3>
+          <div id="budgetSection"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-bookmark-star"></i>เลขที่หนังสือ</h3>
+          <div id="docNoSection"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-chat-left-text"></i>หมายเหตุ</h3>
+          <div id="remarkSection"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-list-check"></i>สถานะการดำเนินการ</h3>
+          <div class="info-group">
+            <div id="stepTrack" class="step-track"></div>
           </div>
-          <div class="actions doc-hero-badges" id="statusBadges"></div>
         </div>
 
-        <div class="subject-block">
-          <div class="label section-label">เรื่อง</div>
-          <div id="subjectText" class="subject-text">-</div>
+        <div>
+          <h3 class="section-title"><i class="bi bi-archive"></i>สถานะจัดเก็บ</h3>
+          <div id="storageStatusSection"></div>
         </div>
 
-        <div class="grid-3 info-grid" id="baseInfo"></div>
-      </div>
-
-      <div class="card">
-        <div class="section-title">รายละเอียดเอกสาร</div>
-        <div class="grid-3 info-grid" id="detailInfo"></div>
-      </div>
-
-      <div class="card">
-        <div class="topbar doc-no-head">
-          <div class="section-title">เลขที่หนังสือส่งกองคลัง / ลงวันที่ดำเนินการ</div>
-          <div class="actions" id="fieldActions"></div>
+        <div>
+          <h3 class="section-title"><i class="bi bi-pencil-square"></i>การบันทึกจัดเก็บ</h3>
+          <div id="storageActionSection"></div>
         </div>
-        <div class="grid-2 info-grid" id="docNoInfo"></div>
-      </div>
 
-      <div class="card">
-        <div class="section-title">ขั้นตอนดำเนินการ</div>
-        <div id="stepTrack" class="step-track"></div>
-      </div>
+        <div id="successMsg" class="state-row">บันทึกสำเร็จ! ระบบกำลังรีโหลดข้อมูล...</div>
+        <div id="loadingMsg" class="state-row"><div class="spinner"></div><div>กำลังบันทึก...</div></div>
 
-      <div class="card" id="storageWrap"></div>
-
-      <div class="card" id="actionWrap"></div>
-
-      <div class="card qr-card">
-        <div class="label">QR เอกสาร</div>
-        <img id="docQr" alt="QR">
-        <div class="actions" style="justify-content:center;margin-top:8px;">
-          <button id="btnPrintSticker" class="btn outline" type="button"><i class="bi bi-printer"></i> พิมพ์ใบแปะ</button>
+        <div class="qr-wrap">
+          <p class="fw-bold small mb-2" style="color:var(--text-muted);"><i class="bi bi-qr-code me-1"></i>QR Code</p>
+          <img id="docQr" class="qr-img" alt="QR Document">
+          <div style="margin-top:10px;">
+            <button id="btnPrintSticker" type="button" class="btn outline"><i class="bi bi-printer"></i>พิมพ์ใบแปะหน้าเอกสาร</button>
+          </div>
         </div>
       </div>
     </div>
@@ -524,34 +704,39 @@
       'use strict';
 
       var C = window.DocFrontendCommon;
-      var query = C.parseQuery();
-      var docId = C.safeTrim(query.id || '');
+      var q = C.parseQuery();
+      var docId = C.safeTrim(q.id || '');
 
       var state = {
-        api: null,
         settings: null,
-        user: null,
+        api: null,
         doc: null,
         statusData: null,
-        memberMap: {}
+        members: [],
+        info: { locations: [], fiscalYears: [] },
+        memberImgMap: {},
+        memberPosMap: {},
+        currentUser: null
       };
 
       var els = {
-        docHeroTitle: document.getElementById('docHeroTitle'),
-        docHead: document.getElementById('docHead'),
         btnBack: document.getElementById('btnBack'),
-        btnReload: document.getElementById('btnReload'),
         errBox: document.getElementById('errBox'),
-        mainWrap: document.getElementById('mainWrap'),
+        mainCard: document.getElementById('mainCard'),
+        docIdTitle: document.getElementById('docIdTitle'),
+        docIdSub: document.getElementById('docIdSub'),
         statusBadges: document.getElementById('statusBadges'),
-        baseInfo: document.getElementById('baseInfo'),
-        subjectText: document.getElementById('subjectText'),
+        actionButtons: document.getElementById('actionButtons'),
+        generalInfo: document.getElementById('generalInfo'),
         detailInfo: document.getElementById('detailInfo'),
-        docNoInfo: document.getElementById('docNoInfo'),
-        fieldActions: document.getElementById('fieldActions'),
+        budgetSection: document.getElementById('budgetSection'),
+        docNoSection: document.getElementById('docNoSection'),
+        remarkSection: document.getElementById('remarkSection'),
         stepTrack: document.getElementById('stepTrack'),
-        storageWrap: document.getElementById('storageWrap'),
-        actionWrap: document.getElementById('actionWrap'),
+        storageStatusSection: document.getElementById('storageStatusSection'),
+        storageActionSection: document.getElementById('storageActionSection'),
+        successMsg: document.getElementById('successMsg'),
+        loadingMsg: document.getElementById('loadingMsg'),
         docQr: document.getElementById('docQr'),
         btnPrintSticker: document.getElementById('btnPrintSticker')
       };
@@ -559,205 +744,428 @@
       function showError(message) {
         var msg = C.safeTrim(message || '');
         if (!msg) {
-          els.errBox.classList.add('hidden');
+          els.errBox.classList.remove('show');
           els.errBox.textContent = '';
           return;
         }
         els.errBox.textContent = msg;
-        els.errBox.classList.remove('hidden');
+        els.errBox.classList.add('show');
       }
 
-      function statusBadge(doc) {
-        var st = C.safeTrim(doc.docStatus || '');
-        if (st === 'ยกเลิก') return '<span class="badge err"><i class="bi bi-x-circle"></i> ยกเลิก</span>';
-        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return '<span class="badge"><i class="bi bi-arrow-return-left"></i> ส่งคืนฯ</span>';
-        if (st === 'กำลังดำเนินการ') return '<span class="badge info"><i class="bi bi-hourglass-split"></i> กำลังดำเนินการ</span>';
-        if (st === 'มอบผู้รับผิดชอบ') return '<span class="badge" style="background:rgba(236,72,153,.12);border-color:rgba(236,72,153,.45);color:#9d174d;"><i class="bi bi-person-check"></i> มอบผู้รับผิดชอบ</span>';
-        return '<span class="badge ok"><i class="bi bi-check-circle"></i> ดำเนินการเสร็จ</span>';
+      function setBusy(isBusy) {
+        els.loadingMsg.classList.toggle('show', !!isBusy);
       }
 
-      function renderUserChip(name) {
-        var key = C.safeTrim(name || '');
-        if (!key) return '-';
-        var img = state.memberMap[key] || state.memberMap[key.toLowerCase()] || '';
-        if (!img) {
-          return '<span class="avatar-chip"><img alt="u" src="https://dummyimage.com/24x24/e2e8f0/64748b.png&text=' + encodeURIComponent((key.charAt(0) || '?').toUpperCase()) + '"><span>' + C.escapeHtml(key) + '</span></span>';
+      function showSuccessRow(text) {
+        els.successMsg.textContent = C.safeText(text || 'บันทึกสำเร็จ');
+        els.successMsg.classList.add('show');
+        setTimeout(function () {
+          els.successMsg.classList.remove('show');
+        }, 2200);
+      }
+
+      function mapMemberData(members) {
+        var imgMap = {};
+        var posMap = {};
+        var list = Array.isArray(members) ? members : [];
+
+        for (var i = 0; i < list.length; i++) {
+          var m = list[i] || {};
+          var name = C.safeTrim(m.name || '');
+          if (!name) continue;
+          var lower = name.toLowerCase();
+          var img = C.safeTrim(m.image || '');
+          var pos = C.safeTrim(m.position || '');
+          if (img) {
+            imgMap[name] = img;
+            imgMap[lower] = img;
+          }
+          if (pos) {
+            posMap[name] = pos;
+            posMap[lower] = pos;
+          }
         }
-        return '<span class="avatar-chip"><img alt="u" src="' + C.escapeHtml(img) + '"><span>' + C.escapeHtml(key) + '</span></span>';
+
+        state.memberImgMap = imgMap;
+        state.memberPosMap = posMap;
+      }
+
+      function statusBadge(docStatus) {
+        var st = C.safeTrim(docStatus || '');
+        if (st === 'ยกเลิก') return '<span class="h-badge red"><i class="bi bi-x-circle"></i>ยกเลิก</span>';
+        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return '<span class="h-badge gray"><i class="bi bi-arrow-return-left"></i>ส่งคืนฯ</span>';
+        if (st === 'กำลังดำเนินการ') return '<span class="h-badge info"><i class="bi bi-hourglass-split"></i>กำลังดำเนินการ</span>';
+        if (st === 'มอบผู้รับผิดชอบ') return '<span class="h-badge pink"><i class="bi bi-person-check"></i>มอบผู้รับผิดชอบ</span>';
+        return '<span class="h-badge success"><i class="bi bi-check-circle"></i>ดำเนินการเสร็จ</span>';
+      }
+
+      function storageBadge(isStored) {
+        if (isStored) return '<span class="h-badge info"><i class="bi bi-archive"></i>จัดเก็บแล้ว</span>';
+        return '<span class="h-badge warn"><i class="bi bi-clock"></i>รอจัดเก็บ</span>';
+      }
+
+      function userAvatar(name, fallbackColor, fallbackTextColor) {
+        var n = C.safeTrim(name || '');
+        var img = state.memberImgMap[n] || state.memberImgMap[n.toLowerCase()] || '';
+        if (img) {
+          return '<img src="' + C.escapeHtml(img) + '" alt="u">';
+        }
+        var first = (n.charAt(0) || '?').toUpperCase();
+        return '<span class="fallback" style="background:' + (fallbackColor || 'rgba(10,132,255,0.12)') + ';color:' + (fallbackTextColor || '#007AFF') + ';">' + C.escapeHtml(first) + '</span>';
+      }
+
+      function goEdit() {
+        if (!state.doc) return;
+        C.redirect('document-form.html', { mode: 'edit', id: state.doc.docId || docId });
+      }
+
+      function goStatus() {
+        if (!state.doc) return;
+        C.redirect('document-status.html', { id: state.doc.docId || docId });
+      }
+
+      function goScanner() {
+        C.redirect('storage-box-scan.html');
       }
 
       function getDocQrUrl() {
         var base = C.normalizeScriptUrl(state.settings.scriptUrl || '').split('?')[0];
-        var target = base + '?id=' + encodeURIComponent(state.doc.docId || docId) + '&dk=' + encodeURIComponent(state.settings.deviceKey || '');
-        return 'https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=0&qzone=2&ecc=Q&data=' + encodeURIComponent(target);
+        var target = base + '?id=' + encodeURIComponent((state.doc && state.doc.docId) || docId || '');
+        return 'https://api.qrserver.com/v1/create-qr-code/?size=1200x1200&margin=0&qzone=2&ecc=Q&data=' + encodeURIComponent(target);
       }
 
-      function renderDoc() {
-        var d = state.doc || {};
-        var statusData = state.statusData || {};
-        var isReadOnly = !!d.isReadOnlyUser;
-        var isStored = !!d.isStored;
+      function infoItem(label, value) {
+        return '<div class="info-group"><p class="info-label">' + C.escapeHtml(label) + '</p><p class="info-value">' + C.escapeHtml(C.safeText(value || '-') || '-') + '</p></div>';
+      }
 
-        els.docHeroTitle.textContent = d.docId || '-';
-        els.docHead.textContent = 'เลขรับ ' + (d.receiveNo || '-') + ' • วันที่รับ ' + (d.dateRecDisplay || '-') + ' • เวลา ' + ((d.timeRec || '-') + ' น.');
-
-        var badges = statusBadge(d);
-        if (isStored) {
-          badges += ' <span class="badge ok"><i class="bi bi-archive"></i> จัดเก็บแล้ว</span>';
-        } else {
-          badges += ' <span class="badge warn"><i class="bi bi-clock-history"></i> รอจัดเก็บ</span>';
+      function renderActionButtons(isReadOnly) {
+        if (isReadOnly) {
+          els.actionButtons.innerHTML = '<div class="readonly-box"><i class="bi bi-eye me-1"></i>บัญชีผู้มีสิทธิ์อ่าน: ดูข้อมูลได้เท่านั้น</div>';
+          return;
         }
-        els.statusBadges.innerHTML = badges;
 
-        var baseRows = [
-          ['เลขที่รับ', d.receiveNo || '-'],
-          ['วันที่รับ', d.dateRecDisplay || '-'],
-          ['เวลา', (d.timeRec || '-') + ' น.'],
-          ['เลขที่ สธ.', d.docNoSdh || '-'],
-          ['ประเภทเงินงบประมาณ', d.budgetType || '-'],
-          ['ปีงบประมาณ', d.fiscalYear || '-']
-        ];
+        var html = '';
+        html += '<button type="button" class="btn outline" id="btnGoEdit"><i class="bi bi-pencil"></i>แก้ไข</button>';
+        html += '<button type="button" class="btn green" id="btnGoStatus"><i class="bi bi-list-check"></i>จัดการสถานะ</button>';
+        html += '<button type="button" class="btn gray" id="btnChangeMainStatus"><i class="bi bi-arrow-repeat"></i>เปลี่ยนสถานะ</button>';
 
-        var baseHtml = '';
-        for (var i = 0; i < baseRows.length; i++) {
-          baseHtml += '<div class="info-item"><div class="label">' + C.escapeHtml(baseRows[i][0]) + '</div><div class="value">' + C.escapeHtml(baseRows[i][1]) + '</div></div>';
+        els.actionButtons.innerHTML = html;
+
+        document.getElementById('btnGoEdit').addEventListener('click', goEdit);
+        document.getElementById('btnGoStatus').addEventListener('click', goStatus);
+        document.getElementById('btnChangeMainStatus').addEventListener('click', changeMainStatus);
+      }
+
+      function renderGeneralInfo(doc) {
+        var html = '';
+        html += infoItem('เลขที่รับ', doc.receiveNo || '-');
+        html += infoItem('วันที่รับ', doc.dateRecDisplay || '-');
+        html += infoItem('เวลา', (doc.timeRec || '-') + ' น.');
+        html += infoItem('ลงวันที่', doc.datedDisplay || '-');
+        html += infoItem('เลขที่ สธ. (กลุ่มงาน)', doc.docNoSdh || '-');
+        html += infoItem('สถานะหลัก', doc.docStatus || '-');
+        els.generalInfo.innerHTML = html;
+      }
+
+      function renderDetailInfo(doc) {
+        var html = '';
+
+        html += '<div class="info-group row-full">';
+        html += '<p class="info-label">เรื่อง</p>';
+        html += '<p class="info-value" style="font-weight:780;color:#1d4ed8;">' + C.escapeHtml(doc.subject || '-') + '</p>';
+        html += '</div>';
+
+        html += infoItem('กลุ่ม/ศูนย์', doc.group || '-');
+        html += infoItem('ชื่อผู้ส่ง/ผู้ยืม/ผู้ใช้หนี้/ผู้ประสานงาน', doc.sender || '-');
+        html += infoItem('วัตถุประสงค์', doc.purpose || '-');
+        html += infoItem('จำนวนเบิก/ยืม/คืน', C.fmtMoney(doc.amount || '-'));
+        html += infoItem('ส่วนต่าง/เงินเหลือคืน', C.fmtMoney(doc.difference || '-'));
+
+        els.detailInfo.innerHTML = html;
+      }
+
+      function renderBudgetSection(doc) {
+        var budgetType = C.safeTrim(doc.budgetType || '') || '-';
+        var isPlan = budgetType === 'เงินงบประมาณ';
+
+        var html = '';
+        html += '<div class="info-group" style="background:rgba(10,132,255,0.08);border-style:dashed;">';
+        html += '<p class="info-label">ประเภทเงินงบประมาณ</p>';
+        html += '<p class="info-value">' + C.escapeHtml(budgetType) + '</p>';
+
+        if (isPlan) {
+          html += '<div class="grid-2" style="margin-top:8px;">';
+          html += infoItem('ผลผลิต', doc.prod || '-');
+          html += infoItem('กิจกรรมหลัก', doc.mainAct || '-');
+          html += infoItem('โครงการย่อย', doc.subProject || '-');
+          html += infoItem('กิจกรรมย่อย', doc.activity || '-');
+          html += '</div>';
         }
-        els.baseInfo.innerHTML = baseHtml;
 
-        els.subjectText.textContent = d.subject || '-';
+        html += '</div>';
+        els.budgetSection.innerHTML = html;
+      }
 
-        var detailRows = [
-          ['กลุ่ม/ศูนย์', d.group || '-'],
-          ['ผู้ส่ง', d.sender || '-'],
-          ['วัตถุประสงค์', d.purpose || '-'],
-          ['จำนวน', C.fmtMoney(d.amount)],
-          ['ส่วนต่าง', C.fmtMoney(d.difference)],
-          ['หมายเหตุ', d.statusRemark || '-']
-        ];
-        var detailHtml = '';
-        for (var j = 0; j < detailRows.length; j++) {
-          detailHtml += '<div class="info-item"><div class="label">' + C.escapeHtml(detailRows[j][0]) + '</div><div class="value">' + C.escapeHtml(detailRows[j][1]) + '</div></div>';
-        }
-        els.detailInfo.innerHTML = detailHtml;
+      function renderDocNoSection(doc, isReadOnly) {
+        var amText = C.safeTrim(doc.amDocNo || '');
+        var anText = C.safeTrim(doc.anDateDisplay || '-') || '-';
 
-        els.docNoInfo.innerHTML = ''
-          + '<div class="info-item"><div class="label">เลขที่หนังสือส่งกองคลัง</div><div class="value">' + C.escapeHtml(d.amDocNo || '-') + '</div></div>'
-          + '<div class="info-item"><div class="label">ลงวันที่ดำเนินการ</div><div class="value">' + C.escapeHtml(d.anDateDisplay || '-') + '</div></div>';
+        var html = '';
+        html += '<div class="grid-2">';
 
-        var fieldButtons = '';
+        html += '<div class="info-group">';
+        html += '<p class="info-label">เลขที่หนังสือส่งกองคลัง</p>';
+        html += '<div class="action-row" style="margin-top:4px;">';
+        html += '<p class="info-value" style="margin:0;">' + (amText ? C.escapeHtml(amText) : '<span style="font-size:0.86rem;color:var(--text-muted);font-weight:520;">ยังไม่ได้กรอก</span>') + '</p>';
         if (!isReadOnly) {
-          fieldButtons += '<button id="btnEditAm" class="btn outline" type="button"><i class="bi bi-pencil"></i> แก้เลขหนังสือ</button>';
-          fieldButtons += '<button id="btnEditAn" class="btn outline" type="button"><i class="bi bi-calendar3"></i> แก้วันที่</button>';
+          html += '<button type="button" class="btn outline" id="btnEditAm" style="min-height:32px;padding:0 10px;font-size:0.75rem;"><i class="bi bi-pencil-fill"></i></button>';
         }
-        els.fieldActions.innerHTML = fieldButtons;
+        html += '</div>';
+        html += '</div>';
 
+        html += '<div class="info-group">';
+        html += '<p class="info-label">ลงวันที่ดำเนินการ</p>';
+        html += '<div class="action-row" style="margin-top:4px;">';
+        html += '<p class="info-value" style="margin:0;">' + C.escapeHtml(anText) + '</p>';
+        if (!isReadOnly) {
+          html += '<button type="button" class="btn outline" id="btnEditAn" style="min-height:32px;padding:0 10px;font-size:0.75rem;"><i class="bi bi-pencil-fill"></i></button>';
+        }
+        html += '</div>';
+        html += '</div>';
+
+        html += '</div>';
+
+        els.docNoSection.innerHTML = html;
+
+        if (!isReadOnly) {
+          var btnAm = document.getElementById('btnEditAm');
+          var btnAn = document.getElementById('btnEditAn');
+          if (btnAm) {
+            btnAm.addEventListener('click', function () {
+              editAmDocNo();
+            });
+          }
+          if (btnAn) {
+            btnAn.addEventListener('click', function () {
+              editAnDate();
+            });
+          }
+        }
+      }
+
+      function renderRemarkSection(doc) {
+        var text = C.safeTrim(doc.statusRemark || '');
+        if (!text) {
+          els.remarkSection.innerHTML = '<div class="info-group"><p class="info-value" style="font-size:0.86rem;color:var(--text-muted);font-weight:520;">ไม่มีหมายเหตุ</p></div>';
+          return;
+        }
+        els.remarkSection.innerHTML = '<div class="info-group"><p class="info-value">' + C.escapeHtml(text) + '</p></div>';
+      }
+
+      function renderStepTrack(statusData) {
         var steps = [
-          ['ส่งกลับแก้ไข', statusData.returnCheck, statusData.returnDateDisplay, statusData.returnUser],
-          ['รับคืนเอกสาร', statusData.receiveBackCheck, statusData.receiveBackDateDisplay, statusData.receiveBackUser],
-          ['ตรวจสอบ', statusData.verifyCheck, statusData.verifyDateDisplay, statusData.verifyUser],
-          ['หัวหน้าผ่านงาน', statusData.bossCheck, statusData.bossDateDisplay, statusData.bossUser],
-          ['เสนอลงนาม', statusData.signCheck, statusData.signDateDisplay, statusData.signUser]
+          { key: 'return', label: 'ส่งกลับแก้ไข', done: !!statusData.returnCheck, date: statusData.returnDateDisplay, user: statusData.returnUser },
+          { key: 'receiveBack', label: 'รับคืนเอกสาร', done: !!statusData.receiveBackCheck, date: statusData.receiveBackDateDisplay, user: statusData.receiveBackUser },
+          { key: 'verify', label: 'ตรวจสอบ', done: !!statusData.verifyCheck, date: statusData.verifyDateDisplay, user: statusData.verifyUser },
+          { key: 'boss', label: 'หัวหน้าผ่านงาน', done: !!statusData.bossCheck, date: statusData.bossDateDisplay, user: statusData.bossUser },
+          { key: 'sign', label: 'เสนอลงนาม', done: !!statusData.signCheck, date: statusData.signDateDisplay, user: statusData.signUser }
         ];
 
-        var stepHtml = '';
-        for (var k = 0; k < steps.length; k++) {
-          var done = !!steps[k][1];
-          stepHtml += '<div class="step ' + (done ? 'done' : '') + '">';
-          stepHtml += '<div class="step-name">' + C.escapeHtml(steps[k][0]) + '</div>';
-          if (done) {
-            stepHtml += '<div class="step-meta">' + C.escapeHtml(steps[k][2] || '-') + '</div>';
-            stepHtml += '<div class="step-meta">' + C.escapeHtml(steps[k][3] || '-') + '</div>';
-          } else {
-            stepHtml += '<div class="step-pending">ยังไม่ดำเนินการ</div>';
+        var html = '';
+
+        for (var i = 0; i < steps.length; i++) {
+          var s = steps[i];
+          html += '<div class="step-item ' + (s.done ? 'done' : '') + '">';
+          html += s.done ? '<i class="bi bi-check-circle-fill"></i>' : '<i class="bi bi-circle"></i>';
+          html += '<div>' + C.escapeHtml(s.label) + '</div>';
+
+          if (s.done) {
+            html += '<div style="font-size:0.68rem;">' + C.escapeHtml(C.safeText(s.date || '-') || '-') + '</div>';
+            var uname = C.safeTrim(s.user || '');
+            if (uname) {
+              html += '<span class="step-user-chip">';
+              html += userAvatar(uname, 'rgba(34,197,94,0.18)', '#166534');
+              html += '<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + C.escapeHtml(uname) + '</span>';
+              html += '</span>';
+            }
           }
-          stepHtml += '</div>';
+
+          html += '</div>';
         }
-        els.stepTrack.innerHTML = stepHtml;
+
+        els.stepTrack.innerHTML = html;
+      }
+
+      function renderStorageStatus(doc) {
+        var isStored = !!doc.isStored;
+        var storageHtml = '';
+
+        if (!isStored) {
+          storageHtml += '<div class="info-group" style="text-align:center;background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.2);">';
+          storageHtml += '<p class="info-label">สถานที่เก็บ</p>';
+          storageHtml += '<h4 style="margin:2px 0 0;font-size:1.05rem;color:var(--text-muted);font-weight:800;">ยังไม่ได้จัดเก็บ</h4>';
+          storageHtml += '</div>';
+          els.storageStatusSection.innerHTML = storageHtml;
+          return;
+        }
+
+        var storedLoc = C.safeTrim(doc.storedLoc || '-') || '-';
+        var storedAt = C.safeTrim(doc.storedAtDisplay || '-') || '-';
+        var destroyDate = C.safeTrim(doc.destroyDateDisplay || '-') || '-';
+        var storedUser = C.safeTrim(doc.storedUser || '-') || '-';
+        var fiscal = C.safeTrim(doc.fiscalYear || '-') || '-';
+        var pos = state.memberPosMap[storedUser] || state.memberPosMap[storedUser.toLowerCase()] || '';
+
+        storageHtml += '<div class="info-group" style="text-align:center;background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.22);">';
+        storageHtml += '<p class="info-label">สถานที่เก็บ</p>';
+        storageHtml += '<h4 style="margin:2px 0 0;font-size:1.08rem;color:#16a34a;font-weight:860;">' + C.escapeHtml(storedLoc) + '</h4>';
+
+        storageHtml += '<div class="storage-detail">';
+        storageHtml += '<span class="chip">ปีงบฯ ' + C.escapeHtml(fiscal) + '</span>';
+        storageHtml += '<div class="storage-grid">';
+        storageHtml += '<div><small style="display:block;font-size:0.7rem;color:var(--text-muted);font-weight:760;letter-spacing:0.04em;">วันที่จัดเก็บ</small><strong style="font-size:0.9rem;">' + C.escapeHtml(storedAt) + '</strong></div>';
+        storageHtml += '<div><small style="display:block;font-size:0.7rem;color:var(--text-muted);font-weight:760;letter-spacing:0.04em;">ผู้จัดเก็บ</small><div class="storage-owner">';
+        storageHtml += userAvatar(storedUser, 'rgba(34,197,94,0.18)', '#166534');
+        storageHtml += '<div><strong style="font-size:0.86rem;">' + C.escapeHtml(storedUser) + '</strong>';
+        if (pos) {
+          storageHtml += '<br><small style="font-size:0.72rem;color:var(--text-muted);">' + C.escapeHtml(pos) + '</small>';
+        }
+        storageHtml += '</div></div></div>';
+        storageHtml += '</div>';
+        storageHtml += '<div class="destroy-line"><i class="bi bi-clock-history me-1"></i>ครบกำหนดทำลาย: ' + C.escapeHtml(destroyDate) + '</div>';
+        storageHtml += '</div>';
+        storageHtml += '</div>';
+
+        els.storageStatusSection.innerHTML = storageHtml;
+      }
+
+      function buildStorageAction(doc, isReadOnly) {
+        var status = C.safeTrim(doc.docStatus || '');
+        var isStored = !!doc.isStored;
+        var isCancelled = status === 'ยกเลิก';
+        var isReturned = status === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง';
+        var isInProgress = status === 'กำลังดำเนินการ';
+        var isAssigned = status === 'มอบผู้รับผิดชอบ';
+
+        if (isReadOnly) {
+          return '<div class="readonly-box"><i class="bi bi-eye me-1"></i>สิทธิ์อ่านเท่านั้น ไม่สามารถบันทึกจัดเก็บหรือแก้ไขข้อมูลได้</div>';
+        }
+
+        if (isCancelled) {
+          return '<div class="notice-box red"><i class="bi bi-ban me-1"></i>เอกสารถูกยกเลิก ไม่สามารถบันทึกจัดเก็บได้</div>';
+        }
+
+        if (isReturned) {
+          return '<div class="notice-box gray"><i class="bi bi-arrow-return-left me-1"></i>อนุมัติแล้วส่งคืนเจ้าของเรื่อง ไม่สามารถบันทึกจัดเก็บได้</div>';
+        }
+
+        if (isInProgress) {
+          return '<div class="notice-box blue"><i class="bi bi-hourglass-split me-1"></i>เอกสารต้องเปลี่ยนเป็นสถานะ "ดำเนินการเสร็จ" ก่อนจึงจะจัดเก็บได้</div>';
+        }
+
+        if (isAssigned) {
+          return '<div class="notice-box pink"><i class="bi bi-person-check me-1"></i>สถานะมอบผู้รับผิดชอบ ไม่สามารถบันทึกจัดเก็บได้</div>';
+        }
 
         if (isStored) {
-          els.storageWrap.innerHTML = ''
-            + '<div class="section-title">ข้อมูลการจัดเก็บ</div>'
-            + '<div class="grid-2 info-grid">'
-            + '<div class="info-item"><div class="label">สถานที่เก็บ</div><div class="value">' + C.escapeHtml(d.storedLoc || '-') + '</div></div>'
-            + '<div class="info-item"><div class="label">ผู้จัดเก็บ</div><div class="value">' + renderUserChip(d.storedUser || '-') + '</div></div>'
-            + '<div class="info-item"><div class="label">วันที่จัดเก็บ</div><div class="value">' + C.escapeHtml(d.storedAtDisplay || '-') + '</div></div>'
-            + '<div class="info-item"><div class="label">ครบกำหนดทำลาย</div><div class="value">' + C.escapeHtml(d.destroyDateDisplay || '-') + '</div></div>'
-            + '</div>';
-        } else {
-          var canStore = !isReadOnly && d.docStatus !== 'ยกเลิก' && d.docStatus !== 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง' && d.docStatus !== 'กำลังดำเนินการ' && d.docStatus !== 'มอบผู้รับผิดชอบ';
-          if (!canStore) {
-            els.storageWrap.innerHTML = '<div class="section-title">การจัดเก็บเอกสาร</div><div class="section-note">เอกสารสถานะนี้ยังไม่สามารถจัดเก็บได้</div>';
-          } else {
-            els.storageWrap.innerHTML = ''
-              + '<div class="section-title">การจัดเก็บเอกสาร</div>'
-              + '<div class="section-note">ใช้หน้าสแกนกลางเพื่อจัดเก็บเอกสารเป็นชุด</div>'
-              + '<div class="actions" style="margin-top:8px;">'
-              + '<button id="btnGoScanner" class="btn success" type="button"><i class="bi bi-upc-scan"></i> ไปหน้าสแกนจัดเก็บ</button>'
-              + '</div>';
-          }
+          return '<div class="notice-box green"><i class="bi bi-check-circle-fill me-1"></i>จัดเก็บเรียบร้อยแล้ว</div>';
         }
 
-        var actionHtml = '<div class="section-title">จัดการเอกสาร</div><div class="actions" style="margin-top:8px;">';
-        if (!isReadOnly) {
-          actionHtml += '<button id="btnEdit" class="btn outline" type="button"><i class="bi bi-pencil"></i> แก้ไขเอกสาร</button>';
-          actionHtml += '<button id="btnStatus" class="btn outline" type="button"><i class="bi bi-list-check"></i> จัดการสถานะ</button>';
-          actionHtml += '<button id="btnMainStatus" class="btn warn" type="button"><i class="bi bi-arrow-repeat"></i> เปลี่ยนสถานะหลัก</button>';
+        var locations = Array.isArray(state.info.locations) ? state.info.locations : [];
+        var fiscalYears = Array.isArray(state.info.fiscalYears) ? state.info.fiscalYears : [];
+
+        var locHtml = '<option value="" selected disabled>เลือกสถานที่เก็บ...</option>';
+        for (var i = 0; i < locations.length; i++) {
+          locHtml += '<option value="' + C.escapeHtml(locations[i]) + '">' + C.escapeHtml(locations[i]) + '</option>';
         }
-        actionHtml += '</div>';
-        els.actionWrap.innerHTML = actionHtml;
+
+        var fiscalHtml = '<option value="" selected disabled>เลือกปีงบประมาณ...</option>';
+        for (var f = 0; f < fiscalYears.length; f++) {
+          fiscalHtml += '<option value="' + C.escapeHtml(fiscalYears[f]) + '">' + C.escapeHtml(fiscalYears[f]) + '</option>';
+        }
+
+        var userName = C.safeTrim((state.currentUser && (state.currentUser.displayName || state.currentUser.username)) || '');
+        var userPos = C.safeTrim((state.currentUser && state.currentUser.position) || '') || 'ผู้ใช้งานระบบ';
+
+        var html = '';
+        html += '<div class="storage-form" id="formContainer">';
+        html += '<h4 class="section-title" style="margin:0 0 10px;color:#1d4ed8;"><i class="bi bi-pencil-square"></i>บันทึกการจัดเก็บ</h4>';
+
+        html += '<div style="margin-bottom:8px;">';
+        html += '<label class="info-label">สถานที่จัดเก็บ</label>';
+        html += '<select id="locationSelect" class="form-control">' + locHtml + '</select>';
+        html += '</div>';
+
+        html += '<div style="margin-bottom:8px;">';
+        html += '<label class="info-label">ผู้บันทึกข้อมูล (ผู้ที่ล็อกอิน)</label>';
+        html += '<div class="storage-user">';
+        html += userAvatar(userName, 'rgba(10,132,255,0.12)', '#007AFF');
+        html += '<div><div style="font-size:0.88rem;font-weight:780;color:var(--text-color);">' + C.escapeHtml(userName || '-') + '</div>';
+        html += '<div style="font-size:0.78rem;color:var(--text-muted);font-weight:620;">' + C.escapeHtml(userPos) + '</div></div>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div style="margin-bottom:8px;">';
+        html += '<label class="info-label">ปีงบประมาณ (ของเอกสาร)</label>';
+        html += '<select id="fiscalSelect" class="form-control">' + fiscalHtml + '</select>';
+        html += '</div>';
+
+        html += '<div class="storage-note"><i class="bi bi-info-circle me-1"></i>ระบบจะคำนวณวันครบกำหนดทำลายอัตโนมัติจากวันจัดเก็บ + 10 ปี</div>';
+        html += '<div style="margin-top:10px;">';
+        html += '<button type="button" class="btn primary" id="btnSaveStorage" style="width:100%;"><i class="bi bi-save-fill"></i>บันทึกจัดเก็บ</button>';
+        html += '</div>';
+        html += '</div>';
+
+        return html;
+      }
+
+      function bindStorageActionEvents(doc) {
+        var btn = document.getElementById('btnSaveStorage');
+        if (!btn) return;
+
+        btn.addEventListener('click', function () {
+          submitStorage(doc).catch(function (err) {
+            Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
+          });
+        });
+      }
+
+      function renderDocument() {
+        var doc = state.doc || {};
+        var statusData = state.statusData || {};
+        var isReadOnly = !!doc.isReadOnlyUser;
+
+        els.docIdTitle.textContent = doc.docId || '-';
+        els.docIdSub.textContent = C.safeTrim(doc.docNoSdh || '') ? ('สธ ' + C.safeText(doc.docNoSdh || '')) : '-';
+        els.statusBadges.innerHTML = statusBadge(doc.docStatus) + storageBadge(!!doc.isStored);
+
+        renderActionButtons(isReadOnly);
+        renderGeneralInfo(doc);
+        renderDetailInfo(doc);
+        renderBudgetSection(doc);
+        renderDocNoSection(doc, isReadOnly);
+        renderRemarkSection(doc);
+        renderStepTrack(statusData);
+        renderStorageStatus(doc);
+
+        els.storageActionSection.innerHTML = buildStorageAction(doc, isReadOnly);
+        bindStorageActionEvents(doc);
 
         els.docQr.src = getDocQrUrl();
-
-        bindActionEvents();
-      }
-
-      function bindActionEvents() {
-        var d = state.doc || {};
-
-        var btnEdit = document.getElementById('btnEdit');
-        if (btnEdit) {
-          btnEdit.onclick = function () {
-            C.redirect('document-form.html', { mode: 'edit', id: d.docId });
-          };
-        }
-
-        var btnStatus = document.getElementById('btnStatus');
-        if (btnStatus) {
-          btnStatus.onclick = function () {
-            C.redirect('document-status.html', { id: d.docId });
-          };
-        }
-
-        var btnMainStatus = document.getElementById('btnMainStatus');
-        if (btnMainStatus) {
-          btnMainStatus.onclick = changeMainStatus;
-        }
-
-        var btnGoScanner = document.getElementById('btnGoScanner');
-        if (btnGoScanner) {
-          btnGoScanner.onclick = function () {
-            C.redirect('storage-box-scan.html');
-          };
-        }
-
-        var btnEditAm = document.getElementById('btnEditAm');
-        if (btnEditAm) {
-          btnEditAm.onclick = function () { editField('amDocNo', 'แก้ไขเลขที่หนังสือส่งกองคลัง', d.amDocNo || ''); };
-        }
-
-        var btnEditAn = document.getElementById('btnEditAn');
-        if (btnEditAn) {
-          btnEditAn.onclick = function () { editField('anDate', 'แก้ไขลงวันที่ดำเนินการ (YYYY-MM-DD)', d.anDateInput || ''); };
-        }
       }
 
       async function changeMainStatus() {
+        if (!state.doc || state.doc.isReadOnlyUser) {
+          Swal.fire({ icon: 'warning', title: 'สิทธิ์ไม่เพียงพอ', text: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถแก้ไขหรือจัดการเอกสารได้' });
+          return;
+        }
+
         var result = await Swal.fire({
           title: 'เปลี่ยนสถานะเอกสาร',
           html: ''
             + '<div style="text-align:left;">'
-            + '<label class="label">สถานะ</label>'
-            + '<select id="swMainStatus">'
+            + '<label class="info-label" style="display:block;margin-bottom:6px;">สถานะเอกสาร</label>'
+            + '<select id="swMainStatus" class="form-control">'
             + '<option value="">-- เลือกสถานะ --</option>'
             + '<option value="ดำเนินการเสร็จ">ดำเนินการเสร็จ</option>'
             + '<option value="กำลังดำเนินการ">กำลังดำเนินการ</option>'
@@ -765,89 +1173,208 @@
             + '<option value="ยกเลิก">ยกเลิก</option>'
             + '<option value="อนุมัติแล้วส่งคืนเจ้าของเรื่อง">อนุมัติแล้วส่งคืนเจ้าของเรื่อง</option>'
             + '</select>'
-            + '<label class="label" style="margin-top:8px;">หมายเหตุ (ไม่บังคับ)</label>'
-            + '<textarea id="swMainRemark" rows="3" placeholder="หมายเหตุ"></textarea>'
+            + '<label class="info-label" style="display:block;margin:10px 0 6px;">หมายเหตุ (ไม่บังคับ)</label>'
+            + '<textarea id="swStatusRemark" class="form-control" rows="3" placeholder="กรอกหมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>'
             + '</div>',
           showCancelButton: true,
-          confirmButtonText: 'บันทึก',
           cancelButtonText: 'ยกเลิก',
+          confirmButtonText: 'บันทึก',
+          confirmButtonColor: '#007AFF',
           preConfirm: function () {
-            var st = C.safeTrim(document.getElementById('swMainStatus').value);
+            var st = C.safeTrim((document.getElementById('swMainStatus') || {}).value || '');
+            var note = C.safeTrim((document.getElementById('swStatusRemark') || {}).value || '');
             if (!st) {
-              Swal.showValidationMessage('กรุณาเลือกสถานะ');
+              Swal.showValidationMessage('กรุณาเลือกสถานะเอกสาร');
               return false;
             }
-            return {
-              status: st,
-              remark: C.safeTrim(document.getElementById('swMainRemark').value)
-            };
+            return { status: st, remark: note };
           }
         });
 
         if (!result || !result.isConfirmed || !result.value) return;
 
+        setBusy(true);
         try {
-          var res = await state.api.docChangeMainStatus(state.doc.docId, result.value.status, result.value.remark);
-          if (!res || res.success === false) throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
-          Swal.fire('สำเร็จ', 'เปลี่ยนสถานะเรียบร้อย', 'success');
+          var res = await state.api.docChangeMainStatus(state.doc.docId, result.value.status, result.value.remark || '');
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
+          }
+          await Swal.fire({ icon: 'success', title: 'เปลี่ยนสถานะสำเร็จ', confirmButtonColor: '#007AFF' });
           await loadDetail();
         } catch (err) {
           Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
         }
+        setBusy(false);
       }
 
-      async function editField(fieldName, title, currentValue) {
+      async function editAmDocNo() {
+        if (!state.doc || state.doc.isReadOnlyUser) {
+          Swal.fire({ icon: 'warning', title: 'สิทธิ์ไม่เพียงพอ', text: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถแก้ไขได้' });
+          return;
+        }
+
         var result = await Swal.fire({
-          title: title,
+          title: 'เพิ่มเลขที่หนังสือส่งกองคลัง',
           input: 'text',
-          inputValue: C.safeText(currentValue || ''),
+          inputPlaceholder: 'กรอกเลขที่หนังสือ',
+          inputValue: C.safeText(state.doc.amDocNo || ''),
           showCancelButton: true,
+          cancelButtonText: 'ยกเลิก',
           confirmButtonText: 'บันทึก',
-          cancelButtonText: 'ยกเลิก'
+          confirmButtonColor: '#007AFF'
         });
 
         if (!result || !result.isConfirmed) return;
 
+        setBusy(true);
         try {
-          var res = await state.api.docUpdateField(state.doc.docId, fieldName, C.safeText(result.value || ''));
-          if (!res || res.success === false) throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
-          Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อย', 'success');
+          var res = await state.api.docUpdateField(state.doc.docId, 'amDocNo', C.safeText(result.value || ''));
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
+          }
+          await Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', confirmButtonColor: '#007AFF' });
           await loadDetail();
         } catch (err) {
           Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
         }
+        setBusy(false);
       }
 
-      function printSticker() {
-        var d = state.doc || {};
-        var qr = getDocQrUrl();
-        var w = window.open('', '', 'width=920,height=1200');
-        if (!w) {
-          Swal.fire('ไม่สามารถเปิดหน้าต่างพิมพ์', 'กรุณาอนุญาต Pop-up', 'info');
+      async function editAnDate() {
+        if (!state.doc || state.doc.isReadOnlyUser) {
+          Swal.fire({ icon: 'warning', title: 'สิทธิ์ไม่เพียงพอ', text: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถแก้ไขได้' });
           return;
         }
 
-        var esc = C.escapeHtml;
+        var tempDateId = 'tempAnDate' + Date.now();
+        var result = await Swal.fire({
+          title: 'แก้ไขลงวันที่ดำเนินการ',
+          html: ''
+            + '<div class="thai-date-input" onclick="openCalendar(\'' + tempDateId + '\')" style="margin-top:12px;">'
+            + '<input type="hidden" id="' + tempDateId + '" value="' + C.escapeHtml(C.safeTrim(state.doc.anDateInput || '')) + '">'
+            + '<div class="form-control" id="' + tempDateId + 'Display" style="color:var(--text-muted);">เลือกวันที่...</div>'
+            + '<i class="bi bi-calendar3 cal-icon"></i>'
+            + '</div>',
+          showCancelButton: true,
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonText: 'บันทึก',
+          confirmButtonColor: '#007AFF',
+          didOpen: function () {
+            if (typeof window.updDD === 'function') {
+              window.updDD(tempDateId);
+            }
+          },
+          preConfirm: function () {
+            var v = C.safeTrim((document.getElementById(tempDateId) || {}).value || '');
+            if (!v) {
+              Swal.showValidationMessage('กรุณาเลือกวันที่');
+              return false;
+            }
+            return v;
+          }
+        });
+
+        if (!result || !result.isConfirmed || !result.value) return;
+
+        setBusy(true);
+        try {
+          var res = await state.api.docUpdateField(state.doc.docId, 'anDate', result.value);
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
+          }
+          await Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', confirmButtonColor: '#007AFF' });
+          await loadDetail();
+        } catch (err) {
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
+        }
+        setBusy(false);
+      }
+
+      async function submitStorage(doc) {
+        if (!doc || doc.isReadOnlyUser) {
+          Swal.fire({ icon: 'warning', title: 'สิทธิ์ไม่เพียงพอ', text: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถบันทึกจัดเก็บได้' });
+          return;
+        }
+
+        var loc = C.safeTrim((document.getElementById('locationSelect') || {}).value || '');
+        var fiscal = C.safeTrim((document.getElementById('fiscalSelect') || {}).value || '');
+        if (!loc || !fiscal) {
+          Swal.fire('กรอกข้อมูลไม่ครบ', 'กรุณาเลือกสถานที่จัดเก็บและปีงบประมาณ', 'warning');
+          return;
+        }
+
+        var today = new Date();
+        var destroyDate = new Date(today);
+        destroyDate.setFullYear(destroyDate.getFullYear() + 10);
+        var destroyDateStr = destroyDate.getFullYear() + '-' + String(destroyDate.getMonth() + 1).padStart(2, '0') + '-' + String(destroyDate.getDate()).padStart(2, '0');
+
+        var form = document.getElementById('formContainer');
+        if (form) form.style.display = 'none';
+
+        setBusy(true);
+        try {
+          var res = await state.api.saveStorageData(doc.docId, loc, '', fiscal, destroyDateStr);
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
+          }
+
+          showSuccessRow('บันทึกสำเร็จ! ระบบกำลังรีโหลดข้อมูล...');
+          await Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', confirmButtonColor: '#007AFF' });
+          await loadDetail();
+        } catch (err) {
+          if (form) form.style.display = 'block';
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
+        }
+        setBusy(false);
+      }
+
+      function printDocSticker() {
+        if (!state.doc) return;
+
+        var d = state.doc;
+        var docQr = getDocQrUrl();
+
+        var w = window.open('', '', 'width=940,height=1200');
+        if (!w) {
+          Swal.fire('ไม่สามารถเปิดหน้าต่างพิมพ์', 'กรุณาอนุญาตป๊อปอัป (Pop-up) สำหรับหน้านี้', 'info');
+          return;
+        }
+
+        function row(label, val) {
+          return '<tr><td class="head">' + C.escapeHtml(label) + '</td><td>' + C.escapeHtml(C.safeText(val || '-') || '-') + '</td></tr>';
+        }
+
+        var projectPlan = '-';
+        if (C.safeTrim(d.budgetType || '') === 'เงินงบประมาณ') {
+          projectPlan = 'ผลผลิต ' + C.safeText(d.prod || '-') + ' กิจกรรมหลัก ' + C.safeText(d.mainAct || '-') + ' โครงการย่อย ' + C.safeText(d.subProject || '-') + ' กิจกรรมย่อย ' + C.safeText(d.activity || '-');
+        }
+
         var h = '';
-        h += '<!doctype html><html><head><meta charset="utf-8"><title>ใบแปะเอกสาร</title>';
-        h += '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700;800&display=swap" rel="stylesheet">';
-        h += '<style>@page{size:A4 portrait;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:0;color:#0f172a}.sheet{max-width:194mm;margin:0 auto}.label{border:2px solid #0f172a;border-radius:16px;padding:10px}table{width:100%;border-collapse:collapse;margin-top:10px}td{border:1px solid #cbd5e1;padding:6px 8px;font-size:10.5pt}td.head{width:35%;background:#f8fafc;font-weight:800;color:#334155}.subj{margin-top:10px;border:1px solid #cbd5e1;border-radius:12px;padding:8px;background:#f8fafc}.no-print{text-align:center;margin-top:10px}@media print{.no-print{display:none!important}}</style>';
-        h += '</head><body><div class="sheet"><div class="label">';
-        h += '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><div style="font-size:18pt;font-weight:900">ใบแปะหน้าเอกสาร</div><div style="font-size:10pt;color:#334155">สแกนเพื่อดูรายละเอียดเอกสาร</div></div><img src="' + esc(qr) + '" style="width:48mm;height:48mm;border:1px solid #cbd5e1;border-radius:12px;padding:2px;background:#fff"></div>';
-        h += '<table>';
-        h += '<tr><td class="head">เลขที่เอกสาร</td><td>' + esc(d.docId || '-') + '</td></tr>';
-        h += '<tr><td class="head">เลขที่รับ</td><td>' + esc(d.receiveNo || '-') + '</td></tr>';
-        h += '<tr><td class="head">เลขที่ สธ.</td><td>' + esc(d.docNoSdh || '-') + '</td></tr>';
-        h += '<tr><td class="head">เลขที่หนังสือส่งกองคลัง</td><td>' + esc(d.amDocNo || '-') + '</td></tr>';
-        h += '<tr><td class="head">วันที่รับเอกสาร</td><td>' + esc(d.dateRecDisplay || '-') + '</td></tr>';
-        h += '<tr><td class="head">กลุ่ม/ศูนย์</td><td>' + esc(d.group || '-') + '</td></tr>';
-        h += '<tr><td class="head">ผู้ส่ง</td><td>' + esc(d.sender || '-') + '</td></tr>';
-        h += '<tr><td class="head">วัตถุประสงค์</td><td>' + esc(d.purpose || '-') + '</td></tr>';
-        h += '<tr><td class="head">ประเภทเงินงบประมาณ</td><td>' + esc(d.budgetType || '-') + '</td></tr>';
-        h += '<tr><td class="head">สถานะ</td><td>' + esc(d.docStatus || '-') + '</td></tr>';
+        h += '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ใบแปะหน้าเอกสาร</title>';
+        h += '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">';
+        h += '<style>@page{size:A4 portrait;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:0;background:#fff;color:#0F172A}.sheet{max-width:194mm;margin:0 auto;min-height:calc(297mm - 16mm);display:flex;align-items:center;justify-content:center}.label{width:100%;border:2px solid #0F172A;border-radius:18px;padding:10px 12px;background:#fff}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.title{font-size:18pt;font-weight:900;line-height:1.15}.subtitle{font-size:10pt;color:#334155;margin-top:2px}.qr-box{width:48mm;height:48mm;padding:2px;border:1px solid #CBD5E1;border-radius:12px;background:#fff;overflow:hidden;flex-shrink:0}.qr-box img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}.meta{width:100%;border-collapse:collapse;margin-top:10px}.meta td{border:1px solid #CBD5E1;padding:6px 8px;font-size:10.5pt;vertical-align:top}.meta td.head{width:34%;background:#F8FAFC;font-weight:800;color:#334155}.subject{margin-top:10px;border:1px solid #CBD5E1;border-radius:12px;padding:8px 10px;background:#F8FAFC}.subject .head{font-size:8pt;color:#475569;font-weight:800;margin-bottom:4px}.subject .txt{font-size:10.5pt;line-height:1.4}.foot{margin-top:8px;font-size:8.5pt;color:#64748B;text-align:right}.no-print{text-align:center;margin-top:10px}.no-print button{padding:10px 28px;border:none;border-radius:999px;background:#0A84FF;color:#fff;font-weight:900;font-size:12pt}.no-print button:hover{filter:brightness(1.04)}@media print{.no-print{display:none!important}}</style>';
+        h += '</head><body>';
+        h += '<div class="sheet"><div class="label">';
+        h += '<div class="top"><div><div class="title">ใบแปะหน้าเอกสาร</div><div class="subtitle">ใช้สแกนเพื่อเข้าหน้าเอกสารและติดตามสถานะ</div></div><div class="qr-box"><img src="' + C.escapeHtml(docQr) + '" alt="QR"></div></div>';
+        h += '<table class="meta">';
+        h += row('เลขที่เอกสาร', d.docId || '-');
+        h += row('เลขที่รับ', d.receiveNo || '-');
+        h += row('เลขที่ สธ. (กลุ่มงาน)', d.docNoSdh || '-');
+        h += row('เลขที่หนังสือส่งกองคลัง', d.amDocNo || '-');
+        h += row('วันที่รับเอกสาร', d.dateRecDisplay || '-');
+        h += row('กลุ่ม/ศูนย์', d.group || '-');
+        h += row('ผู้ส่ง', d.sender || '-');
+        h += row('วัตถุประสงค์', d.purpose || '-');
+        h += row('ประเภทเงินงบประมาณ', d.budgetType || '-');
+        if (projectPlan !== '-') {
+          h += row('แผนโครงการ', projectPlan);
+        }
+        h += row('สถานะปัจจุบัน', d.docStatus || '-');
         h += '</table>';
-        h += '<div class="subj"><div style="font-size:8pt;font-weight:800;color:#475569">เรื่อง</div><div style="font-size:10.5pt;line-height:1.4">' + esc(d.subject || '-') + '</div></div>';
-        h += '</div><div class="no-print"><button onclick="window.print()" style="padding:10px 26px;border:1px solid rgba(10,132,255,.42);border-radius:999px;background:linear-gradient(180deg,#3299ff,#0a84ff);color:#fff;font-weight:760;box-shadow:0 10px 22px rgba(10,132,255,.22);cursor:pointer">พิมพ์ใบแปะ</button></div></div></body></html>';
+        h += '<div class="subject"><div class="head">เรื่อง</div><div class="txt">' + C.escapeHtml(d.subject || '-') + '</div></div>';
+        h += '<div class="foot">พิมพ์เมื่อ: ' + C.escapeHtml(new Date().toLocaleString('th-TH')) + '</div>';
+        h += '</div><div class="no-print"><button onclick="window.print()">พิมพ์ใบแปะหน้าเอกสาร</button></div></div>';
+        h += '</body></html>';
 
         w.document.write(h);
         w.document.close();
@@ -855,53 +1382,60 @@
 
       async function loadDetail() {
         showError('');
-        els.mainWrap.classList.add('hidden');
 
-        try {
-          var data = await Promise.all([
-            state.api.docDetail(docId),
-            state.api.optionsMembers(),
-            state.api.me()
-          ]);
+        var res = await Promise.all([
+          state.api.docDetail(docId),
+          state.api.optionsMembers(),
+          state.api.optionsInfo(),
+          state.api.me()
+        ]);
 
-          var detailRes = data[0] || {};
-          var membersRes = data[1] || {};
-          var meRes = data[2] || {};
+        var detailRes = res[0] || {};
+        var membersRes = res[1] || {};
+        var infoRes = res[2] || {};
+        var meRes = res[3] || {};
 
-          if (!meRes || meRes.success === false || !meRes.user) {
-            C.redirect('index.html', {}, true);
-            return;
-          }
-
-          if (!detailRes || detailRes.success === false || !detailRes.doc) {
-            throw new Error((detailRes && detailRes.error) ? detailRes.error : 'ไม่พบเอกสาร');
-          }
-
-          state.user = meRes.user;
-          state.doc = detailRes.doc;
-          state.statusData = detailRes.statusData || {};
-
-          state.memberMap = {};
-          var members = (membersRes && membersRes.data && Array.isArray(membersRes.data)) ? membersRes.data : [];
-          for (var i = 0; i < members.length; i++) {
-            var m = members[i] || {};
-            var name = C.safeTrim(m.name || '');
-            var img = C.safeTrim(m.image || '');
-            if (!name || !img) continue;
-            state.memberMap[name] = img;
-            state.memberMap[name.toLowerCase()] = img;
-          }
-
-          renderDoc();
-          els.mainWrap.classList.remove('hidden');
-        } catch (err) {
-          showError((err && err.message) ? err.message : 'โหลดข้อมูลเอกสารไม่สำเร็จ');
+        if (!meRes || meRes.success === false || !meRes.user) {
+          C.redirect('index.html', {}, true);
+          return false;
         }
+
+        if (!detailRes || detailRes.success === false || !detailRes.doc) {
+          C.redirect('not-found.html', {
+            message: 'ไม่พบเอกสาร',
+            detail: docId,
+            back: 'index.html'
+          }, true);
+          return false;
+        }
+
+        state.currentUser = meRes.user;
+        state.doc = detailRes.doc;
+        state.statusData = detailRes.statusData || {};
+        state.members = Array.isArray(membersRes.data) ? membersRes.data : [];
+        state.info = (infoRes && infoRes.data && typeof infoRes.data === 'object') ? infoRes.data : { locations: [], fiscalYears: [] };
+
+        mapMemberData(state.members);
+        renderDocument();
+        els.mainCard.style.display = 'block';
+        return true;
       }
 
-      function init() {
+      function bindEvents() {
+        els.btnBack.addEventListener('click', function () {
+          C.redirect('index.html');
+        });
+
+        els.btnPrintSticker.addEventListener('click', printDocSticker);
+      }
+
+      async function init() {
         if (!docId) {
-          showError('ไม่พบพารามิเตอร์ id');
+          C.redirect('not-found.html', {
+            message: 'ไม่พบเอกสาร',
+            detail: '',
+            back: 'index.html'
+          }, true);
           return;
         }
 
@@ -913,23 +1447,14 @@
           return;
         }
 
-        els.btnBack.onclick = function () {
-          if (window.history.length > 1) {
-            window.history.back();
-          } else {
-            C.redirect('index.html');
-          }
-        };
+        bindEvents();
 
-        els.btnReload.onclick = function () {
-          loadDetail();
-        };
-
-        els.btnPrintSticker.onclick = function () {
-          printSticker();
-        };
-
-        loadDetail();
+        try {
+          var ok = await loadDetail();
+          if (!ok) return;
+        } catch (err) {
+          showError((err && err.message) ? err.message : 'โหลดข้อมูลเอกสารไม่สำเร็จ');
+        }
       }
 
       init();
