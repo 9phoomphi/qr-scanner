@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ไม่มีสิทธิ์เข้าถึง</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -129,6 +129,40 @@
     @media (max-width: 620px) {
       .deny-actions {
         grid-template-columns: 1fr;
+      }
+
+      .deny-card {
+        border-radius: 22px;
+      }
+
+      .deny-head {
+        padding: 16px 14px 14px;
+      }
+
+      .deny-head h1 {
+        font-size: 1.14rem;
+      }
+
+      .deny-head p {
+        font-size: 0.8rem;
+      }
+
+      .deny-body {
+        padding: 14px 12px 12px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 420px) {
+      body {
+        padding: 10px;
+      }
+
+      .deny-alert {
+        font-size: 0.84rem;
       }
     }
   </style>

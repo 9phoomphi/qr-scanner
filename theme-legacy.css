@@ -87,6 +87,8 @@ body.dark-mode {
 html,
 body {
   min-height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -2817,6 +2819,14 @@ body.dark-mode .box-card:hover {
   #statsRow,
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  input,
+  select,
+  textarea,
+  .form-control,
+  .form-select {
+    font-size: 16px !important;
   }
 }
 

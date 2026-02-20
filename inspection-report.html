@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>เครื่องมือตรวจสอบผลงาน</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -408,14 +408,84 @@
     }
 
     @media (max-width: 760px) {
+      .insp-page {
+        padding: 12px;
+      }
+
+      .insp-top {
+        margin-bottom: 10px;
+      }
+
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .hero-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+      }
+
+      .hero h1 {
+        font-size: 1.08rem;
+      }
+
+      .inspector-card {
+        padding: 12px;
+      }
+
+      .search-btn,
+      .print-btn,
+      .adv-btn,
+      .light-btn {
+        width: 100%;
+      }
+
+      .adv-row {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
       .doc-meta {
         gap: 7px;
+        flex-direction: column;
+        align-items: flex-start;
       }
 
       .doc-checker {
         margin-left: 0;
         width: 100%;
         justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .insp-page {
+        padding: 8px;
+      }
+
+      .inspector-card {
+        padding: 10px;
+      }
+
+      .doc-item {
+        padding: 10px;
+      }
+
+      .doc-title {
+        font-size: 0.92rem;
+      }
+
+      .doc-subject {
+        font-size: 0.84rem;
+      }
+
+      .form-control,
+      .form-select {
+        font-size: 16px;
       }
     }
   </style>

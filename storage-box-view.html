@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ตรวจสอบกล่องเอกสาร</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -487,6 +487,10 @@
     }
 
     @media (max-width: 880px) {
+      .box-page {
+        padding: 12px;
+      }
+
       .doc-top {
         flex-direction: column;
         align-items: flex-start;
@@ -511,6 +515,81 @@
 
       .box-doc-card {
         padding: 14px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .box-page {
+        padding: 10px;
+      }
+
+      .box-top {
+        margin-bottom: 10px;
+      }
+
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .header-bg {
+        padding: 16px 12px;
+      }
+
+      .header-bg h2 {
+        font-size: 1.08rem;
+      }
+
+      .header-bg .subtitle {
+        font-size: 0.8rem;
+      }
+
+      .box-body {
+        padding: 12px;
+      }
+
+      .box-qr-wrap {
+        padding: 12px;
+      }
+
+      .box-actions .btn {
+        width: 100%;
+      }
+
+      .year-chip-wrap {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .year-chip {
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .box-page {
+        padding: 8px;
+      }
+
+      .box-body {
+        padding: 10px;
+      }
+
+      .box-qr-image {
+        width: min(86vw, 200px);
+      }
+
+      .box-doc-card {
+        padding: 11px;
+        border-radius: 14px;
+      }
+
+      .doc-title {
+        font-size: 0.92rem;
+      }
+
+      .doc-subject {
+        font-size: 0.84rem;
       }
     }
   </style>

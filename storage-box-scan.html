@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>สแกนเอกสารเข้ากล่องจัดเก็บ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -739,6 +739,19 @@
         padding: 2px 2px 10px;
       }
 
+      .boxscan-hero-head {
+        align-items: stretch;
+      }
+
+      .hero-actions {
+        width: 100%;
+      }
+
+      .hero-btn {
+        flex: 1 1 calc(50% - 4px);
+        justify-content: center;
+      }
+
       .boxscan-card {
         padding: 13px 11px;
         border-radius: 22px;
@@ -777,6 +790,10 @@
 
       .camera-picker {
         grid-template-columns: 1fr;
+      }
+
+      .camera-select {
+        font-size: 16px;
       }
 
       .scan-status {
@@ -828,6 +845,10 @@
       .queue-head {
         flex-wrap: wrap;
         gap: 8px;
+      }
+
+      .hero-btn {
+        flex: 1 1 100%;
       }
 
       .scanner-btn,

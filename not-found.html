@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ไม่พบข้อมูล</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -105,6 +105,43 @@
       color: var(--text-color);
       background: rgba(148, 163, 184, 0.14);
       border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    @media (max-width: 620px) {
+      .nf-card {
+        border-radius: 20px;
+        padding: 18px 12px 14px;
+      }
+
+      .nf-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        font-size: 1.5rem;
+      }
+
+      .nf-title {
+        font-size: 1.18rem;
+      }
+
+      .nf-detail {
+        font-size: 0.84rem;
+      }
+
+      .nf-actions {
+        display: grid;
+        width: 100%;
+      }
+
+      .nf-actions .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 420px) {
+      body {
+        padding: 10px;
+      }
     }
   </style>
 </head>

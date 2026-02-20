@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>จัดการสถานะเอกสาร</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -330,6 +330,74 @@
     @media (max-width: 900px) {
       .status-detail {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .status-page {
+        padding: 12px;
+      }
+
+      .status-top {
+        margin-bottom: 10px;
+      }
+
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .header-bg {
+        padding: 16px 12px;
+      }
+
+      .header-bg i {
+        font-size: 1.62rem;
+      }
+
+      .header-bg h3 {
+        font-size: 1.02rem;
+      }
+
+      .status-body {
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .form-section {
+        padding: 11px;
+        border-radius: 14px;
+      }
+
+      .step-head {
+        align-items: flex-start;
+      }
+
+      .member-select-wrap {
+        flex-wrap: wrap;
+      }
+
+      .form-control,
+      .form-select {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .status-page {
+        padding: 8px;
+      }
+
+      .status-body {
+        padding: 10px;
+      }
+
+      .header-bg small {
+        font-size: 0.78rem;
+      }
+
+      .submit-btn {
+        min-height: 46px;
       }
     }
   </style>

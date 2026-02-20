@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>เพิ่ม/แก้ไขเอกสาร</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -311,6 +311,79 @@
     @media (max-width: 900px) {
       .row.two {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .form-page {
+        padding: 12px;
+      }
+
+      .form-top {
+        margin-bottom: 10px;
+      }
+
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .header-bg {
+        padding: 16px 12px;
+      }
+
+      .header-bg i {
+        font-size: 1.65rem;
+      }
+
+      .header-bg h3 {
+        font-size: 1.05rem;
+      }
+
+      .card-body {
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .form-section {
+        padding: 11px;
+        border-radius: 14px;
+      }
+
+      .thai-time-wrap {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      }
+
+      .thai-time-label {
+        grid-column: 1 / -1;
+      }
+
+      .form-control,
+      .form-select,
+      textarea.form-control {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .form-page {
+        padding: 8px;
+      }
+
+      .header-bg {
+        padding: 14px 10px;
+      }
+
+      .header-bg small {
+        font-size: 0.78rem;
+      }
+
+      .card-body {
+        padding: 10px;
+      }
+
+      .submit-btn {
+        min-height: 46px;
       }
     }
   </style>
