@@ -220,6 +220,27 @@
     }, opts);
   };
 
+  DocumentControlApi.prototype.optionsInfo = function (opts) {
+    return this.call('options.info', {
+      deviceKey: this.defaultDeviceKey,
+      clientIpKey: this.defaultIpKey
+    }, opts);
+  };
+
+  DocumentControlApi.prototype.optionsMembers = function (opts) {
+    return this.call('options.members', {
+      deviceKey: this.defaultDeviceKey,
+      clientIpKey: this.defaultIpKey
+    }, opts);
+  };
+
+  DocumentControlApi.prototype.storageOptions = function (opts) {
+    return this.call('storage.options', {
+      deviceKey: this.defaultDeviceKey,
+      clientIpKey: this.defaultIpKey
+    }, opts);
+  };
+
   DocumentControlApi.prototype.docsList = function (params, opts) {
     params = params || {};
     return this.call('docs.list', {
@@ -229,6 +250,14 @@
       itemsPerPage: Number(params.itemsPerPage || 20),
       searchQuery: safeTrim(params.searchQuery || ''),
       statusFilter: safeTrim(params.statusFilter || 'all')
+    }, opts);
+  };
+
+  DocumentControlApi.prototype.docDetail = function (docId, opts) {
+    return this.call('doc.detail', {
+      deviceKey: this.defaultDeviceKey,
+      clientIpKey: this.defaultIpKey,
+      docId: safeTrim(docId || '')
     }, opts);
   };
 
@@ -312,6 +341,14 @@
       userName: safeTrim(userName || ''),
       fiscalYear: safeTrim(fiscalYear || ''),
       destroyDate: safeTrim(destroyDate || '')
+    }, opts);
+  };
+
+  DocumentControlApi.prototype.boxDetail = function (boxName, opts) {
+    return this.call('box.detail', {
+      deviceKey: this.defaultDeviceKey,
+      clientIpKey: this.defaultIpKey,
+      boxName: safeTrim(boxName || '')
     }, opts);
   };
 
