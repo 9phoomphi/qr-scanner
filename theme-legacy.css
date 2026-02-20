@@ -102,9 +102,9 @@ body {
 
 .shell {
   opacity: 0;
-  transform: translateY(12px) scale(0.995);
-  transition: opacity var(--motion-mid) var(--ease-out-soft), transform var(--motion-slow) var(--ease-out-snap);
-  will-change: opacity, transform;
+  transform: none;
+  transition: opacity var(--motion-mid) var(--ease-out-soft);
+  will-change: opacity;
 }
 
 body.page-ready .shell {
@@ -114,7 +114,7 @@ body.page-ready .shell {
 
 body.page-leaving .shell {
   opacity: 0;
-  transform: translateY(6px) scale(0.994);
+  transform: none;
 }
 
 h1,
@@ -451,14 +451,14 @@ body.dark-mode .search-box:focus {
 /* Floating add button */
 #btnAddFab.fab {
   position: fixed;
-  right: 28px;
-  right: calc(28px + env(safe-area-inset-right));
-  bottom: 28px;
-  bottom: calc(28px + env(safe-area-inset-bottom));
-  width: 96px;
-  height: 96px;
+  right: 20px;
+  right: calc(20px + env(safe-area-inset-right));
+  bottom: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  width: 68px;
+  height: 68px;
   border-radius: 999px;
-  border: 2px solid rgba(147, 197, 253, 0.74);
+  border: 1.5px solid rgba(147, 197, 253, 0.74);
   background: linear-gradient(180deg, rgba(236, 244, 252, 0.95) 0%, rgba(222, 235, 249, 0.88) 100%);
   color: #0a84ff;
   display: inline-flex;
@@ -473,7 +473,7 @@ body.dark-mode .search-box:focus {
 }
 
 #btnAddFab.fab i {
-  font-size: 2.34rem;
+  font-size: 1.62rem;
   font-weight: 500;
   line-height: 1;
 }
@@ -600,15 +600,19 @@ body.dark-mode #itemsPerPage {
 
 .filter-modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 3000;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 3200;
   display: none;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  padding-top: calc(20px + env(safe-area-inset-top));
+  padding-right: calc(20px + env(safe-area-inset-right));
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  padding-left: calc(20px + env(safe-area-inset-left));
+  isolation: isolate;
 }
 
 .filter-modal.active {
@@ -621,6 +625,7 @@ body.dark-mode #itemsPerPage {
   background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  z-index: 0;
 }
 
 .filter-modal-content {
@@ -631,9 +636,10 @@ body.dark-mode #itemsPerPage {
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 32px 64px rgba(0, 0, 0, 0.18), 0 12px 24px rgba(0, 0, 0, 0.12);
-  width: 100%;
-  max-width: 460px;
+  width: min(460px, 100%);
+  max-height: calc(100dvh - 40px);
   overflow: hidden;
+  z-index: 1;
 }
 
 body.dark-mode .filter-modal-content {
@@ -676,7 +682,7 @@ body.dark-mode .filter-modal-content {
 
 .filter-modal-body {
   padding: 16px 20px;
-  max-height: 64vh;
+  max-height: min(64vh, calc(100dvh - 170px));
   overflow-y: auto;
 }
 
@@ -2700,16 +2706,16 @@ body.dark-mode .box-card:hover {
   }
 
   #btnAddFab.fab {
-    width: 74px;
-    height: 74px;
-    right: 16px;
-    right: calc(16px + env(safe-area-inset-right));
-    bottom: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom));
+    width: 56px;
+    height: 56px;
+    right: 12px;
+    right: calc(12px + env(safe-area-inset-right));
+    bottom: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
   }
 
   #btnAddFab.fab i {
-    font-size: 1.86rem;
+    font-size: 1.34rem;
   }
 
   .login-user-chip {
@@ -2827,6 +2833,183 @@ body.dark-mode .box-card:hover {
   .form-control,
   .form-select {
     font-size: 16px !important;
+  }
+
+  #homeTopbar {
+    border-radius: 16px;
+    padding: 8px 0;
+  }
+
+  #homeTopbar .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  #homeTopbar .dash-head-row {
+    gap: 8px;
+  }
+
+  #homeTopbar .dash-brand {
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  #homeTopbar .dash-brand-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  #homeTopbar .dash-brand-icon i {
+    font-size: 1.02rem;
+  }
+
+  #homeTopbar .dash-title {
+    font-size: 1.06rem;
+    line-height: 1.14;
+    margin-bottom: 1px;
+  }
+
+  #homeTopbar .dash-subtitle {
+    font-size: 0.76rem;
+    line-height: 1.24;
+  }
+
+  #homeTopbar #connectStatus.header-status {
+    font-size: 0.72rem;
+    margin-top: 1px;
+  }
+
+  #homeTopbar .dash-user-wrap {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  #homeTopbar #sessionUserChip {
+    width: 100%;
+    min-height: 50px;
+    max-width: none;
+    padding: 6px 10px 6px 8px;
+  }
+
+  #homeTopbar .session-avatar-wrap {
+    width: 34px;
+    height: 34px;
+  }
+
+  #homeTopbar .login-user-name {
+    font-size: 0.8rem;
+  }
+
+  #homeTopbar .login-user-pos {
+    font-size: 0.7rem;
+  }
+
+  #homeTopbar .logout-btn {
+    width: 100%;
+    margin-left: 0;
+    min-height: 38px;
+    font-size: 0.8rem !important;
+  }
+
+  #homeTopbar .dash-search-wrap {
+    margin-top: 6px;
+  }
+
+  #homeTopbar .dash-search-wrap #searchIcon {
+    left: 14px;
+    font-size: 1.02rem;
+  }
+
+  #homeTopbar .search-box {
+    min-height: 48px;
+    border-radius: 14px;
+    padding: 0 12px 0 44px;
+    font-size: 0.9rem;
+  }
+
+  .docs-toolbar {
+    display: grid;
+    gap: 8px;
+  }
+
+  .docs-toolbar-left,
+  .docs-toolbar-right {
+    width: 100%;
+  }
+
+  .docs-toolbar-left .btn,
+  .docs-toolbar-right .btn {
+    width: 100%;
+  }
+
+  #statsRow .stat-card {
+    min-height: 108px;
+    padding: 12px 12px !important;
+    border-radius: 16px !important;
+  }
+
+  #statsRow .stat-label {
+    font-size: 0.78rem;
+    line-height: 1.15;
+  }
+
+  #statsRow .stat-num,
+  #statsRow .stat-number {
+    font-size: 1.92rem;
+    margin-top: 3px;
+  }
+
+  #statsRow .stat-icon {
+    font-size: 2.05rem;
+    right: 8px;
+    top: 8px;
+  }
+
+  .pagination-controls {
+    gap: 8px;
+    padding: 8px 10px !important;
+  }
+
+  .pagination-info {
+    font-size: 0.82rem;
+  }
+
+  .pagination-inline-input {
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 34px !important;
+  }
+
+  .box-card {
+    border-radius: 14px !important;
+    padding: 11px;
+  }
+
+  .box-name {
+    font-size: 0.92rem;
+  }
+
+  .box-count,
+  .box-hint {
+    font-size: 0.76rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #btnAddFab.fab {
+    width: 52px;
+    height: 52px;
+    right: 10px;
+    right: calc(10px + env(safe-area-inset-right));
+    bottom: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+
+  #btnAddFab.fab i {
+    font-size: 1.2rem;
   }
 }
 

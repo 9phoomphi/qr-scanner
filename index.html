@@ -2413,8 +2413,16 @@
         if (els.filterReturned) els.filterReturned.checked = state.selectedFilters.indexOf('returned') > -1;
       }
 
+      function mountFilterModalToBody() {
+        if (!els.filterModal || !document.body) return;
+        if (els.filterModal.parentNode !== document.body) {
+          document.body.appendChild(els.filterModal);
+        }
+      }
+
       function openFilterModal() {
         if (!els.filterModal) return;
+        mountFilterModalToBody();
         refreshFilterOptions();
         els.filterModal.classList.add('active');
       }
@@ -3053,6 +3061,7 @@
         refreshFilterOptions();
         syncPagination();
         switchTab('docs');
+        mountFilterModalToBody();
         initEvents();
 
         if (initialUrl) {
