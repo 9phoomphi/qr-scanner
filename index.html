@@ -618,7 +618,7 @@
 
     .search-head-left {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 14px;
       min-width: 0;
       flex: 1 1 auto;
@@ -640,32 +640,38 @@
 
     .search-brand-copy {
       min-width: 0;
-      display: grid;
-      gap: 1px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
     }
 
     #homeTopbar.search-head .title {
-      font-size: 1.96rem;
-      line-height: 1.05;
-      font-weight: 900;
+      font-size: clamp(1.55rem, 3.1vw, 2.18rem);
+      line-height: 1.18;
+      font-weight: 850;
       margin: 0;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.005em;
       color: #0f172a;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .app-subtitle {
-      font-size: 1.02rem !important;
+      font-size: clamp(0.98rem, 1.45vw, 1.2rem) !important;
       color: #64748b !important;
-      font-weight: 600;
-      line-height: 1.2;
+      font-weight: 650;
+      line-height: 1.32;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .header-status {
-      font-size: 0.76rem;
-      line-height: 1.2;
-      font-weight: 700;
+      font-size: clamp(0.84rem, 1.2vw, 0.95rem);
+      line-height: 1.26;
+      font-weight: 750;
       color: #64748b;
-      margin-top: 2px;
+      margin-top: 0;
     }
 
     .header-status[data-status="ok"] { color: #15803d; }
@@ -1210,7 +1216,7 @@
       font-size: 3.9rem;
       line-height: 1;
       color: var(--stat-icon);
-      opacity: 0.58;
+      opacity: 0.52;
       transform: translate3d(var(--ix), var(--iy), 24px) rotate(-8deg);
       transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.34s ease;
       pointer-events: none;
@@ -1224,18 +1230,20 @@
 
     #statsRow .stat-label {
       margin: 0;
-      max-width: calc(100% - 84px);
-      font-size: 1.08rem;
+      max-width: none;
+      font-size: clamp(0.96rem, 1.2vw, 1.08rem);
       font-weight: 800;
       letter-spacing: 0;
       text-transform: none;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.22;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      overflow-wrap: anywhere;
+      word-break: break-word;
       color: var(--stat-color) !important;
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     #statsRow .stat-num,
@@ -1248,7 +1256,7 @@
       letter-spacing: -0.02em;
       color: var(--stat-color) !important;
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     #statsRow .stat-card.s-total {
@@ -1390,7 +1398,7 @@
 
     @media (max-width: 1200px) {
       #statsRow .stat-label {
-        font-size: 1.02rem;
+        font-size: 0.98rem;
       }
 
       #statsRow .stat-num,
@@ -1449,13 +1457,15 @@
         font-size: 1.28rem;
       }
       #homeTopbar.search-head .title {
-        font-size: 1.44rem;
+        font-size: 1.28rem;
+        line-height: 1.2;
       }
       .app-subtitle {
-        font-size: 0.88rem !important;
+        font-size: 0.84rem !important;
+        line-height: 1.28;
       }
       .header-status {
-        font-size: 0.7rem;
+        font-size: 0.76rem;
       }
       .session-chip {
         width: 100%;
@@ -1500,8 +1510,9 @@
         border-radius: 22px !important;
       }
       #statsRow .stat-label {
-        max-width: calc(100% - 64px);
-        font-size: 0.95rem;
+        max-width: none;
+        font-size: 0.9rem;
+        line-height: 1.18;
       }
       #statsRow .stat-num,
       #statsRow .stat-number {
@@ -1562,7 +1573,6 @@
           <div id="appSubtitle" class="muted app-subtitle">ค้นหา เพิ่ม แก้ไข และจัดการเอกสาร</div>
           <div id="connectStatus" class="header-status" data-status="warn">พร้อมเข้าสู่ระบบ</div>
           <div id="configLinks" class="config-links hidden">
-            <a id="linkWebApp" class="config-link hidden" target="_blank" rel="noopener">Web App</a>
             <a id="linkSpreadsheet" class="config-link hidden" target="_blank" rel="noopener">Spreadsheet</a>
             <a id="linkAppsScript" class="config-link hidden" target="_blank" rel="noopener">Apps Script</a>
             <a id="linkDriveFolder" class="config-link hidden" target="_blank" rel="noopener">Drive Folder</a>
@@ -1745,7 +1755,6 @@
         appTitle: document.getElementById('appTitle'),
         appSubtitle: document.getElementById('appSubtitle'),
         configLinks: document.getElementById('configLinks'),
-        linkWebApp: document.getElementById('linkWebApp'),
         linkSpreadsheet: document.getElementById('linkSpreadsheet'),
         linkAppsScript: document.getElementById('linkAppsScript'),
         linkDriveFolder: document.getElementById('linkDriveFolder'),
@@ -1840,7 +1849,6 @@
           el.classList.remove('hidden');
         }
 
-        bindLink(els.linkWebApp, links.webApp || config.scriptUrl || '');
         bindLink(els.linkSpreadsheet, links.spreadsheet || '');
         bindLink(els.linkAppsScript, links.appsScriptProject || '');
         bindLink(els.linkDriveFolder, links.driveFolder || '');
