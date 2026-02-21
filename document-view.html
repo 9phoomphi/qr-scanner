@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-1">
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-5">
   <style>
     .doc-page {
       max-width: 1120px;
@@ -546,7 +546,7 @@
       margin: 0;
       font-size: 0.98rem;
       font-weight: 860;
-      color: #0f2343;
+      color: var(--text-color);
       line-height: 1.3;
       display: inline-flex;
       align-items: center;
@@ -580,6 +580,15 @@
       height: 50px;
       border-radius: 14px !important;
       font-weight: 650;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      padding-right: 42px !important;
+      background-color: #ffffff !important;
+      background-image: var(--dd-arrow-light) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 14px 14px !important;
     }
 
     .storage-user {
@@ -802,7 +811,11 @@
       height: 50px !important;
       border-radius: 15px !important;
       border: 1px solid rgba(100, 116, 139, 0.38) !important;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 251, 255, 0.78)) !important;
+      background-color: #ffffff !important;
+      background-image: var(--dd-arrow-light) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 14px 14px !important;
       color: var(--text-color) !important;
       padding: 0 40px 0 14px !important;
       font: inherit !important;
@@ -835,9 +848,16 @@
     body.dark-mode .swal2-popup .sw-status-select,
     body.dark-mode .swal2-popup .sw-status-remark {
       border-color: rgba(148, 163, 184, 0.44) !important;
-      background: linear-gradient(180deg, rgba(20, 29, 43, 0.9), rgba(14, 23, 35, 0.78)) !important;
+      background-color: rgba(20, 29, 43, 0.9) !important;
       color: rgba(241, 245, 249, 0.96) !important;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 22px rgba(2, 8, 20, 0.34) !important;
+    }
+
+    body.dark-mode .swal2-popup .sw-status-select {
+      background-image: var(--dd-arrow-dark) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 14px 14px !important;
     }
 
     .thai-date-input {
@@ -869,16 +889,36 @@
     }
 
     body.dark-mode .step-item {
-      border-color: rgba(148, 163, 184, 0.34);
-      background: linear-gradient(180deg, rgba(19, 30, 45, 0.84), rgba(14, 23, 35, 0.74));
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 30px rgba(2, 8, 20, 0.34);
-      color: rgba(226, 232, 240, 0.78);
+      border-color: rgba(74, 104, 139, 0.52);
+      background: linear-gradient(180deg, rgba(17, 33, 51, 0.96), rgba(12, 25, 40, 0.9));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 30px rgba(2, 8, 20, 0.4);
+      color: rgba(216, 228, 245, 0.95);
+    }
+
+    body.dark-mode .step-item i {
+      color: rgba(160, 181, 208, 0.96);
     }
 
     body.dark-mode .step-item.done {
-      border-color: rgba(74, 222, 128, 0.46);
-      background: linear-gradient(180deg, rgba(34, 197, 94, 0.26), rgba(34, 197, 94, 0.14));
-      color: #86efac;
+      border-color: rgba(89, 161, 255, 0.56);
+      background: linear-gradient(180deg, rgba(34, 88, 156, 0.66), rgba(21, 60, 111, 0.58));
+      color: #d8e9ff;
+    }
+
+    body.dark-mode .step-item.done i {
+      color: #8fd0ff;
+    }
+
+    body.dark-mode .step-user-chip {
+      border-color: rgba(118, 168, 234, 0.52);
+      background: rgba(12, 29, 47, 0.88);
+      color: #d2e6ff;
+    }
+
+    body.dark-mode .step-user-chip .fallback {
+      background: rgba(64, 129, 213, 0.28);
+      border-color: rgba(139, 191, 250, 0.58);
+      color: #d9ecff;
     }
 
     body.dark-mode .storage-form,
@@ -890,10 +930,29 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 30px rgba(2, 8, 20, 0.34);
     }
 
+    body.dark-mode .storage-select {
+      background-color: rgba(20, 29, 43, 0.9) !important;
+      background-image: var(--dd-arrow-dark) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 14px 14px !important;
+      border-color: rgba(148, 163, 184, 0.44) !important;
+      color: rgba(241, 245, 249, 0.96) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 22px rgba(2, 8, 20, 0.34) !important;
+    }
+
     body.dark-mode .storage-note {
       color: #d1e9ff;
       border-color: rgba(90, 200, 250, 0.44);
       background: linear-gradient(180deg, rgba(10, 132, 255, 0.22), rgba(10, 132, 255, 0.1));
+    }
+
+    body.dark-mode .storage-form-title {
+      color: #eaf2ff;
+    }
+
+    body.dark-mode .storage-form-sub {
+      color: #b8c7dd;
     }
 
     @keyframes spin {
@@ -1109,7 +1168,7 @@
 
   <script src="./config.js"></script>
   <script src="./api-client.js"></script>
-  <script src="./theme-legacy.js"></script>
+  <script src="./theme-legacy.js?v=20260221-2"></script>
   <script src="./app-common.js"></script>
   <script>
     (function () {
@@ -1118,6 +1177,7 @@
       var C = window.DocFrontendCommon;
       var q = C.parseQuery();
       var docId = C.safeTrim(q.id || '');
+      var APP_BROWSER_NAME = 'ระบบทะเบียนคุมเอกสาร';
 
       var state = {
         settings: null,
@@ -1162,6 +1222,12 @@
         }
         els.errBox.textContent = msg;
         els.errBox.classList.add('show');
+      }
+
+      function updateBrowserTitle(idValue) {
+        var id = C.safeTrim(idValue || '');
+        var page = id ? ('รายละเอียดเอกสาร • ' + id) : 'รายละเอียดเอกสาร';
+        document.title = page + ' | ' + APP_BROWSER_NAME;
       }
 
       function setBusy(isBusy) {
@@ -1552,6 +1618,7 @@
         var doc = state.doc || {};
         var statusData = state.statusData || {};
         var isReadOnly = !!doc.isReadOnlyUser;
+        updateBrowserTitle(doc.docId || docId);
 
         els.docIdTitle.textContent = doc.docId || '-';
         els.docIdSub.textContent = C.safeTrim(doc.docNoSdh || '') ? ('สธ ' + C.safeText(doc.docNoSdh || '')) : '-';
@@ -1867,6 +1934,7 @@
         }
 
         bindEvents();
+        updateBrowserTitle(docId);
 
         try {
           var ok = await loadDetail();

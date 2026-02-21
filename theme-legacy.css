@@ -4985,14 +4985,10 @@ body.dark-mode.page-inspector .form-select {
   background-image: var(--dd-arrow-dark) !important;
 }
 
-body.page-doc-view,
-body.page-doc-form,
-body.page-doc-status,
-body.page-inspector,
-body.dark-mode.page-doc-view,
-body.dark-mode.page-doc-form,
-body.dark-mode.page-doc-status,
-body.dark-mode.page-inspector {
+body.page-doc-view:not(.dark-mode),
+body.page-doc-form:not(.dark-mode),
+body.page-doc-status:not(.dark-mode),
+body.page-inspector:not(.dark-mode) {
   --text-color: #0f2343;
   --muted-text: #627086;
   --card-bg: #ffffff;
@@ -5006,15 +5002,15 @@ body.dark-mode.page-inspector {
   color: var(--text-color) !important;
 }
 
-body.page-doc-view .main-card,
-body.page-doc-form .main-card,
-body.page-doc-status .main-card,
-body.page-inspector .inspector-card,
-body.page-inspector .stat-box,
-body.page-inspector .doc-item,
-body.page-doc-view .info-group,
-body.page-doc-status .form-section,
-body.page-doc-form .form-section {
+body.page-doc-view:not(.dark-mode) .main-card,
+body.page-doc-form:not(.dark-mode) .main-card,
+body.page-doc-status:not(.dark-mode) .main-card,
+body.page-inspector:not(.dark-mode) .inspector-card,
+body.page-inspector:not(.dark-mode) .stat-box,
+body.page-inspector:not(.dark-mode) .doc-item,
+body.page-doc-view:not(.dark-mode) .info-group,
+body.page-doc-status:not(.dark-mode) .form-section,
+body.page-doc-form:not(.dark-mode) .form-section {
   background: #ffffff !important;
   border-color: #d4dfed !important;
   box-shadow: 0 8px 20px rgba(11, 45, 92, 0.08) !important;
@@ -5022,44 +5018,44 @@ body.page-doc-form .form-section {
   -webkit-backdrop-filter: none !important;
 }
 
-body.page-doc-view .doc-body,
-body.page-doc-form .card-body,
-body.page-doc-status .status-body {
+body.page-doc-view:not(.dark-mode) .doc-body,
+body.page-doc-form:not(.dark-mode) .card-body,
+body.page-doc-status:not(.dark-mode) .status-body {
   background: #f8fbff !important;
 }
 
-body.page-doc-view .header-bg,
-body.page-doc-form .header-bg,
-body.page-doc-status .header-bg {
+body.page-doc-view:not(.dark-mode) .header-bg,
+body.page-doc-form:not(.dark-mode) .header-bg,
+body.page-doc-status:not(.dark-mode) .header-bg {
   background: linear-gradient(180deg, #2f85e8 0%, #0a66d8 68%, #0758bb 100%) !important;
   border-bottom: 1px solid rgba(10, 102, 216, 0.24) !important;
 }
 
-body.page-inspector .hero-icon {
+body.page-inspector:not(.dark-mode) .hero-icon {
   background: linear-gradient(180deg, #2f85e8 0%, #0a66d8 70%, #0758bb 100%) !important;
   box-shadow: 0 8px 18px rgba(10, 102, 216, 0.22) !important;
 }
 
-body.page-doc-view input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-body.page-doc-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-body.page-doc-status input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-body.page-inspector input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
-body.page-doc-view select,
-body.page-doc-form select,
-body.page-doc-status select,
-body.page-inspector select,
-body.page-doc-view textarea,
-body.page-doc-form textarea,
-body.page-doc-status textarea,
-body.page-inspector textarea,
-body.page-doc-view .form-control,
-body.page-doc-form .form-control,
-body.page-doc-status .form-control,
-body.page-inspector .form-control,
-body.page-doc-view .form-select,
-body.page-doc-form .form-select,
-body.page-doc-status .form-select,
-body.page-inspector .form-select {
+body.page-doc-view:not(.dark-mode) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.page-doc-form:not(.dark-mode) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.page-doc-status:not(.dark-mode) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.page-inspector:not(.dark-mode) input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.page-doc-view:not(.dark-mode) select,
+body.page-doc-form:not(.dark-mode) select,
+body.page-doc-status:not(.dark-mode) select,
+body.page-inspector:not(.dark-mode) select,
+body.page-doc-view:not(.dark-mode) textarea,
+body.page-doc-form:not(.dark-mode) textarea,
+body.page-doc-status:not(.dark-mode) textarea,
+body.page-inspector:not(.dark-mode) textarea,
+body.page-doc-view:not(.dark-mode) .form-control,
+body.page-doc-form:not(.dark-mode) .form-control,
+body.page-doc-status:not(.dark-mode) .form-control,
+body.page-inspector:not(.dark-mode) .form-control,
+body.page-doc-view:not(.dark-mode) .form-select,
+body.page-doc-form:not(.dark-mode) .form-select,
+body.page-doc-status:not(.dark-mode) .form-select,
+body.page-inspector:not(.dark-mode) .form-select {
   background-color: #ffffff !important;
   border-color: #c8d7ea !important;
   box-shadow: none !important;
@@ -5067,28 +5063,150 @@ body.page-inspector .form-select {
   -webkit-backdrop-filter: none !important;
 }
 
-body.page-doc-view .btn.primary,
-body.page-doc-form .submit-btn,
-body.page-doc-status .submit-btn,
-body.page-inspector .search-btn,
-body.page-inspector .print-btn {
+body.page-doc-view:not(.dark-mode) .btn.primary,
+body.page-doc-form:not(.dark-mode) .submit-btn,
+body.page-doc-status:not(.dark-mode) .submit-btn,
+body.page-inspector:not(.dark-mode) .search-btn,
+body.page-inspector:not(.dark-mode) .print-btn {
   background: linear-gradient(180deg, #2f85e8 0%, #0a66d8 68%, #0758bb 100%) !important;
   border-color: rgba(10, 102, 216, 0.42) !important;
   color: #ffffff !important;
   box-shadow: 0 10px 22px rgba(10, 102, 216, 0.24) !important;
 }
 
-body.page-inspector .adv-btn,
-body.page-inspector .light-btn,
-body.page-doc-view .btn.outline,
-body.page-doc-view .btn.gray,
-body.page-doc-status .back-btn,
-body.page-doc-form .back-btn,
-body.page-inspector .back-btn {
+body.page-inspector:not(.dark-mode) .adv-btn,
+body.page-inspector:not(.dark-mode) .light-btn,
+body.page-doc-view:not(.dark-mode) .btn.outline,
+body.page-doc-view:not(.dark-mode) .btn.gray,
+body.page-doc-status:not(.dark-mode) .back-btn,
+body.page-doc-form:not(.dark-mode) .back-btn,
+body.page-inspector:not(.dark-mode) .back-btn {
   background: #ffffff !important;
   color: #1f3e63 !important;
   border-color: #c8d7ea !important;
   box-shadow: 0 8px 16px rgba(15, 35, 64, 0.08) !important;
+}
+
+body.dark-mode.page-doc-view,
+body.dark-mode.page-doc-form,
+body.dark-mode.page-doc-status,
+body.dark-mode.page-inspector {
+  --text-color: #e6eefb;
+  --muted-text: #a5b6cf;
+  --card-bg: #121d2f;
+  --card-strong: #172437;
+  --input-bg: #0f1a2b;
+  --input-border: #31465f;
+  --primary-color: #2f89f3;
+  --primary-color-soft: rgba(47, 137, 243, 0.24);
+  --bg-gradient: linear-gradient(180deg, #081322 0%, #0d192b 55%, #12203a 100%);
+  background: var(--bg-gradient) !important;
+  color: var(--text-color) !important;
+}
+
+body.dark-mode.page-doc-view .main-card,
+body.dark-mode.page-doc-form .main-card,
+body.dark-mode.page-doc-status .main-card,
+body.dark-mode.page-inspector .inspector-card,
+body.dark-mode.page-inspector .stat-box,
+body.dark-mode.page-inspector .doc-item,
+body.dark-mode.page-doc-view .info-group,
+body.dark-mode.page-doc-status .form-section,
+body.dark-mode.page-doc-form .form-section {
+  background: #121d2f !important;
+  border-color: #2a3f59 !important;
+  box-shadow: 0 14px 30px rgba(1, 8, 22, 0.48) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.dark-mode.page-doc-view .doc-body,
+body.dark-mode.page-doc-form .card-body,
+body.dark-mode.page-doc-status .status-body {
+  background: #0e1828 !important;
+}
+
+body.dark-mode.page-doc-view .header-bg,
+body.dark-mode.page-doc-form .header-bg,
+body.dark-mode.page-doc-status .header-bg,
+body.dark-mode.page-inspector .hero-icon {
+  background: linear-gradient(180deg, #2b6fc9 0%, #1e58ac 68%, #16468e 100%) !important;
+  border-bottom-color: rgba(91, 144, 220, 0.36) !important;
+}
+
+body.dark-mode.page-doc-view input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.dark-mode.page-doc-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.dark-mode.page-doc-status input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.dark-mode.page-inspector input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.dark-mode.page-doc-view select,
+body.dark-mode.page-doc-form select,
+body.dark-mode.page-doc-status select,
+body.dark-mode.page-inspector select,
+body.dark-mode.page-doc-view textarea,
+body.dark-mode.page-doc-form textarea,
+body.dark-mode.page-doc-status textarea,
+body.dark-mode.page-inspector textarea,
+body.dark-mode.page-doc-view .form-control,
+body.dark-mode.page-doc-form .form-control,
+body.dark-mode.page-doc-status .form-control,
+body.dark-mode.page-inspector .form-control,
+body.dark-mode.page-doc-view .form-select,
+body.dark-mode.page-doc-form .form-select,
+body.dark-mode.page-doc-status .form-select,
+body.dark-mode.page-inspector .form-select {
+  background-color: #0f1a2b !important;
+  border-color: #334b68 !important;
+  color: #e6eefb !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.dark-mode.page-doc-view .btn.primary,
+body.dark-mode.page-doc-form .submit-btn,
+body.dark-mode.page-doc-status .submit-btn,
+body.dark-mode.page-inspector .search-btn,
+body.dark-mode.page-inspector .print-btn {
+  background: linear-gradient(180deg, #3a8ef4 0%, #246fce 70%, #1a58aa 100%) !important;
+  border-color: rgba(86, 149, 234, 0.52) !important;
+  color: #f3f7ff !important;
+  box-shadow: 0 12px 26px rgba(18, 76, 156, 0.42) !important;
+}
+
+body.dark-mode.page-inspector .adv-btn,
+body.dark-mode.page-inspector .light-btn,
+body.dark-mode.page-doc-view .btn.outline,
+body.dark-mode.page-doc-view .btn.gray,
+body.dark-mode.page-doc-status .back-btn,
+body.dark-mode.page-doc-form .back-btn,
+body.dark-mode.page-inspector .back-btn {
+  background: #17263b !important;
+  color: #dbe9fb !important;
+  border-color: #365172 !important;
+  box-shadow: 0 10px 20px rgba(4, 14, 32, 0.36) !important;
+}
+
+/* Status-card icon readability tuning */
+#statsRow .stat-icon {
+  opacity: 0.34 !important;
+  filter: saturate(1.08) contrast(1.06);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #statsRow .stat-card:hover .stat-icon {
+    opacity: 0.5 !important;
+  }
+}
+
+body.dark-mode #statsRow .stat-icon {
+  opacity: 0.44 !important;
+  filter: saturate(1.2) brightness(1.08) drop-shadow(0 6px 16px rgba(3, 12, 28, 0.44));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dark-mode #statsRow .stat-card:hover .stat-icon {
+    opacity: 0.58 !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

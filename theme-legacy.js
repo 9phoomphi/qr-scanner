@@ -4,6 +4,77 @@
   var pageLeaveTimer = null;
   var pageLoadBusyCount = 0;
   var statCardObserver = null;
+  var dropdownStyleObserver = null;
+  var dropdownStyleRaf = 0;
+
+  var DD_ARROW_LIGHT = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23334863' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.2' d='M3 6l5 5 5-5'/%3E%3C/svg%3E\")";
+  var DD_ARROW_DARK = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23dbe7f8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.2' d='M3 6l5 5 5-5'/%3E%3C/svg%3E\")";
+
+  function applyUnifiedDropdownStyles(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+    if (!scope || !scope.querySelectorAll) return;
+
+    var isDark = !!(document.body && document.body.classList.contains('dark-mode'));
+    var arrow = isDark ? DD_ARROW_DARK : DD_ARROW_LIGHT;
+    var selects = scope.querySelectorAll('select, .form-select, .swal2-select, #itemsPerPage, .camera-select');
+
+    for (var i = 0; i < selects.length; i++) {
+      var el = selects[i];
+      if (!el || !el.style) continue;
+
+      var pr = (el.id === 'itemsPerPage') ? '34px' : '40px';
+      el.style.setProperty('-webkit-appearance', 'none', 'important');
+      el.style.setProperty('-moz-appearance', 'none', 'important');
+      el.style.setProperty('appearance', 'none', 'important');
+      el.style.setProperty('background-image', arrow, 'important');
+      el.style.setProperty('background-repeat', 'no-repeat', 'important');
+      el.style.setProperty('background-position', 'right 12px center', 'important');
+      el.style.setProperty('background-size', '14px 14px', 'important');
+      el.style.setProperty('padding-right', pr, 'important');
+      el.style.setProperty('border-radius', '14px', 'important');
+    }
+  }
+
+  function scheduleApplyUnifiedDropdownStyles(root) {
+    if (dropdownStyleRaf) return;
+    var run = function () {
+      dropdownStyleRaf = 0;
+      applyUnifiedDropdownStyles(root || document);
+    };
+    if (typeof global.requestAnimationFrame === 'function') {
+      dropdownStyleRaf = global.requestAnimationFrame(run);
+      return;
+    }
+    dropdownStyleRaf = setTimeout(run, 16);
+  }
+
+  function bindUnifiedDropdownObserver() {
+    if (dropdownStyleObserver || typeof MutationObserver !== 'function' || !document.body) return;
+    dropdownStyleObserver = new MutationObserver(function (mutations) {
+      if (!mutations || !mutations.length) return;
+      for (var i = 0; i < mutations.length; i++) {
+        var m = mutations[i];
+        if (!m) continue;
+        if (m.type === 'attributes') {
+          if (m.attributeName === 'class' && m.target === document.body) {
+            scheduleApplyUnifiedDropdownStyles(document);
+            return;
+          }
+          continue;
+        }
+        if (m.type === 'childList' && m.addedNodes && m.addedNodes.length) {
+          scheduleApplyUnifiedDropdownStyles(document);
+          return;
+        }
+      }
+    });
+    dropdownStyleObserver.observe(document.documentElement || document.body, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  }
 
   function getLoaderMessage(message) {
     var text = String(message == null ? '' : message).trim();
@@ -539,6 +610,7 @@
       var isDark = document.body.classList.contains('dark-mode');
       localStorage.setItem('appTheme', isDark ? 'dark' : 'light');
       if (icon) icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars';
+      scheduleApplyUnifiedDropdownStyles(document);
     } catch (_err) {}
   }
 
@@ -860,6 +932,8 @@
     ensurePageLoader();
     initDateDisplays();
     initStatCardMotion();
+    applyUnifiedDropdownStyles(document);
+    bindUnifiedDropdownObserver();
     resetPageLoading();
   }
 
@@ -883,6 +957,7 @@
   global.initTheme = initTheme;
   global.toggleTheme = toggleTheme;
   global.applyThemePreset = applyThemePreset;
+  global.applyUnifiedDropdownStyles = applyUnifiedDropdownStyles;
   global.setViewportHeightVar = setViewportHeightVar;
   global.initStatCardMotion = initStatCardMotion;
   global.openCalendar = openCalendar;

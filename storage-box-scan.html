@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-1">
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-5">
   <style>
     .boxscan-page {
       min-height: 100vh;
@@ -445,18 +445,50 @@
     }
 
     .camera-auto-chip {
-      margin-top: 10px;
+      margin: 10px auto 0;
       min-height: 38px;
       border-radius: 12px;
       padding: 0 12px;
       border: 1px solid rgba(148, 163, 184, 0.36);
       background: rgba(255, 255, 255, 0.74);
       color: #334155;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 8px;
       font-size: 0.82rem;
       font-weight: 760;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .swal2-container.scan-success-backdrop {
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(9, 17, 29, 0.36) !important;
+      backdrop-filter: saturate(145%) blur(8px) !important;
+      -webkit-backdrop-filter: saturate(145%) blur(8px) !important;
+    }
+
+    .scan-success-popup {
+      width: min(430px, calc(100vw - 28px)) !important;
+      border-radius: 20px !important;
+      padding: 1.1em 1.15em 1em !important;
+    }
+
+    .scan-success-title {
+      margin-bottom: 0.25em !important;
+      font-size: clamp(1.02rem, 2.2vw, 1.18rem) !important;
+      font-weight: 860 !important;
+      line-height: 1.32 !important;
+    }
+
+    .scan-success-html {
+      margin: 0.2em 0 0 !important;
+      font-size: 0.94rem !important;
+      font-weight: 620 !important;
+      color: #475569 !important;
+      line-height: 1.5 !important;
+      letter-spacing: 0.01em !important;
     }
 
     .camera-actions {
@@ -734,6 +766,14 @@
       color: #cbd5e1;
     }
 
+    body.dark-mode .swal2-container.scan-success-backdrop {
+      background: rgba(2, 8, 20, 0.56) !important;
+    }
+
+    body.dark-mode .scan-success-html {
+      color: #cbd5e1 !important;
+    }
+
     body.dark-mode .status-message {
       color: #cbd5e1;
     }
@@ -975,7 +1015,7 @@
 
   <script src="./config.js"></script>
   <script src="./api-client.js"></script>
-  <script src="./theme-legacy.js"></script>
+  <script src="./theme-legacy.js?v=20260221-2"></script>
   <script src="./app-common.js"></script>
   <script>
     (function () {
@@ -1576,12 +1616,19 @@
 
           if (selection && addQueueItem(checkRes.docId || docId, selection.fiscalYear, selection.boxId)) {
             Swal.fire({
-              toast: true,
-              position: 'top',
+              target: document.body,
+              backdrop: true,
               icon: 'success',
-              title: 'เพิ่มเข้ารายการแล้ว',
+              title: 'เพิ่มเข้ารายการจัดเก็บแล้ว',
+              html: 'ระบบเพิ่มเอกสารเข้าคิวบันทึกเรียบร้อย',
+              customClass: {
+                container: 'scan-success-backdrop',
+                popup: 'scan-success-popup',
+                title: 'scan-success-title',
+                htmlContainer: 'scan-success-html'
+              },
               showConfirmButton: false,
-              timer: 1100,
+              timer: 1250,
               timerProgressBar: true
             });
           }

@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-1">
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-5">
   <style>
     .box-page {
       max-width: 1140px;
@@ -602,9 +602,9 @@
 
     <div id="errBox" class="error-box"></div>
 
-    <div id="mainCard" class="main-card" style="display:none;">
+      <div id="mainCard" class="main-card" style="display:none;">
       <div class="header-bg">
-        <div class="subtitle">ตรวจสอบกล่อง</div>
+        <div id="boxSubtitle" class="subtitle">ตรวจสอบเอกสารในกล่อง: -</div>
         <h2 id="boxTitle"><i class="bi bi-archive-fill me-2"></i>-</h2>
         <span id="totalChip" class="header-chip">รวม 0 รายการ</span>
       </div>
@@ -634,7 +634,7 @@
 
   <script src="./config.js"></script>
   <script src="./api-client.js"></script>
-  <script src="./theme-legacy.js"></script>
+  <script src="./theme-legacy.js?v=20260221-2"></script>
   <script src="./app-common.js"></script>
   <script>
     (function () {
@@ -643,6 +643,7 @@
       var C = window.DocFrontendCommon;
       var q = C.parseQuery();
       var boxName = C.safeTrim(q.box || '');
+      var APP_BROWSER_NAME = 'ระบบทะเบียนคุมเอกสาร';
 
       var state = {
         settings: null,
@@ -655,6 +656,7 @@
         btnReload: document.getElementById('btnReload'),
         errBox: document.getElementById('errBox'),
         mainCard: document.getElementById('mainCard'),
+        boxSubtitle: document.getElementById('boxSubtitle'),
         boxTitle: document.getElementById('boxTitle'),
         totalChip: document.getElementById('totalChip'),
         boxQr: document.getElementById('boxQr'),
@@ -674,6 +676,12 @@
         }
         els.errBox.textContent = msg;
         els.errBox.classList.add('show');
+      }
+
+      function updateBrowserTitle(boxValue) {
+        var box = C.safeTrim(boxValue || '');
+        var page = box ? ('ตรวจสอบเอกสารในกล่อง • ' + box) : 'ตรวจสอบเอกสารในกล่อง';
+        document.title = page + ' | ' + APP_BROWSER_NAME;
       }
 
       function statusBadge(status) {
@@ -721,8 +729,13 @@
       function render() {
         var detail = state.detail || {};
         var docs = Array.isArray(detail.docs) ? detail.docs : [];
+        var resolvedBoxName = C.safeTrim(detail.boxName || boxName || '-');
+        updateBrowserTitle(resolvedBoxName);
 
-        els.boxTitle.innerHTML = '<i class="bi bi-archive-fill me-2"></i>' + C.escapeHtml(detail.boxName || boxName || '-');
+        els.boxTitle.innerHTML = '<i class="bi bi-archive-fill me-2"></i>' + C.escapeHtml(resolvedBoxName);
+        if (els.boxSubtitle) {
+          els.boxSubtitle.textContent = 'ตรวจสอบเอกสารในกล่อง: ' + resolvedBoxName;
+        }
         els.totalChip.textContent = 'รวม ' + docs.length + ' รายการ';
         els.storageYearChip.textContent = 'ปีจัดเก็บเอกสาร: ' + C.safeText(detail.storageYearSummary || '-');
         els.destroyYearChip.textContent = 'ปีที่ทำลายเอกสาร: ' + C.safeText(detail.destroyYearSummary || '-');
@@ -943,6 +956,7 @@
         }
 
         bindEvents();
+        updateBrowserTitle(boxName);
 
         try {
           var ok = await loadDetail();
