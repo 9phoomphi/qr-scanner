@@ -23,6 +23,17 @@
     return 'dk_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
   }
 
+  function getRuntimeDeviceKey() {
+    var key = '';
+    try {
+      if (typeof global.getDeviceKey === 'function') {
+        key = safeTrim(global.getDeviceKey() || '');
+      }
+    } catch (_e1) {}
+    if (!key) key = safeTrim(global.__docControlDeviceKey || '');
+    return key;
+  }
+
   function safeUrl(url) {
     var v = safeTrim(url);
     if (!v) return '';
@@ -59,14 +70,22 @@
     var cfg = readConfig();
     var savedUrl = '';
     var savedDevice = '';
+    var runtimeDevice = '';
 
     try {
       savedUrl = normalizeScriptUrl(localStorage.getItem(STORAGE_SCRIPT_URL) || '');
       savedDevice = safeTrim(localStorage.getItem(STORAGE_DEVICE_KEY) || '');
     } catch (_e) {}
 
+    runtimeDevice = getRuntimeDeviceKey();
+
     var scriptUrl = cfg.scriptUrl || savedUrl;
-    var deviceKey = cfg.deviceKey || savedDevice || randomDeviceKey();
+    var deviceKey = cfg.deviceKey || savedDevice || runtimeDevice || randomDeviceKey();
+
+    if (deviceKey) {
+      try { localStorage.setItem(STORAGE_DEVICE_KEY, deviceKey); } catch (_e2) {}
+      global.__docControlDeviceKey = deviceKey;
+    }
 
     return {
       scriptUrl: scriptUrl,
@@ -78,7 +97,7 @@
 
   function persistSettings(scriptUrl, deviceKey) {
     var nextUrl = normalizeScriptUrl(scriptUrl);
-    var nextDevice = safeTrim(deviceKey);
+    var nextDevice = safeTrim(deviceKey) || getRuntimeDeviceKey() || randomDeviceKey();
     if (!nextUrl) throw new Error('missing_script_url');
     if (!nextDevice) throw new Error('missing_device_key');
 
@@ -86,6 +105,7 @@
       localStorage.setItem(STORAGE_SCRIPT_URL, nextUrl);
       localStorage.setItem(STORAGE_DEVICE_KEY, nextDevice);
     } catch (_e) {}
+    global.__docControlDeviceKey = nextDevice;
 
     return {
       scriptUrl: nextUrl,

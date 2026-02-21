@@ -1167,9 +1167,9 @@
   </div>
 
   <script src="./config.js"></script>
-  <script src="./api-client.js"></script>
+  <script src="./api-client.js?v=20260221-2"></script>
   <script src="./theme-legacy.js?v=20260221-2"></script>
-  <script src="./app-common.js"></script>
+  <script src="./app-common.js?v=20260221-2"></script>
   <script>
     (function () {
       'use strict';
@@ -1309,6 +1309,11 @@
       function getDocQrUrl() {
         var base = C.normalizeScriptUrl(state.settings.scriptUrl || '').split('?')[0];
         var target = base + '?id=' + encodeURIComponent((state.doc && state.doc.docId) || docId || '');
+        if (typeof window.appendSessionKeysToUrl === 'function') {
+          target = window.appendSessionKeysToUrl(target);
+        } else if (state.settings && C.safeTrim(state.settings.deviceKey || '')) {
+          target += '&dk=' + encodeURIComponent(C.safeTrim(state.settings.deviceKey || ''));
+        }
         return 'https://api.qrserver.com/v1/create-qr-code/?size=1200x1200&margin=0&qzone=2&ecc=Q&data=' + encodeURIComponent(target);
       }
 

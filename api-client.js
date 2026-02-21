@@ -57,10 +57,28 @@
   }
 
   DocumentControlApi.prototype._buildPayload = function (action, payload, opts) {
+    var normalizedPayload = payload && typeof payload === 'object' ? payload : {};
     var body = {
       action: action,
-      payload: payload || {}
+      payload: normalizedPayload
     };
+    var bodyDeviceKey = safeTrim(normalizedPayload.deviceKey || normalizedPayload.dk || this.defaultDeviceKey || '');
+    var bodyIpKey = safeTrim(
+      normalizedPayload.clientIpKey
+      || normalizedPayload.ipKey
+      || normalizedPayload.ipk
+      || this.defaultIpKey
+      || ''
+    );
+    if (bodyDeviceKey) {
+      body.deviceKey = bodyDeviceKey;
+      body.dk = bodyDeviceKey;
+    }
+    if (bodyIpKey) {
+      body.clientIpKey = bodyIpKey;
+      body.ipKey = bodyIpKey;
+      body.ipk = bodyIpKey;
+    }
     var requestId = safeTrim(opts && opts.requestId ? opts.requestId : '');
     if (requestId) body.requestId = requestId;
     return body;
@@ -103,7 +121,19 @@
       return Promise.reject(new Error('fetch_not_supported'));
     }
 
-    var endpoint = appendQuery(this.scriptUrl, { api: '1' });
+    var sessionDeviceKey = safeTrim((payload && (payload.deviceKey || payload.dk)) || this.defaultDeviceKey || '');
+    var sessionIpKey = safeTrim(
+      (payload && (payload.clientIpKey || payload.ipKey || payload.ipk))
+      || this.defaultIpKey
+      || ''
+    );
+    var endpoint = appendQuery(this.scriptUrl, {
+      api: '1',
+      dk: sessionDeviceKey,
+      deviceKey: sessionDeviceKey,
+      ipk: sessionIpKey,
+      clientIpKey: sessionIpKey
+    });
     var body = this._buildPayload(action, payload, opts);
     var timeoutMs = normalizeTimeoutMs((opts && opts.timeoutMs), this.timeoutMs || 15000);
 
@@ -170,10 +200,20 @@
       };
 
       var queryPayload = self._buildPayload(action, payload, opts).payload || {};
+      var queryDeviceKey = safeTrim((queryPayload && (queryPayload.deviceKey || queryPayload.dk)) || self.defaultDeviceKey || '');
+      var queryIpKey = safeTrim(
+        (queryPayload && (queryPayload.clientIpKey || queryPayload.ipKey || queryPayload.ipk))
+        || self.defaultIpKey
+        || ''
+      );
       var src = appendQuery(self.scriptUrl, {
         api: '1',
         action: action,
         callback: callbackName,
+        dk: queryDeviceKey,
+        deviceKey: queryDeviceKey,
+        ipk: queryIpKey,
+        clientIpKey: queryIpKey,
         payload: JSON.stringify(queryPayload),
         _: Date.now()
       });
@@ -230,6 +270,12 @@
 
   DocumentControlApi.prototype.call = function (action, payload, opts) {
     var requestPayload = this._ensureSessionKeys(payload || {});
+    if (safeTrim(requestPayload.deviceKey)) {
+      this.defaultDeviceKey = safeTrim(requestPayload.deviceKey);
+    }
+    if (safeTrim(requestPayload.clientIpKey)) {
+      this.defaultIpKey = safeTrim(requestPayload.clientIpKey);
+    }
     var useJsonpOnly = !!(opts && opts.useJsonpOnly);
     var loaderTicket = this._startGlobalLoader(opts);
     var self = this;
