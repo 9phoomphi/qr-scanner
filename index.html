@@ -1563,7 +1563,7 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-5">
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-16">
 </head>
 <body class="app-home-page">
   <div class="shell">
@@ -1808,8 +1808,8 @@
   <button id="btnAddFab" class="fab hidden" type="button" title="เพิ่มเอกสาร"><i class="bi bi-plus-lg"></i></button>
 
   <script src="./config.js"></script>
-  <script src="./api-client.js?v=20260221-2"></script>
-  <script src="./theme-legacy.js?v=20260221-2"></script>
+  <script src="./api-client.js?v=20260221-4"></script>
+  <script src="./theme-legacy.js?v=20260221-3"></script>
   <script src="./app-common.js?v=20260221-2"></script>
   <script>
     (function () {
@@ -2160,13 +2160,24 @@
         return 'status-completed';
       }
 
+      function getDocBgIcon(status, storedLoc) {
+        var st = C.safeTrim(status || '');
+        var hasStored = !!C.safeTrim(storedLoc || '');
+        if (st === 'ยกเลิก') return 'bi-x-circle';
+        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return 'bi-arrow-return-left';
+        if (hasStored) return 'bi-archive-fill';
+        if (st === 'กำลังดำเนินการ') return 'bi-hourglass-split';
+        if (st === 'มอบผู้รับผิดชอบ') return 'bi-person-check-fill';
+        return 'bi-check-circle-fill';
+      }
+
       function getStatusBadge(status) {
         var st = C.safeTrim(status || '');
-        if (st === 'ยกเลิก') return '<span class="badge-status badge-cancel">ยกเลิก</span>';
-        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return '<span class="badge-status badge-return">ส่งคืนฯ</span>';
-        if (st === 'กำลังดำเนินการ') return '<span class="badge-status badge-inprogress">กำลังดำเนินการ</span>';
-        if (st === 'มอบผู้รับผิดชอบ') return '<span class="badge-status badge-assigned">มอบผู้รับผิดชอบ</span>';
-        return '<span class="badge-status badge-active">ดำเนินการเสร็จ</span>';
+        if (st === 'ยกเลิก') return '<span class="badge-status badge-cancel"><i class="bi bi-x-circle-fill"></i>ยกเลิก</span>';
+        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return '<span class="badge-status badge-return"><i class="bi bi-arrow-return-left"></i>ส่งคืนฯ</span>';
+        if (st === 'กำลังดำเนินการ') return '<span class="badge-status badge-inprogress"><i class="bi bi-hourglass-split"></i>กำลังดำเนินการ</span>';
+        if (st === 'มอบผู้รับผิดชอบ') return '<span class="badge-status badge-assigned"><i class="bi bi-person-check-fill"></i>มอบผู้รับผิดชอบ</span>';
+        return '<span class="badge-status badge-active"><i class="bi bi-check-circle-fill"></i>ดำเนินการเสร็จ</span>';
       }
 
       function getStoredUserChip(doc) {
@@ -2179,6 +2190,19 @@
           : '<span class="stored-user-avatar" title="ผู้จัดเก็บ: ' + C.escapeHtml(storedUser) + '">' + C.escapeHtml((storedUser.charAt(0) || '?').toUpperCase()) + '</span>';
 
         return '<span class="stored-user-chip" title="ผู้จัดเก็บ: ' + C.escapeHtml(storedUser) + '">' + avatar + '<span class="stored-user-name">' + C.escapeHtml(storedUser) + '</span></span>';
+      }
+
+      function getCreatorChip(doc) {
+        var creator = C.safeTrim(doc && doc.createdBy || '');
+        if (!creator) return '';
+        var creatorPos = C.safeTrim(doc && doc.createdByPosition || '');
+        var creatorImg = C.safeTrim(doc && doc.createdByImg || '');
+        var titleText = creatorPos ? (creator + ' (' + creatorPos + ')') : creator;
+        var avatar = creatorImg
+          ? '<img src="' + C.escapeHtml(creatorImg) + '" title="ผู้บันทึกเอกสาร: ' + C.escapeHtml(titleText) + '" class="rounded-circle" width="24" height="24" style="object-fit:cover;border:1.5px solid rgba(255,255,255,0.82);box-shadow:0 1px 4px rgba(0,0,0,0.12);flex:0 0 24px">'
+          : '<span class="stored-user-avatar" title="ผู้บันทึกเอกสาร: ' + C.escapeHtml(titleText) + '">' + C.escapeHtml((creator.charAt(0) || '?').toUpperCase()) + '</span>';
+        var text = creatorPos ? (creator + ' (' + creatorPos + ')') : creator;
+        return '<span class="created-user-chip" title="ผู้บันทึกเอกสาร: ' + C.escapeHtml(titleText) + '">' + avatar + '<span class="stored-user-name">' + C.escapeHtml(text) + '</span></span>';
       }
 
       function renderStats(stats) {
@@ -2226,13 +2250,14 @@
         for (var i = 0; i < docs.length; i++) {
           var d = docs[i] || {};
           var statusClass = getDocStatusClass(d.docStatus, d.storedLoc);
+          var bgIcon = getDocBgIcon(d.docStatus, d.storedLoc);
           var stBadge = getStatusBadge(d.docStatus);
           var locBadge = '';
           var storedLoc = C.safeTrim(d.storedLoc || '');
           if (storedLoc) {
             locBadge = '<span class="badge-status badge-stored"><i class="bi bi-archive-fill me-1"></i>' + C.escapeHtml(storedLoc) + '</span>';
           } else if (d.docStatus !== 'ยกเลิก' && d.docStatus !== 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง' && d.docStatus !== 'กำลังดำเนินการ' && d.docStatus !== 'มอบผู้รับผิดชอบ') {
-            locBadge = '<span class="badge-status badge-pending">รอจัดเก็บ</span>';
+            locBadge = '<span class="badge-status badge-pending"><i class="bi bi-clock-history"></i>รอจัดเก็บ</span>';
           }
 
           var ppBadge = '';
@@ -2242,22 +2267,36 @@
 
           var budgetLabel = C.safeTrim(d.budgetType || '') || 'ไม่ระบุงบประมาณ';
           var budgetBadge = '<span class="badge-status badge-budget"><i class="bi bi-wallet2 me-1"></i>' + C.escapeHtml(budgetLabel) + '</span>';
+          var groupLabel = C.safeTrim(d.group || '') || '-';
+          var senderLabel = C.safeTrim(d.sender || '') || '-';
+          var receivedDateLabel = C.safeTrim(d.dateRec || '') || '-';
+          var creatorChip = getCreatorChip(d);
 
           var destroyInfo = '';
-          if (storedLoc && d.destroyDate && d.destroyDate !== '-') {
-            destroyInfo = '<div class="doc-destroy"><i class="bi bi-clock-history"></i>ครบกำหนดทำลาย: ' + C.escapeHtml(d.destroyDate) + '</div>';
+          if (storedLoc) {
+            var destroyDateLabel = C.safeTrim(d.destroyDate || '');
+            if (!destroyDateLabel || destroyDateLabel === '-') destroyDateLabel = 'ยังไม่ระบุ';
+            destroyInfo = '<div class="doc-destroy"><i class="bi bi-clock-history"></i>ครบกำหนดทำลาย: ' + C.escapeHtml(destroyDateLabel) + '</div>';
           }
 
           var sdhText = C.safeTrim(d.docNoSdh || '');
           var docHref = buildDocLink(d);
           html += '<a class="doc-card ' + statusClass + ' mb-2 d-block text-decoration-none" href="' + C.escapeHtml(docHref) + '">';
+          html += '<i class="bi ' + C.escapeHtml(bgIcon) + ' doc-bg-icon" aria-hidden="true"></i>';
           html += '<div class="doc-top">';
           html += '<div class="doc-left"><div style="min-width:0"><div class="doc-title text-primary">' + C.escapeHtml(d.amDocNo || d.amDocNoAk || '-') + '</div><div class="doc-subtitle">' + (sdhText ? ('(สธ ' + C.escapeHtml(sdhText) + ')') : '') + '</div></div></div>';
           html += '<div class="doc-tags">' + ppBadge + budgetBadge + stBadge + locBadge + '</div>';
           html += '</div>';
           html += '<p class="doc-subject">' + C.escapeHtml(C.safeText(d.subject || '-')) + '</p>';
+          html += '<div class="doc-meta-lines">';
+          html += '<div class="doc-meta-line"><i class="bi bi-diagram-3"></i><span class="meta-key">กลุ่มงาน:</span><span class="meta-value">' + C.escapeHtml(groupLabel) + '</span></div>';
+          html += '<div class="doc-meta-line"><i class="bi bi-person-lines-fill"></i><span class="meta-key">ชื่อผู้ส่ง:</span><span class="meta-value">' + C.escapeHtml(senderLabel) + '</span></div>';
+          if (creatorChip) {
+            html += '<div class="doc-meta-line creator"><i class="bi bi-person-vcard"></i><span class="meta-key">ผู้บันทึกเอกสาร:</span>' + creatorChip + '</div>';
+          }
+          html += '</div>';
           html += destroyInfo;
-          html += '<div class="doc-foot"><small>' + C.escapeHtml((C.safeText(d.group || '') + ' ' + C.safeText(d.sender || '')).replace(/\s+/g, ' ').trim()) + '</small><div class="doc-foot-right"><small>รับ: ' + C.escapeHtml(d.receiveNo || '-') + '</small>' + getStoredUserChip(d) + '</div></div>';
+          html += '<div class="doc-foot"><small><i class="bi bi-calendar2-week me-1"></i>วันที่รับ: ' + C.escapeHtml(receivedDateLabel) + '</small><div class="doc-foot-right"><small>รับ: ' + C.escapeHtml(d.receiveNo || '-') + '</small>' + getStoredUserChip(d) + '</div></div>';
           html += '</a>';
         }
 
@@ -2719,12 +2758,21 @@
             var d = docs[i] || {};
             var recNo = C.safeText(d.receiveNo || '');
             var fiscal = recNo && recNo.indexOf('/') > -1 ? recNo.split('/')[0] : '';
+            var amDocStrict = C.safeTrim(d.amDocNoAk || '');
+            if (!amDocStrict) {
+              var amCandidate = C.safeTrim(d.amDocNo || '');
+              var recCandidate = C.safeTrim(d.receiveNo || '');
+              var sdhCandidate = C.safeTrim(d.docNoSdh || '');
+              if (amCandidate && amCandidate !== recCandidate && amCandidate !== sdhCandidate) {
+                amDocStrict = amCandidate;
+              }
+            }
             var subject = C.safeText(d.subject || '-');
             if (subject.length > 220) subject = subject.substring(0, 220).replace(/\s+$/, '') + '...';
             h += '<tr>';
             h += '<td class="text-center index">' + (i + 1) + '</td>';
             h += '<td class="text-center fiscal">' + esc(fiscal) + '</td>';
-            h += '<td class="text-center am-doc">' + esc(d.amDocNoAk || d.amDocNo || '') + '</td>';
+            h += '<td class="text-center am-doc">' + esc(amDocStrict) + '</td>';
             h += '<td class="text-center doc-sdh">' + esc(d.docNoSdh || '') + '</td>';
             h += '<td class="subject-cell">' + esc(subject) + '</td>';
             h += '<td class="budget-cell">' + esc(d.budgetType || '-') + '</td>';

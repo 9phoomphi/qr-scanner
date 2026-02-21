@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-5">
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-16">
   <style>
     .form-page {
       max-width: 980px;
@@ -682,8 +682,8 @@
   </div>
 
   <script src="./config.js"></script>
-  <script src="./api-client.js?v=20260221-2"></script>
-  <script src="./theme-legacy.js?v=20260221-2"></script>
+  <script src="./api-client.js?v=20260221-4"></script>
+  <script src="./theme-legacy.js?v=20260221-3"></script>
   <script src="./app-common.js?v=20260221-2"></script>
   <script>
     (function () {
@@ -764,8 +764,10 @@
       }
 
       function setSaving(isSaving) {
-        els.btnSubmit.disabled = !!isSaving;
-        els.loadingMsg.style.display = isSaving ? 'flex' : 'none';
+        var active = !!isSaving;
+        els.btnSubmit.disabled = active;
+        els.loadingMsg.style.display = active ? 'flex' : 'none';
+        els.loadingMsg.setAttribute('aria-hidden', active ? 'false' : 'true');
       }
 
       function fillTimeOptions() {
@@ -1022,6 +1024,8 @@
         }
 
         setSaving(true);
+        var nextId = '';
+        var title = isEdit ? 'บันทึกการแก้ไขสำเร็จ' : 'เพิ่มเอกสารสำเร็จ';
         try {
           var res;
           if (isEdit) {
@@ -1034,29 +1038,27 @@
             throw new Error((res && res.error) ? res.error : 'ไม่สามารถบันทึกข้อมูลได้');
           }
 
-          var nextId = C.safeTrim((res && res.docId) || formData.amDocNo || formData.docNoSdh || editId || '');
-          var title = isEdit ? 'บันทึกการแก้ไขสำเร็จ' : 'เพิ่มเอกสารสำเร็จ';
-
-          await Swal.fire({
-            icon: 'success',
-            title: title,
-            confirmButtonText: 'ดูรายละเอียดเอกสาร',
-            confirmButtonColor: '#007AFF',
-            allowOutsideClick: false
-          });
-
-          if (nextId) {
-            C.redirect('document-view.html', { id: nextId }, true);
-          } else {
-            C.redirect('index.html', {}, true);
-          }
+          nextId = C.safeTrim((res && res.docId) || formData.amDocNo || formData.docNoSdh || editId || '');
         } catch (err) {
-          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
-          setSaving(false);
+          await Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
           return;
+        } finally {
+          setSaving(false);
         }
 
-        setSaving(false);
+        await Swal.fire({
+          icon: 'success',
+          title: title,
+          confirmButtonText: 'ดูรายละเอียดเอกสาร',
+          confirmButtonColor: '#007AFF',
+          allowOutsideClick: false
+        });
+
+        if (nextId) {
+          C.redirect('document-view.html', { id: nextId }, true);
+        } else {
+          C.redirect('index.html', {}, true);
+        }
       }
 
       async function initData() {
@@ -1111,6 +1113,10 @@
           } else {
             C.redirect('index.html');
           }
+        });
+
+        window.addEventListener('pageshow', function () {
+          setSaving(false);
         });
 
         els.fiscalYear.addEventListener('change', updateReceiveNo);
@@ -1169,6 +1175,7 @@
         fillTimeOptions();
         setupHeader();
         bindEvents();
+        setSaving(false);
 
         try {
           var ok = await initData();

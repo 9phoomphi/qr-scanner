@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-5">
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-16">
   <style>
     .doc-page {
       max-width: 1120px;
@@ -390,17 +390,65 @@
     }
 
     body.dark-mode .storage-status-empty {
-      background: linear-gradient(180deg, rgba(100, 116, 139, 0.26), rgba(100, 116, 139, 0.14));
-      border-color: rgba(148, 163, 184, 0.34);
+      background: linear-gradient(180deg, rgba(40, 56, 80, 0.52), rgba(28, 40, 60, 0.44)) !important;
+      border-color: rgba(118, 146, 186, 0.4) !important;
     }
 
     body.dark-mode .storage-status-ok {
-      background: linear-gradient(180deg, rgba(34, 197, 94, 0.24), rgba(34, 197, 94, 0.14));
-      border-color: rgba(74, 222, 128, 0.4);
+      background: linear-gradient(180deg, rgba(22, 58, 44, 0.62), rgba(16, 44, 34, 0.54)) !important;
+      border-color: rgba(74, 222, 128, 0.42) !important;
     }
 
     body.dark-mode .storage-status-title {
       color: #86efac;
+    }
+
+    body.dark-mode .storage-detail {
+      border-color: rgba(74, 222, 128, 0.36) !important;
+      background:
+        linear-gradient(140deg, rgba(27, 70, 50, 0.54), rgba(17, 46, 35, 0.52)),
+        linear-gradient(180deg, rgba(17, 33, 50, 0.72), rgba(12, 24, 38, 0.66)) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 14px 30px rgba(2, 8, 20, 0.42);
+    }
+
+    body.dark-mode .storage-detail .chip {
+      background: linear-gradient(180deg, rgba(51, 65, 85, 0.9), rgba(30, 41, 59, 0.86)) !important;
+      border-color: rgba(148, 163, 184, 0.44) !important;
+      color: #f1f5f9 !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 18px rgba(2, 8, 20, 0.28) !important;
+    }
+
+    body.dark-mode .storage-meta-label {
+      color: #9eb3cf !important;
+    }
+
+    body.dark-mode .storage-meta-value {
+      color: #e5eefc !important;
+    }
+
+    body.dark-mode .storage-owner-name {
+      color: #e5eefc !important;
+    }
+
+    body.dark-mode .storage-owner-pos {
+      color: #a9bdd7 !important;
+    }
+
+    body.dark-mode .storage-owner .fallback {
+      background: rgba(74, 222, 128, 0.22);
+      color: #dcfce7;
+      border-color: rgba(134, 239, 172, 0.45);
+    }
+
+    body.dark-mode .storage-owner img {
+      border-color: rgba(134, 239, 172, 0.4);
+      box-shadow: 0 8px 16px rgba(2, 8, 20, 0.36);
+    }
+
+    body.dark-mode .destroy-line {
+      border-color: rgba(248, 113, 113, 0.42);
+      background: rgba(220, 38, 38, 0.2);
+      color: #fecaca;
     }
 
     body.dark-mode .btn.outline {
@@ -667,6 +715,7 @@
       border-radius: 14px;
       border: 1px solid rgba(34, 197, 94, 0.25);
       background: linear-gradient(135deg, rgba(34, 197, 94, 0.13), rgba(34, 197, 94, 0.04)), linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(248, 252, 255, 0.68));
+      text-align: left;
     }
 
     .storage-detail .chip {
@@ -688,10 +737,56 @@
       align-items: start;
     }
 
+    .storage-cell {
+      min-width: 0;
+    }
+
+    .storage-cell-owner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-self: end;
+      width: min(100%, 420px);
+    }
+
+    .storage-cell-owner .storage-meta-label {
+      margin-bottom: 4px;
+    }
+
+    .storage-meta-label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 760;
+      letter-spacing: 0.04em;
+    }
+
+    .storage-meta-value {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      font-weight: 760;
+    }
+
     .storage-owner {
       display: flex;
       align-items: center;
       gap: 8px;
+      width: 100%;
+    }
+
+    .storage-owner-text {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .storage-owner-name {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      font-weight: 760;
+      line-height: 1.22;
+      overflow-wrap: anywhere;
     }
 
     .storage-owner img,
@@ -714,6 +809,13 @@
       font-weight: 860;
       border: 1px solid rgba(34, 197, 94, 0.26);
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .storage-owner-pos {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.24;
+      display: block;
     }
 
     .destroy-line {
@@ -1054,6 +1156,11 @@
         grid-template-columns: 1fr;
       }
 
+      .storage-cell-owner {
+        justify-self: start;
+        width: 100%;
+      }
+
       .storage-fields {
         grid-template-columns: 1fr;
       }
@@ -1167,8 +1274,8 @@
   </div>
 
   <script src="./config.js"></script>
-  <script src="./api-client.js?v=20260221-2"></script>
-  <script src="./theme-legacy.js?v=20260221-2"></script>
+  <script src="./api-client.js?v=20260221-4"></script>
+  <script src="./theme-legacy.js?v=20260221-3"></script>
   <script src="./app-common.js?v=20260221-2"></script>
   <script>
     (function () {
@@ -1277,9 +1384,13 @@
         return '<span class="h-badge success"><i class="bi bi-check-circle"></i>ดำเนินการเสร็จ</span>';
       }
 
-      function storageBadge(isStored) {
+      function storageBadge(isStored, docStatus) {
+        var st = C.safeTrim(docStatus || '');
         if (isStored) return '<span class="h-badge info"><i class="bi bi-archive"></i>จัดเก็บแล้ว</span>';
-        return '<span class="h-badge warn"><i class="bi bi-clock"></i>รอจัดเก็บ</span>';
+        if (st === 'ดำเนินการเสร็จ') {
+          return '<span class="h-badge warn"><i class="bi bi-clock"></i>รอจัดเก็บ</span>';
+        }
+        return '';
       }
 
       function userAvatar(name, fallbackColor, fallbackTextColor) {
@@ -1506,12 +1617,12 @@
         storageHtml += '<div class="storage-detail">';
         storageHtml += '<span class="chip">ปีงบฯ ' + C.escapeHtml(fiscal) + '</span>';
         storageHtml += '<div class="storage-grid">';
-        storageHtml += '<div><small style="display:block;font-size:0.7rem;color:var(--text-muted);font-weight:760;letter-spacing:0.04em;">วันที่จัดเก็บ</small><strong style="font-size:0.9rem;">' + C.escapeHtml(storedAt) + '</strong></div>';
-        storageHtml += '<div><small style="display:block;font-size:0.7rem;color:var(--text-muted);font-weight:760;letter-spacing:0.04em;">ผู้จัดเก็บ</small><div class="storage-owner">';
+        storageHtml += '<div class="storage-cell"><small class="storage-meta-label">วันที่จัดเก็บ</small><strong class="storage-meta-value">' + C.escapeHtml(storedAt) + '</strong></div>';
+        storageHtml += '<div class="storage-cell storage-cell-owner"><small class="storage-meta-label">ผู้จัดเก็บ</small><div class="storage-owner">';
         storageHtml += userAvatar(storedUser, 'rgba(34,197,94,0.18)', '#166534');
-        storageHtml += '<div><strong style="font-size:0.86rem;">' + C.escapeHtml(storedUser) + '</strong>';
+        storageHtml += '<div class="storage-owner-text"><strong class="storage-owner-name">' + C.escapeHtml(storedUser) + '</strong>';
         if (pos) {
-          storageHtml += '<br><small style="font-size:0.72rem;color:var(--text-muted);">' + C.escapeHtml(pos) + '</small>';
+          storageHtml += '<small class="storage-owner-pos">' + C.escapeHtml(pos) + '</small>';
         }
         storageHtml += '</div></div></div>';
         storageHtml += '</div>';
@@ -1627,7 +1738,7 @@
 
         els.docIdTitle.textContent = doc.docId || '-';
         els.docIdSub.textContent = C.safeTrim(doc.docNoSdh || '') ? ('สธ ' + C.safeText(doc.docNoSdh || '')) : '-';
-        els.statusBadges.innerHTML = statusBadge(doc.docStatus) + storageBadge(!!doc.isStored);
+        els.statusBadges.innerHTML = statusBadge(doc.docStatus) + storageBadge(!!doc.isStored, doc.docStatus);
 
         renderActionButtons(isReadOnly);
         renderGeneralInfo(doc);

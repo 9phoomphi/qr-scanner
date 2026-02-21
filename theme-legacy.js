@@ -293,7 +293,7 @@
     pageLeaveTimer = setTimeout(function () {
       pageLeaveTimer = null;
       done();
-    }, 170);
+    }, 70);
   }
 
   function normalizeDeviceKeyClient(value) {

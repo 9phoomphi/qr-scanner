@@ -48,12 +48,82 @@
     return Math.round(num);
   }
 
+  function normalizeTransportMode(value) {
+    var mode = safeTrim(value).toLowerCase();
+    if (mode === 'fetch' || mode === 'jsonp' || mode === 'auto') return mode;
+    return '';
+  }
+
+  function getTransportStorageKey(scriptUrl) {
+    var normalized = safeTrim(scriptUrl || '').split('#')[0].split('?')[0].toLowerCase();
+    if (!normalized) return '';
+    return 'docControlTransportModeV1:' + normalized;
+  }
+
+  function readStoredTransportMode(scriptUrl) {
+    var key = getTransportStorageKey(scriptUrl);
+    if (!key) return '';
+    try {
+      return normalizeTransportMode(localStorage.getItem(key) || '');
+    } catch (_e) {
+      return '';
+    }
+  }
+
+  function persistTransportMode(scriptUrl, mode) {
+    var key = getTransportStorageKey(scriptUrl);
+    var normalized = normalizeTransportMode(mode);
+    if (!key || !normalized || normalized === 'auto') return;
+    try {
+      localStorage.setItem(key, normalized);
+    } catch (_e) {}
+  }
+
+  function readSessionCache(cacheKey, maxAgeMs) {
+    if (!cacheKey || !(maxAgeMs > 0)) return null;
+    try {
+      var raw = sessionStorage.getItem(cacheKey) || '';
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return null;
+      var ts = Number(parsed.ts || 0);
+      if (!isFinite(ts) || ts <= 0) return null;
+      if ((Date.now() - ts) > Number(maxAgeMs)) return null;
+      return parsed.data;
+    } catch (_e) {
+      return null;
+    }
+  }
+
+  function writeSessionCache(cacheKey, data) {
+    if (!cacheKey) return;
+    try {
+      sessionStorage.setItem(cacheKey, JSON.stringify({
+        ts: Date.now(),
+        data: data
+      }));
+    } catch (_e) {}
+  }
+
+  function clearSessionCache(cacheKey) {
+    if (!cacheKey) return;
+    try {
+      sessionStorage.removeItem(cacheKey);
+    } catch (_e) {}
+  }
+
+  function normalizeCachePrefix(scriptUrl) {
+    return safeTrim(scriptUrl || '').split('#')[0].split('?')[0].toLowerCase();
+  }
+
   function DocumentControlApi(options) {
     options = options || {};
     this.scriptUrl = normalizeScriptUrl(options.scriptUrl || '');
     this.defaultDeviceKey = safeTrim(options.deviceKey || '') || randomDeviceKey();
     this.defaultIpKey = safeTrim(options.ipKey || '');
     this.timeoutMs = normalizeTimeoutMs(options.timeoutMs, 15000);
+    this.transportMode = readStoredTransportMode(this.scriptUrl) || 'auto';
+    this.cachePrefix = 'docControlApiCacheV1:' + normalizeCachePrefix(this.scriptUrl);
   }
 
   DocumentControlApi.prototype._buildPayload = function (action, payload, opts) {
@@ -268,6 +338,31 @@
     }
   };
 
+  DocumentControlApi.prototype._rememberTransportMode = function (mode) {
+    var normalized = normalizeTransportMode(mode);
+    if (!normalized || normalized === 'auto') return;
+    this.transportMode = normalized;
+    persistTransportMode(this.scriptUrl, normalized);
+  };
+
+  DocumentControlApi.prototype._cacheKey = function (name) {
+    var suffix = safeTrim(name || '');
+    if (!suffix) return '';
+    return this.cachePrefix + ':' + suffix;
+  };
+
+  DocumentControlApi.prototype._cacheRead = function (name, maxAgeMs) {
+    return readSessionCache(this._cacheKey(name), maxAgeMs);
+  };
+
+  DocumentControlApi.prototype._cacheWrite = function (name, data) {
+    writeSessionCache(this._cacheKey(name), data);
+  };
+
+  DocumentControlApi.prototype._cacheClear = function (name) {
+    clearSessionCache(this._cacheKey(name));
+  };
+
   DocumentControlApi.prototype.call = function (action, payload, opts) {
     var requestPayload = this._ensureSessionKeys(payload || {});
     if (safeTrim(requestPayload.deviceKey)) {
@@ -280,15 +375,39 @@
     var loaderTicket = this._startGlobalLoader(opts);
     var self = this;
     var requestPromise;
+    var requestedMode = normalizeTransportMode(opts && opts.transportMode) || '';
+    var transportMode = useJsonpOnly
+      ? 'jsonp'
+      : (requestedMode || normalizeTransportMode(this.transportMode) || 'auto');
 
-    if (useJsonpOnly) {
+    if (transportMode === 'jsonp') {
       requestPromise = this._callJsonp(action, requestPayload, opts);
+      this._rememberTransportMode('jsonp');
+    } else if (transportMode === 'fetch') {
+      requestPromise = this._callFetch(action, requestPayload, opts)
+        .then(function (response) {
+          self._rememberTransportMode('fetch');
+          return response;
+        })
+        .catch(function (err) {
+          if (err && err.isApiError) {
+            throw err;
+          }
+          self._rememberTransportMode('jsonp');
+          return self._callJsonp(action, requestPayload, opts);
+        });
     } else {
       requestPromise = this._callFetch(action, requestPayload, opts).catch(function (err) {
         if (err && err.isApiError) {
           throw err;
         }
+        self._rememberTransportMode('jsonp');
         return self._callJsonp(action, requestPayload, opts);
+      }).then(function (response) {
+        if (normalizeTransportMode(self.transportMode) !== 'jsonp') {
+          self._rememberTransportMode('fetch');
+        }
+        return response;
       });
     }
 
@@ -313,42 +432,79 @@
       clientIpKey: (opts && opts.ipKey) ? safeTrim(opts.ipKey) : this.defaultIpKey
     };
     this.defaultDeviceKey = payload.deviceKey || this.defaultDeviceKey;
-    return this.call('auth.login', payload, opts);
+    var self = this;
+    return this.call('auth.login', payload, opts).then(function (res) {
+      if (res && res.success && res.user) self._cacheWrite('auth.me', res);
+      return res;
+    });
   };
 
   DocumentControlApi.prototype.logout = function (opts) {
+    var self = this;
     return this.call('auth.logout', {
       deviceKey: this.defaultDeviceKey,
       clientIpKey: this.defaultIpKey
-    }, opts);
+    }, opts).finally(function () {
+      self._cacheClear('auth.me');
+    });
   };
 
   DocumentControlApi.prototype.me = function (opts) {
+    var cached = (opts && opts.forceRefresh) ? null : this._cacheRead('auth.me', 20000);
+    if (cached && cached.success && cached.user) {
+      return Promise.resolve(cached);
+    }
+
+    var self = this;
     return this.call('auth.me', {
       deviceKey: this.defaultDeviceKey,
       clientIpKey: this.defaultIpKey
-    }, opts);
+    }, opts).then(function (res) {
+      if (res && res.success && res.user) self._cacheWrite('auth.me', res);
+      return res;
+    });
   };
 
   DocumentControlApi.prototype.optionsInfo = function (opts) {
+    var cached = (opts && opts.forceRefresh) ? null : this._cacheRead('options.info', 10 * 60 * 1000);
+    if (cached && cached.success) return Promise.resolve(cached);
+
+    var self = this;
     return this.call('options.info', {
       deviceKey: this.defaultDeviceKey,
       clientIpKey: this.defaultIpKey
-    }, opts);
+    }, opts).then(function (res) {
+      if (res && res.success) self._cacheWrite('options.info', res);
+      return res;
+    });
   };
 
   DocumentControlApi.prototype.optionsMembers = function (opts) {
+    var cached = (opts && opts.forceRefresh) ? null : this._cacheRead('options.members', 10 * 60 * 1000);
+    if (cached && cached.success) return Promise.resolve(cached);
+
+    var self = this;
     return this.call('options.members', {
       deviceKey: this.defaultDeviceKey,
       clientIpKey: this.defaultIpKey
-    }, opts);
+    }, opts).then(function (res) {
+      if (res && res.success) self._cacheWrite('options.members', res);
+      return res;
+    });
   };
 
   DocumentControlApi.prototype.storageOptions = function (opts) {
+    var cached = (opts && opts.forceRefresh) ? null : this._cacheRead('storage.options', 10 * 60 * 1000);
+    if (cached && cached.success) return Promise.resolve(cached);
+
+    var self = this;
     return this.call('storage.options', {
       deviceKey: this.defaultDeviceKey,
       clientIpKey: this.defaultIpKey
-    }, opts);
+    }, opts).then(function (res) {
+      if (res && res.success) self._cacheWrite('storage.options', res);
+      return res;
+    });
   };
 
   DocumentControlApi.prototype.docsList = function (params, opts) {
