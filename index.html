@@ -2806,6 +2806,18 @@
       function printAllReport() {
         if (!state.api) return;
 
+        // เปิดหน้าต่างพิมพ์ทันทีจาก user gesture เพื่อลดโอกาสโดน popup blocker
+        var w = window.open('', '', 'width=1280,height=860');
+        if (!w) {
+          showError('ไม่สามารถเปิดหน้าต่างพิมพ์ (Pop-up ถูกบล็อก)');
+          return;
+        }
+        try {
+          w.document.open();
+          w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>กำลังเตรียมรายงาน...</title></head><body style="font-family:IBM Plex Sans Thai,sans-serif;padding:24px;color:#0F172A;">กำลังเตรียมข้อมูลรายงานสำหรับพิมพ์...</body></html>');
+          w.document.close();
+        } catch (_ignore) {}
+
         var ensureReport = state.lastSystemReport && Array.isArray(state.lastSystemReport.docs)
           ? Promise.resolve(state.lastSystemReport)
           : state.api.systemReport({ loaderMessage: 'กำลังเตรียมรายงานทั้งหมด...' });
@@ -2814,23 +2826,26 @@
           var report = res || {};
           var docs = Array.isArray(report.docs) ? report.docs : [];
           if (!docs.length) {
+            try { w.close(); } catch (_ignore2) {}
             showError('ไม่พบข้อมูลรายงานสำหรับพิมพ์');
             return;
           }
 
           state.lastSystemReport = report;
 
-          var w = window.open('', '', 'width=1280,height=860');
-          if (!w) {
-            showError('ไม่สามารถเปิดหน้าต่างพิมพ์ (Pop-up ถูกบล็อก)');
-            return;
+          var esc = C.escapeHtml;
+
+          function truncateSubjectForPrint(value) {
+            var text = C.safeText(value || '').replace(/\s+/g, ' ').trim();
+            if (!text) return '-';
+            if (text.length <= 150) return text;
+            return text.substring(0, 150).replace(/\s+$/, '') + '.....';
           }
 
-          var esc = C.escapeHtml;
           var h = '';
           h += '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>รายงานเอกสารทั้งหมด</title>';
           h += '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
-          h += '<style>@page{size:A4 landscape;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:8px;color:#0F172A}.wrap{padding:0}h2{margin:0 0 2px;text-align:center;font-size:21px;line-height:1.2;font-weight:800}p.sub{margin:0 0 4px;text-align:center;font-size:12px;color:#334155}.meta{margin:0 0 8px;text-align:center;font-size:11px;color:#475569}table{width:100%;border-collapse:collapse;table-layout:fixed}thead{display:table-header-group}th,td{border:1px solid #334155;padding:4px 5px;font-size:10.2px;line-height:1.28;vertical-align:top}th{background:#E2E8F0;text-align:center;font-weight:800}.text-center{text-align:center}.text-right{text-align:right}.subject-cell,.sender-cell,.budget-cell,.status-cell,.loc-cell{white-space:normal;overflow-wrap:anywhere;word-break:break-word}.subject-cell{line-height:1.3}.index,.fiscal,.am-doc,.doc-sdh,.date-rec,.amount{white-space:nowrap}.btn-print{padding:10px 28px;background:#0A84FF;color:#fff;border:none;border-radius:999px;font-weight:900}.no-print{text-align:center;margin-top:14px}@media print{.no-print{display:none!important}}</style>';
+          h += '<style>@page{size:A4 landscape;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:8px;color:#0F172A}.wrap{padding:0}h2{margin:0 0 2px;text-align:center;font-size:21px;line-height:1.2;font-weight:800}p.sub{margin:0 0 4px;text-align:center;font-size:12px;color:#334155}.meta{margin:0 0 8px;text-align:center;font-size:11px;color:#475569}table{width:100%;border-collapse:collapse;table-layout:fixed}thead{display:table-header-group}tbody tr{break-inside:avoid;page-break-inside:avoid}th,td{border:1px solid #334155;padding:4px 5px;font-size:10.2px;line-height:1.28;vertical-align:top}th{background:#E2E8F0;text-align:center;font-weight:800}.text-center{text-align:center}.text-right{text-align:right}.sender-cell,.budget-cell,.status-cell,.loc-cell{white-space:normal;overflow-wrap:anywhere;word-break:break-word}.subject-cell{white-space:normal;overflow-wrap:anywhere;word-break:break-word;line-height:1.22}.subject-text{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;max-height:4.88em}.index,.fiscal,.am-doc,.doc-sdh,.date-rec,.amount{white-space:nowrap}.btn-print{padding:10px 28px;background:#0A84FF;color:#fff;border:none;border-radius:999px;font-weight:900}.no-print{text-align:center;margin-top:14px}@media print{.no-print{display:none!important}}</style>';
           h += '</head><body><div class="wrap">';
           h += '<h2>รายงานรายการเอกสารทั้งหมดในระบบ</h2>';
           h += '<p class="sub">จำนวนทั้งหมด ' + docs.length + ' รายการ</p>';
@@ -2850,14 +2865,13 @@
                 amDocStrict = amCandidate;
               }
             }
-            var subject = C.safeText(d.subject || '-');
-            if (subject.length > 220) subject = subject.substring(0, 220).replace(/\s+$/, '') + '...';
+            var subject = truncateSubjectForPrint(d.subject || '-');
             h += '<tr>';
             h += '<td class="text-center index">' + (i + 1) + '</td>';
             h += '<td class="text-center fiscal">' + esc(fiscal) + '</td>';
             h += '<td class="text-center am-doc">' + esc(amDocStrict) + '</td>';
             h += '<td class="text-center doc-sdh">' + esc(d.docNoSdh || '') + '</td>';
-            h += '<td class="subject-cell">' + esc(subject) + '</td>';
+            h += '<td class="subject-cell"><div class="subject-text">' + esc(subject) + '</div></td>';
             h += '<td class="budget-cell">' + esc(d.budgetType || '-') + '</td>';
             h += '<td class="text-right amount">' + esc(d.amount || '-') + '</td>';
             h += '<td class="text-center status-cell">' + esc(d.docStatus || '-') + '</td>';
@@ -2867,12 +2881,15 @@
             h += '</tr>';
           }
 
-          h += '</tbody></table><div class="no-print"><button class="btn-print" onclick="window.print()">พิมพ์รายงานทั้งหมด</button></div>';
+          h += '</tbody></table>';
+          h += '<div class="no-print"><button class="btn-print" onclick="window.print()">พิมพ์รายงานทั้งหมด</button></div>';
           h += '</div></body></html>';
 
+          w.document.open();
           w.document.write(h);
           w.document.close();
         }).catch(function (err) {
+          try { w.close(); } catch (_ignore3) {}
           showError((err && err.message) ? err.message : 'ไม่สามารถดึงข้อมูลรายงานได้');
         });
       }
