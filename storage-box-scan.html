@@ -982,23 +982,64 @@
         return C.escapeHtml(value == null ? '' : String(value));
       }
 
-      function normalizeDocId(raw) {
+      function normalizeDocId(raw, depth) {
+        var level = Number(depth || 0);
+        if (level > 3) return '';
+
         var text = C.safeTrim(raw || '');
         if (!text) return '';
 
+        function safeDecode(value) {
+          var input = String(value == null ? '' : value);
+          if (!input) return '';
+          try { return decodeURIComponent(input); } catch (_err) { return input; }
+        }
+
+        if (text.indexOf('\n') >= 0 || text.indexOf('\r') >= 0) {
+          var lines = text.split(/\r?\n/);
+          for (var li = 0; li < lines.length; li++) {
+            var line = C.safeTrim(lines[li] || '');
+            if (line) {
+              text = line;
+              break;
+            }
+          }
+        }
+
         try {
           var parsed = new URL(text, window.location.href);
-          var pid = parsed.searchParams.get('id') || parsed.searchParams.get('ID');
+          var host = String(parsed.hostname || '').toLowerCase();
+          var nestedData = C.safeTrim(parsed.searchParams.get('data') || parsed.searchParams.get('text') || '');
+          if (nestedData && (host.indexOf('qrserver.com') >= 0 || host.indexOf('googleapis.com') >= 0)) {
+            return normalizeDocId(safeDecode(nestedData), level + 1);
+          }
+
+          var pid = C.safeTrim(
+            parsed.searchParams.get('id')
+            || parsed.searchParams.get('ID')
+            || parsed.searchParams.get('docId')
+            || parsed.searchParams.get('docid')
+            || parsed.searchParams.get('amDocNo')
+            || parsed.searchParams.get('amdocno')
+            || ''
+          );
           if (pid) {
-            text = decodeURIComponent(String(pid || ''));
+            text = safeDecode(pid);
+          } else {
+            var hash = String(parsed.hash || '');
+            var hashMatch = hash.match(/[?&](?:id|docid|amdocno)=([^&#]+)/i);
+            if (hashMatch && hashMatch[1]) {
+              text = safeDecode(hashMatch[1]);
+            }
           }
         } catch (_e) {
-          var match = text.match(/[?&]id=([^&#]+)/i);
+          var match = text.match(/[?&#](?:id|docid|amdocno)=([^&#]+)/i);
           if (match && match[1]) {
-            try {
-              text = decodeURIComponent(match[1]);
-            } catch (_e2) {
-              text = match[1];
+            text = safeDecode(match[1]);
+          } else {
+            var decoded = safeDecode(text);
+            if (decoded !== text && /(?:id|docid|amdocno)\s*=/.test(decoded.toLowerCase())) {
+              return normalizeDocId(decoded, level + 1);
             }
           }
         }
@@ -1007,6 +1048,11 @@
         while (text && text.charAt(0) === '\'') {
           text = text.substring(1);
         }
+
+        if (/^https?:\/\//i.test(text) && !/[?&#](?:id|docid|amdocno)=/i.test(text)) {
+          return '';
+        }
+
         return text;
       }
 
@@ -1484,7 +1530,11 @@
 
         var now = Date.now();
         var docId = normalizeDocId(decodedText);
-        if (!docId) return;
+        if (!docId) {
+          setStatus('QR ไม่ใช่เอกสาร', 'error');
+          setStatusMessage('สถานะ: QR นี้ไม่พบรหัสเอกสาร (docId)');
+          return;
+        }
 
         if (docId === state.lastScanValue && (now - state.lastScanAt) < 2500) return;
         if ((now - state.lastScanAt) < 600) return;

@@ -1418,12 +1418,15 @@
       }
 
       function getDocQrUrl() {
-        var base = C.normalizeScriptUrl(state.settings.scriptUrl || '').split('?')[0];
-        var target = base + '?id=' + encodeURIComponent((state.doc && state.doc.docId) || docId || '');
+        var targetDocId = C.safeTrim((state.doc && state.doc.docId) || docId || '');
+        var target = C.buildPageUrl('document-view.html', { id: targetDocId });
+        try {
+          target = new URL(target, window.location.href).toString();
+        } catch (_ignore) {}
         if (typeof window.appendSessionKeysToUrl === 'function') {
           target = window.appendSessionKeysToUrl(target);
         } else if (state.settings && C.safeTrim(state.settings.deviceKey || '')) {
-          target += '&dk=' + encodeURIComponent(C.safeTrim(state.settings.deviceKey || ''));
+          target += (target.indexOf('?') >= 0 ? '&' : '?') + 'dk=' + encodeURIComponent(C.safeTrim(state.settings.deviceKey || ''));
         }
         return 'https://api.qrserver.com/v1/create-qr-code/?size=1200x1200&margin=0&qzone=2&ecc=Q&data=' + encodeURIComponent(target);
       }

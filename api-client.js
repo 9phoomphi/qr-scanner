@@ -581,10 +581,13 @@
   };
 
   DocumentControlApi.prototype.checkStorageEligibility = function (docId, opts) {
+    var normalizedDocId = safeTrim(docId || '');
     return this.call('storage.check_eligibility', {
       deviceKey: this.defaultDeviceKey,
       clientIpKey: this.defaultIpKey,
-      docId: safeTrim(docId || '')
+      docId: normalizedDocId,
+      id: normalizedDocId,
+      amDocNo: normalizedDocId
     }, opts);
   };
 

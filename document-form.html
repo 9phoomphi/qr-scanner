@@ -949,8 +949,13 @@
         var hh = C.safeTrim(els.timeRecHr.value || '');
         var mm = C.safeTrim(els.timeRecMn.value || '');
         var timeRec = hh && mm ? (hh + '.' + mm) : '';
+        var frontendDocumentUrl = '';
+        try {
+          frontendDocumentUrl = new URL('document-view.html', window.location.href).toString();
+        } catch (_ignore) {}
 
         return {
+          frontendBaseUrl: C.safeTrim(frontendDocumentUrl || ''),
           fiscalYear: isEdit ? '' : C.safeTrim(els.fiscalYear.value || ''),
           dateRec: C.safeTrim(els.dateRec.value || ''),
           timeRec: timeRec,
