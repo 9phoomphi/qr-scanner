@@ -1128,31 +1128,6 @@
         return info;
       }
 
-      function inferFiscalFromStoredLocation(storedLoc) {
-        var loc = C.safeTrim(storedLoc || '');
-        if (!loc) return '';
-
-        var info = normalizeLoanStorageInfo(state.storageInfo || {});
-        var byFiscal = (info.boxesByFiscalYear && typeof info.boxesByFiscalYear === 'object')
-          ? info.boxesByFiscalYear
-          : {};
-        var matched = [];
-
-        for (var key in byFiscal) {
-          if (!Object.prototype.hasOwnProperty.call(byFiscal, key)) continue;
-          if (key === '__all__') continue;
-          var boxes = Array.isArray(byFiscal[key]) ? byFiscal[key] : [];
-          for (var i = 0; i < boxes.length; i++) {
-            if (C.safeTrim(boxes[i] || '') !== loc) continue;
-            matched.push(C.safeTrim(key || ''));
-            break;
-          }
-        }
-
-        matched = uniqTrimmed(matched);
-        return matched.join(', ');
-      }
-
       function userAvatar(name, bgColor, colorHex) {
         var userName = C.safeTrim(name || '');
         var userLower = userName.toLowerCase();
@@ -1344,7 +1319,7 @@
         var storedAt = C.safeTrim(doc.storedAtDisplay || '-') || '-';
         var storedBy = C.safeTrim(doc.storedBy || '-') || '-';
         var storedPos = C.safeTrim(doc.storedPosition || '') || '';
-        var fiscalText = C.safeTrim(inferFiscalFromStoredLocation(storedLoc) || '-') || '-';
+        var fiscalText = C.safeTrim(doc.fiscalYear || '-') || '-';
 
         html += '<div class="info-group storage-status-ok">';
         html += '<p class="info-label">สถานที่เก็บ</p>';

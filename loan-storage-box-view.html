@@ -1476,13 +1476,6 @@
         return 0;
       }
 
-      function normalizeDocIdentifier(value) {
-        var raw = C.safeTrim(value || '');
-        if (!raw) return '';
-        if (raw.charAt(0) === "'") raw = C.safeTrim(raw.slice(1));
-        return raw.replace(/\s+/g, '').toUpperCase();
-      }
-
       function parseAdYear(text) {
         var raw = C.safeTrim(text || '');
         if (!raw) return 0;
@@ -1510,50 +1503,22 @@
         return parseAdYear(yearText);
       }
 
-      function resolveDocFiscalYear(doc, storageOptionsData) {
+      function resolveDocFiscalYear(doc) {
         var fy = C.safeTrim((doc && doc.fiscalYear) || '');
-        if (fy) return fy;
-
-        var map = (storageOptionsData && storageOptionsData.sdhFiscalYears) || {};
-        if (!map || typeof map !== 'object') return '';
-        var sdhKey = normalizeDocIdentifier(doc && doc.docNoSdh);
-        if (!sdhKey) return '';
-        return C.safeTrim(map[sdhKey] || '');
+        return fy;
       }
 
-      function computeStorageYearSummaryFromOptions(storageOptionsData, targetBox) {
-        var data = storageOptionsData || {};
-        var map = data.boxesByFiscalYear || {};
-        var years = [];
-        var target = normalizeBoxLooseKey(targetBox);
-        if (!target || !map || typeof map !== 'object') return '-';
-        for (var year in map) {
-          if (!Object.prototype.hasOwnProperty.call(map, year)) continue;
-          var yearText = C.safeTrim(year);
-          if (!yearText || yearText === '__all__') continue;
-          if (listContainsBox(map[year], targetBox)) years.push(C.safeTrim(year));
-        }
-        if (!years.length) return '-';
-        years.sort(function (a, b) {
-          var na = parseInt(a, 10);
-          var nb = parseInt(b, 10);
-          if (!isNaN(na) && !isNaN(nb)) return nb - na;
-          return String(b).localeCompare(String(a), 'th');
-        });
-        return years.join(', ');
-      }
-
-      function computeStorageYearSummaryFromDocs(docs, storageOptionsData, targetBox) {
+      function computeStorageYearSummaryFromDocs(docs) {
         var list = Array.isArray(docs) ? docs : [];
         var years = [];
         var seen = {};
         for (var i = 0; i < list.length; i++) {
-          var fy = resolveDocFiscalYear(list[i], storageOptionsData);
+          var fy = resolveDocFiscalYear(list[i]);
           if (!fy || seen[fy]) continue;
           seen[fy] = true;
           years.push(fy);
         }
-        if (!years.length) return computeStorageYearSummaryFromOptions(storageOptionsData, targetBox);
+        if (!years.length) return '-';
         years.sort(function (a, b) {
           var na = parseInt(a, 10);
           var nb = parseInt(b, 10);
@@ -1596,7 +1561,7 @@
             parseAdYearFromDateInput(doc.storedAtInput) ||
             parseAdYearFromStoredDisplay(doc.storedAtDisplay);
           if (!baseAdYear) {
-            baseAdYear = parseAdYear(resolveDocFiscalYear(doc, storageOptionsData));
+            baseAdYear = parseAdYear(resolveDocFiscalYear(doc));
           }
           if (!baseAdYear) continue;
 
@@ -1627,7 +1592,7 @@
         return {
           boxName: boxName,
           docs: filtered,
-          storageYearSummary: computeStorageYearSummaryFromDocs(filtered, storageOptionsData, boxName),
+          storageYearSummary: computeStorageYearSummaryFromDocs(filtered),
           destroyYearSummary: computeDestroyYearSummaryFromDocs(filtered, storageOptionsData, boxName)
         };
       }
