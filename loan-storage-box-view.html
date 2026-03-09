@@ -1476,6 +1476,51 @@
         return 0;
       }
 
+      function normalizeDocIdentifier(value) {
+        var raw = C.safeTrim(value || '');
+        if (!raw) return '';
+        if (raw.charAt(0) === "'") raw = C.safeTrim(raw.slice(1));
+        return raw.replace(/\s+/g, '').toUpperCase();
+      }
+
+      function parseAdYear(text) {
+        var raw = C.safeTrim(text || '');
+        if (!raw) return 0;
+        var y = parseInt(raw, 10);
+        if (!isFinite(y) || isNaN(y)) return 0;
+        if (y >= 2400) y -= 543;
+        if (y < 1900 || y > 2600) return 0;
+        return y;
+      }
+
+      function parseAdYearFromDateInput(dateInput) {
+        var text = C.safeTrim(dateInput || '');
+        if (!text) return 0;
+        var m = text.match(/^(\d{4})-\d{1,2}-\d{1,2}$/);
+        if (!m) return parseAdYear(text);
+        return parseAdYear(m[1]);
+      }
+
+      function parseAdYearFromStoredDisplay(displayText) {
+        var text = C.safeTrim(displayText || '');
+        if (!text) return 0;
+        var matches = text.match(/\d{4}/g);
+        if (!matches || !matches.length) return 0;
+        var yearText = matches[matches.length - 1];
+        return parseAdYear(yearText);
+      }
+
+      function resolveDocFiscalYear(doc, storageOptionsData) {
+        var fy = C.safeTrim((doc && doc.fiscalYear) || '');
+        if (fy) return fy;
+
+        var map = (storageOptionsData && storageOptionsData.sdhFiscalYears) || {};
+        if (!map || typeof map !== 'object') return '';
+        var sdhKey = normalizeDocIdentifier(doc && doc.docNoSdh);
+        if (!sdhKey) return '';
+        return C.safeTrim(map[sdhKey] || '');
+      }
+
       function computeStorageYearSummaryFromOptions(storageOptionsData, targetBox) {
         var data = storageOptionsData || {};
         var map = data.boxesByFiscalYear || {};
@@ -1503,7 +1548,7 @@
         var years = [];
         var seen = {};
         for (var i = 0; i < list.length; i++) {
-          var fy = C.safeTrim((list[i] && list[i].fiscalYear) || '');
+          var fy = resolveDocFiscalYear(list[i], storageOptionsData);
           if (!fy || seen[fy]) continue;
           seen[fy] = true;
           years.push(fy);
@@ -1515,6 +1560,54 @@
           if (!isNaN(na) && !isNaN(nb)) return nb - na;
           return String(b).localeCompare(String(a), 'th');
         });
+        return years.join(', ');
+      }
+
+      function resolveBoxDestroyYears(storageOptionsData, targetBox) {
+        var data = storageOptionsData || {};
+        var map = data.boxDestroyYearsMap || {};
+        var target = normalizeBoxLooseKey(targetBox);
+        var fallback = parseInt(data.defaultDestroyYears, 10);
+        if (!isFinite(fallback) || isNaN(fallback) || fallback < 1) fallback = 10;
+
+        if (!map || typeof map !== 'object' || !target) return fallback;
+
+        for (var name in map) {
+          if (!Object.prototype.hasOwnProperty.call(map, name)) continue;
+          if (!isBoxNameMatch(name, targetBox)) continue;
+          var years = parseInt(map[name], 10);
+          if (isFinite(years) && !isNaN(years) && years > 0) return years;
+        }
+
+        return fallback;
+      }
+
+      function computeDestroyYearSummaryFromDocs(docs, storageOptionsData, targetBox) {
+        var list = Array.isArray(docs) ? docs : [];
+        if (!list.length) return '-';
+
+        var destroyYears = resolveBoxDestroyYears(storageOptionsData, targetBox);
+        var years = [];
+        var seen = {};
+
+        for (var i = 0; i < list.length; i++) {
+          var doc = list[i] || {};
+          var baseAdYear =
+            parseAdYearFromDateInput(doc.storedAtInput) ||
+            parseAdYearFromStoredDisplay(doc.storedAtDisplay);
+          if (!baseAdYear) {
+            baseAdYear = parseAdYear(resolveDocFiscalYear(doc, storageOptionsData));
+          }
+          if (!baseAdYear) continue;
+
+          var destroyBe = baseAdYear + destroyYears + 543;
+          if (seen[destroyBe]) continue;
+          seen[destroyBe] = true;
+          years.push(String(destroyBe));
+        }
+
+        if (!years.length) return '-';
+        years.sort(function (a, b) { return parseInt(b, 10) - parseInt(a, 10); });
         return years.join(', ');
       }
 
@@ -1535,7 +1628,7 @@
           boxName: boxName,
           docs: filtered,
           storageYearSummary: computeStorageYearSummaryFromDocs(filtered, storageOptionsData, boxName),
-          destroyYearSummary: '-'
+          destroyYearSummary: computeDestroyYearSummaryFromDocs(filtered, storageOptionsData, boxName)
         };
       }
 
