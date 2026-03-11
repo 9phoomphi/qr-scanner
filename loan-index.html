@@ -618,12 +618,23 @@
     #filterModal #btnApplyFilter,
     #filterModal .filter-modal-footer .btn {
       cursor: pointer !important;
+      font-size: 1.02rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.005em;
     }
 
     #filterModal #btnResetFilter:disabled,
     #filterModal #btnApplyFilter:disabled,
     #filterModal .filter-modal-footer .btn:disabled {
       cursor: not-allowed !important;
+    }
+
+    @media (max-width: 640px) {
+      #filterModal #btnResetFilter,
+      #filterModal #btnApplyFilter,
+      #filterModal .filter-modal-footer .btn {
+        font-size: 0.96rem !important;
+      }
     }
 
     @media (max-width: 640px) {
@@ -1225,7 +1236,7 @@
                   <label class="filter-option">
                     <input type="checkbox" id="filterLoanAwaiting" value="awaiting">
                     <span class="checkmark"></span>
-                    <span class="filter-label"><i class="bi bi-pencil-square me-1" style="color:#3B82F6"></i>รอเพิ่มข้อมูล</span>
+                    <span class="filter-label"><i class="bi bi-pencil-square me-1" style="color:#6D28D9"></i>รอเพิ่มข้อมูล</span>
                   </label>
                   <label class="filter-option">
                     <input type="checkbox" id="filterLoanStored" value="stored">
@@ -2801,6 +2812,7 @@
             applyFilterFromModal();
             closeFilterModal();
             state.page = 1;
+            switchTab('docs');
             loadList(true).catch(function (err) {
               showError((err && err.message) ? err.message : 'ไม่สามารถกรองข้อมูลได้');
             });
