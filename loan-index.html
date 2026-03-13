@@ -1441,45 +1441,56 @@
         return false;
       }
 
-      function getLoanStatusClass(item) {
+      function getLoanStatusKey(item) {
+        var key = C.safeTrim((item && item.statusKey) || '');
+        if (key) return key;
         var dueState = C.safeTrim((item && item.dueState) || '');
-        if (isAwaitingInfo(item)) return 'status-waiting';
-        if (isPaidDoc(item)) return 'status-completed';
-        if (dueState === 'overdue') return 'status-cancelled';
-        if (dueState === 'due_soon' || dueState === 'due_today') return 'status-pending';
+        if (isAwaitingInfo(item)) return 'awaiting';
+        if (isPaidDoc(item)) return 'paid';
+        if (dueState === 'overdue') return 'overdue';
+        if (dueState === 'due_soon' || dueState === 'due_today') return 'due_soon';
+        return 'unpaid';
+      }
+
+      function getLoanStatusClass(item) {
+        var statusKey = getLoanStatusKey(item);
+        if (statusKey === 'awaiting') return 'status-waiting';
+        if (statusKey === 'paid') return 'status-completed';
+        if (statusKey === 'overdue') return 'status-cancelled';
+        if (statusKey === 'due_soon') return 'status-pending';
         return 'status-inprogress';
       }
 
       function getLoanBgIcon(item) {
-        var dueState = C.safeTrim((item && item.dueState) || '');
-        if (isAwaitingInfo(item)) return 'bi-pencil-square';
-        if (isPaidDoc(item)) return 'bi-check-circle-fill';
-        if (dueState === 'overdue') return 'bi-exclamation-octagon-fill';
-        if (dueState === 'due_soon' || dueState === 'due_today') return 'bi-alarm-fill';
+        var statusKey = getLoanStatusKey(item);
+        if (statusKey === 'awaiting') return 'bi-pencil-square';
+        if (statusKey === 'paid') return 'bi-check-circle-fill';
+        if (statusKey === 'overdue') return 'bi-exclamation-octagon-fill';
+        if (statusKey === 'due_soon') return 'bi-alarm-fill';
         return 'bi-hourglass-split';
       }
 
       function getLoanStatusBadge(item) {
-        var dueState = C.safeTrim((item && item.dueState) || '');
-
-        if (isPaidDoc(item)) {
+        var statusKey = getLoanStatusKey(item);
+        if (statusKey === 'paid') {
           return '<span class="badge-status badge-completed"><i class="bi bi-check-circle-fill"></i>ชำระแล้ว</span>';
         }
-        if (isAwaitingInfo(item)) {
+        if (statusKey === 'awaiting') {
           return '<span class="badge-status badge-waiting"><i class="bi bi-pencil-square"></i>รอเพิ่มข้อมูล</span>';
         }
-        if (dueState === 'overdue') {
+        if (statusKey === 'overdue') {
           return '<span class="badge-status badge-cancel"><i class="bi bi-exclamation-octagon-fill"></i>เลยกำหนด</span>';
         }
-        if (dueState === 'due_soon' || dueState === 'due_today') {
+        if (statusKey === 'due_soon') {
           return '<span class="badge-status badge-pending"><i class="bi bi-alarm-fill"></i>ใกล้ครบกำหนด</span>';
         }
         return '<span class="badge-status badge-inprogress"><i class="bi bi-hourglass-split"></i>ยังไม่ชำระ</span>';
       }
 
       function getLoanDueBadge(item) {
+        var statusKey = getLoanStatusKey(item);
         var dueState = C.safeTrim((item && item.dueState) || '');
-        if (isPaidDoc(item) || dueState === 'paid' || isAwaitingInfo(item)) return '';
+        if (statusKey === 'paid' || statusKey === 'awaiting' || dueState === 'paid') return '';
 
         var dueBadgeClass = getDueBadgeClass(dueState);
         var dueLabel = C.safeTrim((item && item.dueLabel) || '') || 'ยังไม่กำหนดวันครบกำหนด';
@@ -1489,12 +1500,13 @@
       function getLoanRemainingDisplay(item) {
         var remaining = C.safeTrim((item && item.remainingText) || '');
         if (remaining) return remaining;
-        if (isAwaitingInfo(item)) return 'รอเพิ่มข้อมูล';
+        var statusKey = getLoanStatusKey(item);
+        if (statusKey === 'awaiting') return 'รอเพิ่มข้อมูล';
+        if (statusKey === 'paid') return 'ชำระแล้ว';
 
         var dueState = C.safeTrim((item && item.dueState) || '');
         var rawDays = (item && item.daysToDue != null) ? Number(item.daysToDue) : null;
 
-        if (dueState === 'paid') return 'ชำระแล้ว';
         if (dueState === 'due_today') return 'ครบกำหนดวันนี้';
         if (rawDays !== null && isFinite(rawDays)) {
           if (rawDays < 0) return 'เลยกำหนด ' + Math.abs(rawDays) + ' วัน';
@@ -1559,16 +1571,7 @@
       function matchesLoanStatusFilter(item, statusKey) {
         var key = C.safeTrim(statusKey || '');
         if (!key) return true;
-        if (isAwaitingInfo(item)) return key === 'awaiting';
-        if (key === 'awaiting') return false;
-        if (key === 'unpaid') return !isPaidDoc(item);
-        if (key === 'due_soon') {
-          var dueSoonState = C.safeTrim((item && item.dueState) || '');
-          return dueSoonState === 'due_soon' || dueSoonState === 'due_today';
-        }
-        if (key === 'overdue') return C.safeTrim((item && item.dueState) || '') === 'overdue';
-        if (key === 'paid') return isPaidDoc(item);
-        return true;
+        return getLoanStatusKey(item) === key;
       }
 
       function matchesLoanAdvancedFilter(item) {
@@ -1903,12 +1906,13 @@
         var stats = { total: 0, paid: 0, unpaid: 0, overdue: 0, dueSoon: 0, awaiting: 0 };
         for (var i = 0; i < docs.length; i++) {
           var d = docs[i] || {};
+          var statusKey = getLoanStatusKey(d);
           stats.total++;
-          if (isAwaitingInfo(d)) stats.awaiting++;
-          if (isPaidDoc(d)) stats.paid++;
+          if (statusKey === 'awaiting') stats.awaiting++;
+          else if (statusKey === 'paid') stats.paid++;
+          else if (statusKey === 'overdue') stats.overdue++;
+          else if (statusKey === 'due_soon') stats.dueSoon++;
           else stats.unpaid++;
-          if (C.safeTrim(d.dueState || '') === 'overdue') stats.overdue++;
-          if (C.safeTrim(d.dueState || '') === 'due_soon' || C.safeTrim(d.dueState || '') === 'due_today') stats.dueSoon++;
         }
         return stats;
       }
@@ -1925,11 +1929,11 @@
       }
 
       function getLoanStatusLabelForReport(item) {
-        var d = item || {};
-        if (isAwaitingInfo(d)) return 'รอเพิ่มข้อมูล';
-        if (isPaidDoc(d)) return 'ชำระแล้ว';
-        if (C.safeTrim(d.dueState || '') === 'overdue') return 'เลยกำหนด';
-        if (C.safeTrim(d.dueState || '') === 'due_soon' || C.safeTrim(d.dueState || '') === 'due_today') return 'ใกล้ครบกำหนด';
+        var statusKey = getLoanStatusKey(item);
+        if (statusKey === 'awaiting') return 'รอเพิ่มข้อมูล';
+        if (statusKey === 'paid') return 'ชำระแล้ว';
+        if (statusKey === 'overdue') return 'เลยกำหนด';
+        if (statusKey === 'due_soon') return 'ใกล้ครบกำหนด';
         return 'ยังไม่ชำระ';
       }
 
