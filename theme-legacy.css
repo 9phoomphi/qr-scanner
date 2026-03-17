@@ -1116,15 +1116,28 @@ body.dark-mode .form-label .field-help {
 }
 
 .section.section-payment input,
-.section.section-payment textarea,
-.section.section-payment .form-control {
+.section.section-payment textarea {
   cursor: text;
   caret-color: #0f172a;
 }
 
 .section.section-payment select,
-.section.section-payment .form-select {
+.section.section-payment .form-select,
+.section.section-payment .thai-date-input,
+.section.section-payment .thai-date-input .form-control,
+.section.section-payment .thai-date-input .cal-icon {
   cursor: pointer;
+}
+
+.section.section-payment input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.section.section-payment input[type="number"]::-webkit-outer-spin-button,
+.section.section-payment input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 body.dark-mode.page-loan-register .section.section-payment input,
