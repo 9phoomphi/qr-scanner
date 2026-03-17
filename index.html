@@ -2414,6 +2414,27 @@
         return '<span class="badge-status badge-active"><i class="bi bi-check-circle-fill"></i>ดำเนินการเสร็จ</span>';
       }
 
+      function resolveSheetColorLabel(value) {
+        var raw = C.safeTrim(value || '');
+        if (!raw) return '';
+        var compact = raw.toLowerCase().replace(/\s+/g, '').replace(/[.]/g, '');
+        if (compact === 'ใบฟ้า' || compact === 'ฟ้า' || compact === 'ใบสีฟ้า' || compact === 'blue' || compact === 'lightblue') return 'ใบฟ้า';
+        if (compact === 'ใบชมพู' || compact === 'ชมพู' || compact === 'ใบสีชมพู' || compact === 'pink') return 'ใบชมพู';
+        if (compact === 'ใบเขียว' || compact === 'เขียว' || compact === 'ใบสีเขียว' || compact === 'green') return 'ใบเขียว';
+        if (compact === 'อื่นๆ' || compact === 'อื่น' || compact === 'other') return 'อื่น ๆ';
+        return '';
+      }
+
+      function buildSheetColorBadge(label) {
+        var name = resolveSheetColorLabel(label);
+        if (!name) return '';
+        var cls = 'badge-sheet-other';
+        if (name === 'ใบฟ้า') cls = 'badge-sheet-blue';
+        else if (name === 'ใบชมพู') cls = 'badge-sheet-pink';
+        else if (name === 'ใบเขียว') cls = 'badge-sheet-green';
+        return '<span class="badge-status ' + cls + '"><i class="bi bi-file-earmark-text me-1"></i>' + C.escapeHtml(name) + '</span>';
+      }
+
       function getStoredUserChip(doc) {
         var storedUser = C.safeTrim(doc && doc.storedUser || '');
         if (!storedUser || !C.safeTrim(doc && doc.storedLoc || '')) return '';
@@ -2499,6 +2520,8 @@
             ppBadge = '<span class="badge-status badge-purpose me-1"><i class="bi bi-tag-fill me-1"></i>' + C.escapeHtml(d.purpose) + '</span>';
           }
 
+          var sheetBadge = buildSheetColorBadge(d.sheetColor || d.sheetType || d.colorSheet || d.docColor || '');
+
           var budgetLabel = C.safeTrim(d.budgetType || '') || 'ไม่ระบุงบประมาณ';
           var budgetBadge = '<span class="badge-status badge-budget"><i class="bi bi-wallet2 me-1"></i>' + C.escapeHtml(budgetLabel) + '</span>';
           var groupLabel = C.safeTrim(d.group || '') || '-';
@@ -2519,7 +2542,7 @@
           html += '<i class="bi ' + C.escapeHtml(bgIcon) + ' doc-bg-icon" aria-hidden="true"></i>';
           html += '<div class="doc-top">';
           html += '<div class="doc-left"><div style="min-width:0"><div class="doc-title text-primary">' + C.escapeHtml(d.amDocNo || d.amDocNoAk || '-') + '</div><div class="doc-subtitle">' + (sdhText ? ('(สธ ' + C.escapeHtml(sdhText) + ')') : '') + '</div></div></div>';
-          html += '<div class="doc-tags">' + ppBadge + budgetBadge + stBadge + locBadge + '</div>';
+          html += '<div class="doc-tags">' + ppBadge + (sheetBadge ? (sheetBadge + ' ') : '') + budgetBadge + stBadge + locBadge + '</div>';
           html += '</div>';
           html += '<p class="doc-subject">' + C.escapeHtml(C.safeText(d.subject || '-')) + '</p>';
           html += '<div class="doc-meta-lines">';
