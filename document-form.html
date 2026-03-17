@@ -593,7 +593,7 @@
             <input type="text" id="subjectK" class="form-control" placeholder="เรื่อง">
           </div>
           <div style="margin-bottom:8px;">
-            <label class="form-label">วันที่/เดือน/ปี</label>
+            <label class="form-label">วันที่/เดือน/ปี <span class="text-danger">*</span></label>
             <input type="text" id="subjectL" class="form-control" placeholder="วันที่/เดือน/ปี">
           </div>
           <div style="margin-bottom:8px;">
@@ -601,7 +601,7 @@
             <input type="text" id="subjectM" class="form-control" placeholder="เวลา">
           </div>
           <div>
-            <label class="form-label">สถานที่</label>
+            <label class="form-label">สถานที่ <span class="text-danger">*</span></label>
             <input type="text" id="subjectN" class="form-control" placeholder="สถานที่">
           </div>
         </section>
@@ -1189,7 +1189,9 @@
           if (!formData.dated) return 'กรุณาเลือกลงวันที่ของกอง/กลุ่ม';
         }
 
-        if (!formData.subjectK) return 'กรุณากรอกเรื่อง (ช่อง L)';
+        if (!formData.subjectK) return 'กรุณากรอกเรื่อง';
+        if (!formData.subjectL) return 'กรุณากรอกวันที่/เดือน/ปี';
+        if (!formData.subjectN) return 'กรุณากรอกสถานที่';
         if (!formData.docNoSdh) return 'กรุณากรอกเลขที่ สธ. (กลุ่มงาน)';
         if (!formData.sender) return 'กรุณากรอกชื่อผู้ส่ง/ผู้ยืม/ผู้ใช้หนี้/ผู้ประสานงาน';
         if (!formData.purpose) return 'กรุณาเลือกวัตถุประสงค์';
