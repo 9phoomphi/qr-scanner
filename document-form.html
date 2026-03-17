@@ -309,6 +309,7 @@
     .page-doc-form.sheet-theme-blue {
       --sheet-card-border: rgba(59, 130, 246, 0.36);
       --sheet-card-bg: linear-gradient(180deg, rgba(236, 248, 255, 0.9), rgba(219, 234, 254, 0.72));
+      --sheet-body-bg: linear-gradient(180deg, rgba(219, 234, 254, 0.46), rgba(191, 219, 254, 0.28));
       --sheet-section-border: rgba(59, 130, 246, 0.24);
       --sheet-section-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.78));
       --sheet-header-grad: linear-gradient(145deg, #66baff 0%, #3196fb 42%, #1f79f0 100%);
@@ -317,6 +318,7 @@
     .page-doc-form.sheet-theme-pink {
       --sheet-card-border: rgba(244, 114, 182, 0.4);
       --sheet-card-bg: linear-gradient(180deg, rgba(253, 232, 243, 0.92), rgba(251, 207, 232, 0.7));
+      --sheet-body-bg: linear-gradient(180deg, rgba(252, 231, 243, 0.54), rgba(249, 168, 212, 0.26));
       --sheet-section-border: rgba(244, 114, 182, 0.28);
       --sheet-section-bg: linear-gradient(180deg, rgba(255, 245, 251, 0.94), rgba(252, 231, 243, 0.8));
       --sheet-header-grad: linear-gradient(145deg, #f472b6 0%, #ec4899 52%, #db2777 100%);
@@ -325,6 +327,7 @@
     .page-doc-form.sheet-theme-green {
       --sheet-card-border: rgba(34, 197, 94, 0.36);
       --sheet-card-bg: linear-gradient(180deg, rgba(220, 252, 231, 0.9), rgba(187, 247, 208, 0.72));
+      --sheet-body-bg: linear-gradient(180deg, rgba(220, 252, 231, 0.48), rgba(134, 239, 172, 0.26));
       --sheet-section-border: rgba(34, 197, 94, 0.26);
       --sheet-section-bg: linear-gradient(180deg, rgba(240, 253, 244, 0.92), rgba(220, 252, 231, 0.8));
       --sheet-header-grad: linear-gradient(145deg, #34d399 0%, #22c55e 52%, #16a34a 100%);
@@ -333,6 +336,7 @@
     .page-doc-form.sheet-theme-other {
       --sheet-card-border: rgba(148, 163, 184, 0.45);
       --sheet-card-bg: linear-gradient(180deg, rgba(241, 245, 249, 0.92), rgba(226, 232, 240, 0.78));
+      --sheet-body-bg: linear-gradient(180deg, rgba(226, 232, 240, 0.52), rgba(203, 213, 225, 0.32));
       --sheet-section-border: rgba(148, 163, 184, 0.3);
       --sheet-section-bg: linear-gradient(180deg, rgba(248, 250, 252, 0.92), rgba(226, 232, 240, 0.82));
       --sheet-header-grad: linear-gradient(145deg, #94a3b8 0%, #64748b 55%, #475569 100%);
@@ -341,6 +345,7 @@
     body.dark-mode.page-doc-form.sheet-theme-blue {
       --sheet-card-border: rgba(56, 189, 248, 0.38);
       --sheet-card-bg: linear-gradient(180deg, rgba(16, 30, 48, 0.9), rgba(12, 22, 36, 0.88));
+      --sheet-body-bg: linear-gradient(180deg, rgba(15, 28, 46, 0.55), rgba(12, 22, 36, 0.38));
       --sheet-section-border: rgba(56, 189, 248, 0.28);
       --sheet-section-bg: linear-gradient(180deg, rgba(16, 32, 48, 0.9), rgba(12, 24, 38, 0.84));
       --sheet-header-grad: linear-gradient(145deg, #1e3a8a 0%, #1e40af 52%, #1d4ed8 100%);
@@ -349,6 +354,7 @@
     body.dark-mode.page-doc-form.sheet-theme-pink {
       --sheet-card-border: rgba(244, 114, 182, 0.42);
       --sheet-card-bg: linear-gradient(180deg, rgba(52, 20, 36, 0.92), rgba(34, 12, 24, 0.9));
+      --sheet-body-bg: linear-gradient(180deg, rgba(52, 20, 36, 0.58), rgba(34, 12, 24, 0.4));
       --sheet-section-border: rgba(244, 114, 182, 0.28);
       --sheet-section-bg: linear-gradient(180deg, rgba(52, 22, 38, 0.9), rgba(32, 14, 26, 0.86));
       --sheet-header-grad: linear-gradient(145deg, #9d174d 0%, #be185d 52%, #db2777 100%);
@@ -357,6 +363,7 @@
     body.dark-mode.page-doc-form.sheet-theme-green {
       --sheet-card-border: rgba(34, 197, 94, 0.4);
       --sheet-card-bg: linear-gradient(180deg, rgba(16, 38, 28, 0.92), rgba(12, 28, 20, 0.88));
+      --sheet-body-bg: linear-gradient(180deg, rgba(16, 38, 28, 0.56), rgba(12, 28, 20, 0.4));
       --sheet-section-border: rgba(34, 197, 94, 0.3);
       --sheet-section-bg: linear-gradient(180deg, rgba(18, 40, 30, 0.9), rgba(12, 30, 22, 0.86));
       --sheet-header-grad: linear-gradient(145deg, #166534 0%, #15803d 52%, #16a34a 100%);
@@ -365,9 +372,43 @@
     body.dark-mode.page-doc-form.sheet-theme-other {
       --sheet-card-border: rgba(148, 163, 184, 0.4);
       --sheet-card-bg: linear-gradient(180deg, rgba(20, 28, 40, 0.9), rgba(14, 20, 30, 0.86));
+      --sheet-body-bg: linear-gradient(180deg, rgba(20, 28, 40, 0.56), rgba(14, 20, 30, 0.4));
       --sheet-section-border: rgba(148, 163, 184, 0.3);
       --sheet-section-bg: linear-gradient(180deg, rgba(20, 28, 40, 0.88), rgba(14, 22, 32, 0.84));
       --sheet-header-grad: linear-gradient(145deg, #475569 0%, #334155 52%, #1f2937 100%);
+    }
+
+    body.page-doc-form.sheet-theme-blue .main-card,
+    body.page-doc-form.sheet-theme-pink .main-card,
+    body.page-doc-form.sheet-theme-green .main-card,
+    body.page-doc-form.sheet-theme-other .main-card {
+      border-color: var(--sheet-card-border) !important;
+      background: var(--sheet-card-bg) !important;
+      box-shadow: var(--sheet-card-shadow) !important;
+    }
+
+    body.page-doc-form.sheet-theme-blue .card-body,
+    body.page-doc-form.sheet-theme-pink .card-body,
+    body.page-doc-form.sheet-theme-green .card-body,
+    body.page-doc-form.sheet-theme-other .card-body {
+      background: var(--sheet-body-bg) !important;
+    }
+
+    body.page-doc-form.sheet-theme-blue .form-section,
+    body.page-doc-form.sheet-theme-pink .form-section,
+    body.page-doc-form.sheet-theme-green .form-section,
+    body.page-doc-form.sheet-theme-other .form-section {
+      border-color: var(--sheet-section-border) !important;
+      background: var(--sheet-section-bg) !important;
+      box-shadow: var(--sheet-section-shadow) !important;
+    }
+
+    body.page-doc-form.sheet-theme-blue .header-bg,
+    body.page-doc-form.sheet-theme-pink .header-bg,
+    body.page-doc-form.sheet-theme-green .header-bg,
+    body.page-doc-form.sheet-theme-other .header-bg {
+      background: var(--sheet-header-grad) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.28) !important;
     }
 
     .sheet-color-modal {
@@ -980,6 +1021,12 @@
         { key: 'green', label: 'ใบเขียว', themeClass: 'sheet-theme-green' },
         { key: 'other', label: 'อื่น ๆ', themeClass: 'sheet-theme-other' }
       ];
+      var SHEET_COLOR_ALIASES = {
+        blue: ['ใบฟ้า', 'ฟ้า', 'ใบสีฟ้า', 'blue', 'lightblue'],
+        pink: ['ใบชมพู', 'ชมพู', 'ใบสีชมพู', 'pink'],
+        green: ['ใบเขียว', 'เขียว', 'ใบสีเขียว', 'green'],
+        other: ['อื่น ๆ', 'อื่นๆ', 'อื่น', 'other']
+      };
 
       var state = {
         settings: null,
@@ -1258,6 +1305,17 @@
           if (!Object.prototype.hasOwnProperty.call(data.purposeByColor, key)) continue;
           if (normalizeColorLabel(key) === target) return data.purposeByColor[key];
         }
+        var aliasKey = state.sheetColorKey || '';
+        var aliases = aliasKey && SHEET_COLOR_ALIASES[aliasKey] ? SHEET_COLOR_ALIASES[aliasKey] : [];
+        if (aliases && aliases.length) {
+          for (var k in data.purposeByColor) {
+            if (!Object.prototype.hasOwnProperty.call(data.purposeByColor, k)) continue;
+            var normalizedKey = normalizeColorLabel(k);
+            for (var a = 0; a < aliases.length; a++) {
+              if (normalizeColorLabel(aliases[a]) === normalizedKey) return data.purposeByColor[k];
+            }
+          }
+        }
         return null;
       }
 
@@ -1316,6 +1374,15 @@
         for (var key in map) {
           if (!Object.prototype.hasOwnProperty.call(map, key)) continue;
           if (key.replace(/\s+/g, '').toLowerCase() === target) return map[key];
+        }
+        if (data && data.purposeByColor) {
+          for (var colorKey in data.purposeByColor) {
+            if (!Object.prototype.hasOwnProperty.call(data.purposeByColor, colorKey)) continue;
+            var list = data.purposeByColor[colorKey] || [];
+            for (var i = 0; i < list.length; i++) {
+              if (C.safeTrim(list[i] || '') === value) return colorKey;
+            }
+          }
         }
         return '';
       }
