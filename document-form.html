@@ -1474,6 +1474,7 @@
             if (!ok) return;
 
             fillOptions();
+            C.attachHelpHints('main', state.api, els.mainCard);
 
             if (isEdit && state.doc) {
               setFormData(state.doc);

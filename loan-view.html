@@ -630,10 +630,9 @@
         var contractNo = C.safeTrim(d.contractNo || '');
         var approveDate = C.safeTrim(d.approveDateInput || d.approveDateDisplay || '');
         var receiveMoneyDate = C.safeTrim(d.receiveMoneyDateInput || d.receiveMoneyDateDisplay || '');
-        var eventDate = C.safeTrim(d.eventDateInput || d.eventDateDisplay || '');
         var endActivityDate = C.safeTrim(d.endActivityDateInput || d.endActivityDateDisplay || '');
         if (!contractNo) return true;
-        if (!approveDate || !receiveMoneyDate || !eventDate || !endActivityDate) return true;
+        if (!approveDate || !receiveMoneyDate || !endActivityDate) return true;
         return false;
       }
 
@@ -715,7 +714,6 @@
         html += fieldItem('เลขที่สัญญา', doc.contractNo || '-');
         html += fieldItem('วันที่อนุมัติ', doc.approveDateDisplay || '-');
         html += fieldItem('วันที่ได้รับเงิน', doc.receiveMoneyDateDisplay || '-');
-        html += fieldItem('วันที่จัด/เดินทาง', doc.eventDateDisplay || '-');
         html += fieldItem('วันที่สิ้นสุดกิจกรรม', doc.endActivityDateDisplay || '-');
         html += fieldItem('ประเภทค่าใช้จ่าย', doc.expenseType || '-', 'money-like');
         html += fieldItem('แหล่งเงินยืม', doc.fundingSource || '-', 'money-like');

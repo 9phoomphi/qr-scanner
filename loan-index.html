@@ -1434,10 +1434,9 @@
         var contractNo = C.safeTrim(d.contractNo || '');
         var approveDate = C.safeTrim(d.approveDateInput || d.approveDateDisplay || '');
         var receiveMoneyDate = C.safeTrim(d.receiveMoneyDateInput || d.receiveMoneyDateDisplay || '');
-        var eventDate = C.safeTrim(d.eventDateInput || d.eventDateDisplay || '');
         var endActivityDate = C.safeTrim(d.endActivityDateInput || d.endActivityDateDisplay || '');
         if (!contractNo) return true;
-        if (!approveDate || !receiveMoneyDate || !eventDate || !endActivityDate) return true;
+        if (!approveDate || !receiveMoneyDate || !endActivityDate) return true;
         return false;
       }
 
@@ -2056,7 +2055,7 @@
         if (!state.api) return Promise.reject(new Error('ยังไม่ได้ตั้งค่า API'));
 
         if (els.itemsPerPage) state.itemsPerPage = parseInt(els.itemsPerPage.value, 10) || 20;
-        state.searchText = C.safeTrim((els.searchInput && els.searchInput.value) || state.searchText || '');
+        state.searchText = C.safeTrim(els.searchInput ? els.searchInput.value : (state.searchText || ''));
 
         setLoading(true);
         showError('');
