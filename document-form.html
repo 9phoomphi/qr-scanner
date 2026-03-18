@@ -968,11 +968,11 @@
           <div class="form-section-title"><i class="bi bi-wallet2"></i>ประเภทค่าใช้จ่ายและเกณฑ์คืนเงิน</div>
           <div class="row two">
             <div>
-              <label class="form-label">ประเภทค่าใช้จ่าย</label>
+              <label class="form-label">ประเภทค่าใช้จ่าย <span class="text-danger">*</span></label>
               <select id="loanExpenseType" class="form-select"></select>
             </div>
             <div>
-              <label class="form-label">แหล่งเงินยืม</label>
+              <label class="form-label">แหล่งเงินยืม <span class="text-danger">*</span></label>
               <select id="loanFundingSource" class="form-select"></select>
             </div>
           </div>
@@ -1282,6 +1282,14 @@
         var purpose = C.safeTrim(els.purpose.value || '');
         var show = isLoanPurpose(purpose);
         els.loanExtraSection.style.display = show ? 'block' : 'none';
+        if (els.loanExpenseType) {
+          els.loanExpenseType.required = show;
+          els.loanExpenseType.setAttribute('aria-required', show ? 'true' : 'false');
+        }
+        if (els.loanFundingSource) {
+          els.loanFundingSource.required = show;
+          els.loanFundingSource.setAttribute('aria-required', show ? 'true' : 'false');
+        }
         if (!show) {
           clearLoanExtraFields();
           return;
@@ -1748,6 +1756,14 @@
           formData.mainAct = '';
           formData.subProject = '';
           formData.activity = '';
+        }
+
+        if (isLoanPurpose(formData.purpose)) {
+          if (!formData.expenseType) return 'กรุณาเลือกประเภทค่าใช้จ่าย';
+          if (!formData.fundingSource) return 'กรุณาเลือกแหล่งเงินยืม';
+        } else {
+          formData.expenseType = '';
+          formData.fundingSource = '';
         }
 
         return '';
