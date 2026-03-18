@@ -11,15 +11,15 @@
   <style>
     :root {
       color-scheme: light;
-      --bg-top: #eff7ff;
-      --bg-bottom: #dfeeff;
-      --surface: rgba(255, 255, 255, 0.88);
-      --surface-strong: rgba(255, 255, 255, 0.96);
-      --surface-soft: rgba(248, 251, 255, 0.92);
-      --line: rgba(130, 154, 189, 0.28);
-      --line-strong: rgba(91, 112, 145, 0.42);
-      --text-main: #122039;
-      --text-sub: #5c6d87;
+      --bg: #eef5ff;
+      --bg-soft: #f7faff;
+      --bg-deep: #e6f0fe;
+      --panel: rgba(255, 255, 255, 0.92);
+      --panel-strong: rgba(255, 255, 255, 0.98);
+      --line: rgba(148, 163, 184, 0.28);
+      --line-strong: rgba(100, 116, 139, 0.38);
+      --text: #122033;
+      --text-sub: #5b6b82;
       --text-faint: #7b8ba3;
       --blue: #2563eb;
       --blue-soft: rgba(37, 99, 235, 0.12);
@@ -29,157 +29,225 @@
       --amber-soft: rgba(217, 119, 6, 0.14);
       --rose: #dc2626;
       --rose-soft: rgba(220, 38, 38, 0.12);
-      --shadow: 0 28px 68px rgba(15, 23, 42, 0.14);
-      --shadow-soft: 0 16px 34px rgba(15, 23, 42, 0.08);
-      --accent: linear-gradient(135deg, #44c8ff 0%, #198dff 52%, #175fff 100%);
-      --status-awaiting-bg: linear-gradient(180deg, rgba(245, 240, 255, 0.98), rgba(236, 229, 255, 0.96));
-      --status-due-soon-bg: linear-gradient(180deg, rgba(255, 246, 231, 0.98), rgba(255, 238, 214, 0.96));
-      --status-unpaid-bg: linear-gradient(180deg, rgba(234, 244, 255, 0.98), rgba(223, 238, 255, 0.96));
-      --status-overdue-bg: linear-gradient(180deg, rgba(255, 236, 239, 0.98), rgba(255, 227, 232, 0.96));
+      --bg-glow-a: rgba(66, 199, 255, 0.18);
+      --bg-glow-b: rgba(24, 95, 255, 0.14);
+      --bg-glow-c: rgba(255, 255, 255, 0.58);
+      --bg-glow-d: rgba(148, 163, 184, 0.1);
+      --table-head-bg-start: rgba(216, 227, 242, 0.98);
+      --table-head-bg-end: rgba(202, 216, 235, 0.98);
+      --table-head-top: rgba(255, 255, 255, 0.62);
+      --table-head-bottom: rgba(119, 140, 170, 0.24);
+      --table-head-shadow: rgba(15, 23, 42, 0.08);
+      --table-head-text: #17253c;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.1);
+      --accent: linear-gradient(135deg, #42c7ff 0%, #1989ff 56%, #185fff 100%);
     }
 
     body.dark-mode {
       color-scheme: dark;
-      --bg-top: #07111d;
-      --bg-bottom: #0e1828;
-      --surface: rgba(13, 22, 37, 0.84);
-      --surface-strong: rgba(15, 25, 41, 0.96);
-      --surface-soft: rgba(11, 19, 32, 0.92);
-      --line: rgba(148, 163, 184, 0.18);
-      --line-strong: rgba(148, 163, 184, 0.34);
-      --text-main: #edf4ff;
-      --text-sub: #c6d4e6;
-      --text-faint: #92a6c1;
-      --blue-soft: rgba(59, 130, 246, 0.18);
-      --violet-soft: rgba(124, 58, 237, 0.2);
-      --amber-soft: rgba(245, 158, 11, 0.2);
-      --rose-soft: rgba(248, 113, 113, 0.18);
-      --shadow: 0 34px 84px rgba(2, 8, 20, 0.54);
-      --shadow-soft: 0 18px 42px rgba(2, 8, 20, 0.36);
-      --status-awaiting-bg: linear-gradient(180deg, rgba(43, 25, 78, 0.68), rgba(27, 16, 52, 0.76));
-      --status-due-soon-bg: linear-gradient(180deg, rgba(87, 49, 8, 0.68), rgba(57, 33, 8, 0.76));
-      --status-unpaid-bg: linear-gradient(180deg, rgba(18, 46, 92, 0.68), rgba(12, 30, 64, 0.76));
-      --status-overdue-bg: linear-gradient(180deg, rgba(100, 24, 34, 0.66), rgba(63, 16, 23, 0.76));
+      --bg: #08111e;
+      --bg-soft: #0d1828;
+      --bg-deep: #06101b;
+      --panel: rgba(15, 24, 39, 0.92);
+      --panel-strong: rgba(15, 24, 39, 0.98);
+      --line: rgba(148, 163, 184, 0.16);
+      --line-strong: rgba(148, 163, 184, 0.28);
+      --text: #edf4ff;
+      --text-sub: #c1d0e4;
+      --text-faint: #97aac4;
+      --blue-soft: rgba(37, 99, 235, 0.18);
+      --violet-soft: rgba(124, 58, 237, 0.18);
+      --amber-soft: rgba(217, 119, 6, 0.2);
+      --rose-soft: rgba(220, 38, 38, 0.18);
+      --bg-glow-a: rgba(45, 95, 168, 0.24);
+      --bg-glow-b: rgba(82, 46, 180, 0.18);
+      --bg-glow-c: rgba(11, 19, 32, 0.18);
+      --bg-glow-d: rgba(148, 163, 184, 0.05);
+      --table-head-bg-start: rgba(36, 53, 76, 0.98);
+      --table-head-bg-end: rgba(23, 35, 52, 0.98);
+      --table-head-top: rgba(255, 255, 255, 0.08);
+      --table-head-bottom: rgba(5, 10, 18, 0.42);
+      --table-head-shadow: rgba(2, 8, 20, 0.28);
+      --table-head-text: #edf4ff;
+      --shadow: 0 22px 56px rgba(2, 8, 20, 0.34);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
 
-    html,
     body {
-      min-height: 100%;
-    }
-
-    body {
+      position: relative;
+      overflow-x: hidden;
+      isolation: isolate;
       margin: 0;
       font-family: "IBM Plex Sans Thai", sans-serif;
-      color: var(--text-main);
+      color: var(--text);
       background:
-        radial-gradient(980px 620px at -10% -12%, rgba(52, 200, 255, 0.22), rgba(52, 200, 255, 0) 58%),
-        radial-gradient(920px 520px at 110% -16%, rgba(23, 95, 255, 0.18), rgba(23, 95, 255, 0) 56%),
-        linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-      transition: background 0.28s ease, color 0.28s ease;
+        radial-gradient(1180px 760px at -14% -18%, var(--bg-glow-a), rgba(66, 199, 255, 0) 56%),
+        radial-gradient(940px 640px at 112% -12%, var(--bg-glow-b), rgba(24, 95, 255, 0) 58%),
+        radial-gradient(860px 520px at 50% 18%, var(--bg-glow-c), rgba(255, 255, 255, 0) 72%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 46%, var(--bg-deep) 100%);
     }
 
-    .shell {
-      width: min(1820px, calc(100vw - 28px));
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    body::before {
+      background:
+        radial-gradient(620px 420px at 14% 28%, var(--bg-glow-c), rgba(255, 255, 255, 0) 72%),
+        radial-gradient(760px 480px at 84% 72%, var(--bg-glow-d), rgba(148, 163, 184, 0) 70%);
+      opacity: 0.95;
+    }
+
+    body::after {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 24%);
+      mix-blend-mode: soft-light;
+      opacity: 0.75;
+    }
+
+    .page {
+      width: min(1860px, calc(100vw - 32px));
       margin: 0 auto;
-      padding: calc(18px + env(safe-area-inset-top, 0px)) 0 calc(32px + env(safe-area-inset-bottom, 0px));
+      padding: calc(12px + env(safe-area-inset-top, 0px)) 0 calc(20px + env(safe-area-inset-bottom, 0px));
       display: grid;
-      gap: 22px;
+      gap: 10px;
     }
 
-    .top-panel,
-    .report-card,
-    .state-card {
-      border-radius: 32px;
-      background: var(--surface);
+    .panel {
+      background: var(--panel);
       border: 1px solid rgba(255, 255, 255, 0.56);
+      border-radius: 26px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(22px) saturate(165%);
-      -webkit-backdrop-filter: blur(22px) saturate(165%);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
     }
 
-    .top-panel {
-      padding: 24px;
+    .header-panel {
+      position: sticky;
+      top: calc(env(safe-area-inset-top, 0px) + 8px);
+      z-index: 24;
+      align-self: start;
+      overflow: hidden;
+      padding: 14px 16px;
       display: grid;
-      gap: 18px;
+      gap: 10px;
     }
 
-    .top-head {
+    .header-panel::before,
+    .header-panel::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .header-panel::before {
+      width: 170px;
+      height: 170px;
+      top: -102px;
+      right: -42px;
+      background: rgba(37, 99, 235, 0.12);
+      filter: blur(8px);
+    }
+
+    .header-panel::after {
+      width: 120px;
+      height: 120px;
+      bottom: -76px;
+      left: 10%;
+      background: rgba(66, 199, 255, 0.1);
+      filter: blur(8px);
+    }
+
+    .header-row {
+      position: relative;
+      z-index: 1;
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 16px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .page-title {
+    .title {
       margin: 0;
-      font-size: clamp(2rem, 4vw, 3.35rem);
-      line-height: 1.04;
+      font-size: clamp(1.7rem, 3.2vw, 2.65rem);
+      line-height: 1;
       font-weight: 900;
       letter-spacing: -0.04em;
-      color: var(--text-main);
-    }
-
-    .page-subtitle {
-      margin: 10px 0 0;
-      max-width: 920px;
-      font-size: 1rem;
-      line-height: 1.7;
-      color: var(--text-sub);
-      font-weight: 700;
     }
 
     .theme-btn,
-    .search-btn,
     .ghost-btn,
+    .search-btn,
     .refresh-btn {
       appearance: none;
-      border: 1px solid var(--line-strong);
-      border-radius: 18px;
-      min-height: 56px;
-      padding: 0 18px;
+      min-height: 44px;
+      padding: 0 14px;
+      border-radius: 14px;
       font: inherit;
-      font-weight: 900;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      transition: transform 0.16s ease, filter 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
-      text-decoration: none;
+      gap: 9px;
+      transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
       white-space: nowrap;
+    }
+
+    .theme-btn {
+      min-width: 44px;
+      width: 44px;
+      min-height: 44px;
+      padding: 0;
+      border-radius: 14px;
+      flex: 0 0 44px;
+    }
+
+    .theme-btn i {
+      font-size: 1.06rem;
+      line-height: 1;
     }
 
     .theme-btn,
     .ghost-btn,
     .refresh-btn {
-      background: var(--surface-soft);
-      color: var(--text-main);
-      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--line-strong);
+      background: var(--panel-strong);
+      color: var(--text);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
     }
 
     .search-btn {
+      position: relative;
+      overflow: hidden;
       border: none;
       color: #fff;
       background: var(--accent);
-      box-shadow: 0 18px 32px rgba(10, 132, 255, 0.24);
+      box-shadow: 0 8px 20px rgba(24, 95, 255, 0.14);
     }
 
     .theme-btn:hover,
-    .search-btn:hover,
     .ghost-btn:hover,
+    .search-btn:hover,
     .refresh-btn:hover {
       transform: translateY(-1px);
       filter: brightness(1.02);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
     }
 
     .theme-btn:disabled,
-    .search-btn:disabled,
     .ghost-btn:disabled,
+    .search-btn:disabled,
     .refresh-btn:disabled {
       opacity: 0.72;
       cursor: wait;
@@ -187,10 +255,12 @@
       filter: none;
     }
 
-    .search-bar {
+    .toolbar {
+      position: relative;
+      z-index: 1;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(156px, 176px) minmax(136px, 148px);
-      gap: 14px;
+      grid-template-columns: minmax(0, 1fr) auto auto auto;
+      gap: 10px;
       align-items: center;
     }
 
@@ -201,27 +271,27 @@
 
     .search-field i {
       position: absolute;
-      left: 18px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 1.08rem;
+      font-size: 0.96rem;
       color: var(--text-faint);
       pointer-events: none;
     }
 
     .search-input {
       width: 100%;
-      min-height: 58px;
-      border-radius: 18px;
+      min-height: 46px;
+      border-radius: 14px;
       border: 1px solid var(--line-strong);
-      background: var(--surface-strong);
-      color: var(--text-main);
-      padding: 0 18px 0 50px;
+      background: var(--panel-strong);
+      color: var(--text);
+      padding: 0 14px 0 42px;
       font: inherit;
-      font-size: 1.02rem;
+      font-size: 0.95rem;
       font-weight: 800;
       outline: none;
-      transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
     }
 
     .search-input::placeholder {
@@ -230,514 +300,675 @@
     }
 
     .search-input:focus {
-      border-color: rgba(37, 99, 235, 0.48);
+      border-color: rgba(37, 99, 235, 0.46);
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
     }
 
-    .report-card {
-      overflow: hidden;
-    }
-
-    .report-head {
-      padding: 28px 28px 22px;
-      border-bottom: 1px solid var(--line);
-      text-align: center;
+    .content-panel {
+      padding: 0 8px;
       display: grid;
-      gap: 8px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.08));
+      gap: 10px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
-    body.dark-mode .report-head {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
-    }
-
-    .report-title {
-      margin: 0;
-      font-size: clamp(1.8rem, 3vw, 2.4rem);
-      line-height: 1.15;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      color: var(--text-main);
-    }
-
-    .report-meta {
-      display: grid;
-      gap: 4px;
-      justify-items: center;
-      color: var(--text-sub);
-      font-size: 1rem;
-      font-weight: 700;
-      line-height: 1.6;
-    }
-
-    .report-body {
-      padding: 22px 22px 24px;
-      display: grid;
-      gap: 18px;
-    }
-
-    .status-strip {
+    .summary-strip {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
+      gap: 8px;
     }
 
-    .status-box {
-      border-radius: 24px;
-      border: 1px solid transparent;
-      padding: 18px 18px 16px;
+    .summary-item {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
       display: grid;
-      gap: 12px;
+      gap: 6px;
       min-width: 0;
-      box-shadow: var(--shadow-soft);
+      background: var(--panel-strong);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .status-box.awaiting {
-      background: var(--status-awaiting-bg);
+    .summary-item:hover {
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .summary-item.awaiting {
       border-color: rgba(124, 58, 237, 0.24);
+      background: var(--violet-soft);
     }
 
-    .status-box.due_soon {
-      background: var(--status-due-soon-bg);
+    .summary-item.due_soon {
       border-color: rgba(217, 119, 6, 0.24);
+      background: var(--amber-soft);
     }
 
-    .status-box.unpaid {
-      background: var(--status-unpaid-bg);
+    .summary-item.unpaid {
       border-color: rgba(37, 99, 235, 0.24);
+      background: var(--blue-soft);
     }
 
-    .status-box.overdue {
-      background: var(--status-overdue-bg);
+    .summary-item.overdue {
       border-color: rgba(220, 38, 38, 0.24);
+      background: var(--rose-soft);
     }
 
-    .status-top {
+    .summary-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .status-label {
+    .summary-label {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       min-width: 0;
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 900;
       line-height: 1.4;
     }
 
-    .status-label i {
-      font-size: 1rem;
-    }
+    .summary-item.awaiting .summary-label,
+    .summary-item.awaiting .summary-value { color: var(--violet); }
+    .summary-item.due_soon .summary-label,
+    .summary-item.due_soon .summary-value { color: var(--amber); }
+    .summary-item.unpaid .summary-label,
+    .summary-item.unpaid .summary-value { color: var(--blue); }
+    .summary-item.overdue .summary-label,
+    .summary-item.overdue .summary-value { color: var(--rose); }
 
-    .status-box.awaiting .status-label,
-    .status-box.awaiting .status-value { color: var(--violet); }
-    .status-box.due_soon .status-label,
-    .status-box.due_soon .status-value { color: var(--amber); }
-    .status-box.unpaid .status-label,
-    .status-box.unpaid .status-value { color: var(--blue); }
-    .status-box.overdue .status-label,
-    .status-box.overdue .status-value { color: var(--rose); }
-
-    .status-value {
-      font-size: clamp(2rem, 3vw, 2.75rem);
+    .summary-value {
+      font-size: clamp(1.45rem, 2.4vw, 2rem);
       line-height: 1;
       font-weight: 900;
       letter-spacing: -0.04em;
       white-space: nowrap;
     }
 
-    .status-sub {
-      font-size: 0.92rem;
-      line-height: 1.55;
+    .summary-sub {
+      font-size: 0.82rem;
+      line-height: 1.45;
       font-weight: 750;
       color: var(--text-sub);
     }
 
-    .table-toolbar {
+    .meta-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 8px 12px;
       flex-wrap: wrap;
-    }
-
-    .toolbar-note {
       color: var(--text-sub);
-      font-size: 0.96rem;
-      line-height: 1.6;
-      font-weight: 750;
-    }
-
-    .table-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .count-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 48px;
-      padding: 0 15px;
-      border-radius: 999px;
-      background: var(--surface-soft);
-      border: 1px solid var(--line-strong);
-      color: var(--text-main);
-      font-size: 0.92rem;
-      font-weight: 900;
-      white-space: nowrap;
-      box-shadow: var(--shadow-soft);
+      font-size: 0.86rem;
+      line-height: 1.5;
+      font-weight: 700;
+      padding: 0 2px;
     }
 
     .table-wrap {
-      overflow: auto;
-      border-radius: 24px;
+      overflow: hidden;
       border: 1px solid var(--line-strong);
-      background: var(--surface-strong);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.46);
+      border-radius: 22px;
+      background: var(--panel-strong);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
     }
 
-    .report-table {
+    .desktop-table {
+      display: block;
+    }
+
+    .mobile-list {
+      display: none;
+      gap: 10px;
+    }
+
+    .table {
       width: 100%;
-      min-width: 1240px;
       border-collapse: collapse;
-      color: var(--text-main);
+      color: var(--text);
+      table-layout: fixed;
     }
 
-    .report-table thead th {
+    .table col.col-index { width: 4%; }
+    .table col.col-contract { width: 10%; }
+    .table col.col-borrower { width: 17%; }
+    .table col.col-group { width: 15%; }
+    .table col.col-expense { width: 11%; }
+    .table col.col-funding { width: 11%; }
+    .table col.col-amount { width: 9%; }
+    .table col.col-status { width: 10%; }
+    .table col.col-due { width: 13%; }
+
+    .table thead th {
       position: sticky;
       top: 0;
       z-index: 2;
-      padding: 15px 12px;
+      padding: 11px 8px;
       border-right: 1px solid var(--line-strong);
       border-bottom: 1px solid var(--line-strong);
-      background: linear-gradient(180deg, rgba(229, 236, 246, 0.98), rgba(217, 226, 239, 0.98));
-      color: #18253c;
+      background: linear-gradient(180deg, var(--table-head-bg-start) 0%, var(--table-head-bg-end) 100%);
+      color: var(--table-head-text);
       text-align: center;
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 900;
-      white-space: nowrap;
+      white-space: normal;
+      line-height: 1.35;
+      box-shadow:
+        inset 0 1px 0 var(--table-head-top),
+        inset 0 -1px 0 var(--table-head-bottom),
+        0 8px 16px var(--table-head-shadow);
     }
 
-    body.dark-mode .report-table thead th {
-      background: linear-gradient(180deg, rgba(26, 38, 58, 0.98), rgba(18, 28, 43, 0.98));
-      color: #edf4ff;
-    }
-
-    .report-table thead th:last-child,
-    .report-table tbody td:last-child {
+    .table thead th:last-child,
+    .table tbody td:last-child {
       border-right: none;
     }
 
-    .report-table tbody td {
-      padding: 14px 12px;
+    .table tbody td {
+      padding: 10px 8px;
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
-      vertical-align: middle;
-      font-size: 0.98rem;
-      line-height: 1.6;
+      font-size: 0.88rem;
+      line-height: 1.45;
       font-weight: 700;
-      background: rgba(255, 255, 255, 0.74);
+      vertical-align: middle;
+      background: rgba(255, 255, 255, 0.78);
+      word-break: break-word;
+      transition: background 0.16s ease;
     }
 
-    body.dark-mode .report-table tbody td {
-      background: rgba(10, 18, 31, 0.76);
+    body.dark-mode .table tbody td {
+      background: rgba(11, 19, 32, 0.88);
     }
 
-    .report-table tbody tr:nth-child(even) td {
-      background: rgba(246, 250, 255, 0.9);
+    .table tbody tr:nth-child(even) td {
+      background: rgba(246, 249, 255, 0.96);
     }
 
-    body.dark-mode .report-table tbody tr:nth-child(even) td {
-      background: rgba(13, 21, 35, 0.92);
+    body.dark-mode .table tbody tr:nth-child(even) td {
+      background: rgba(16, 25, 40, 0.96);
     }
 
-    .report-table tbody tr.row-awaiting td:first-child { box-shadow: inset 4px 0 0 rgba(124, 58, 237, 0.86); }
-    .report-table tbody tr.row-due_soon td:first-child { box-shadow: inset 4px 0 0 rgba(217, 119, 6, 0.86); }
-    .report-table tbody tr.row-unpaid td:first-child { box-shadow: inset 4px 0 0 rgba(37, 99, 235, 0.86); }
-    .report-table tbody tr.row-overdue td:first-child { box-shadow: inset 4px 0 0 rgba(220, 38, 38, 0.86); }
+    .table tbody tr.row-awaiting td:first-child { box-shadow: inset 4px 0 0 rgba(124, 58, 237, 0.86); }
+    .table tbody tr.row-due_soon td:first-child { box-shadow: inset 4px 0 0 rgba(217, 119, 6, 0.86); }
+    .table tbody tr.row-unpaid td:first-child { box-shadow: inset 4px 0 0 rgba(37, 99, 235, 0.86); }
+    .table tbody tr.row-overdue td:first-child { box-shadow: inset 4px 0 0 rgba(220, 38, 38, 0.86); }
 
-    .cell-center {
-      text-align: center;
-      white-space: nowrap;
+    .table tbody tr:hover td {
+      background: rgba(223, 236, 255, 0.96);
     }
 
-    .cell-amount {
-      text-align: right;
-      white-space: nowrap;
-      font-weight: 900;
-      color: var(--blue);
+    body.dark-mode .table tbody tr:hover td {
+      background: rgba(23, 37, 58, 0.96);
     }
 
+    .cell-center { text-align: center; white-space: nowrap; }
+    .cell-index { width: auto; font-size: 0.78rem; font-weight: 800; }
+    .cell-contract { width: auto; text-align: center; font-weight: 900; white-space: nowrap; }
     .cell-borrower {
-      min-width: 260px;
+      width: auto;
       font-weight: 900;
-      color: var(--text-main);
-    }
-
-    .cell-contract {
-      min-width: 160px;
-      font-weight: 900;
-      text-align: center;
       white-space: nowrap;
+      word-break: keep-all;
+      overflow: visible;
+      text-overflow: clip;
     }
-
-    .cell-group,
-    .cell-expense,
+    .cell-group {
+      width: auto;
+      white-space: nowrap;
+      word-break: keep-all;
+      font-size: 0.84rem;
+    }
+    .cell-expense { width: auto; }
     .cell-funding {
-      min-width: 210px;
+      width: auto;
+      white-space: nowrap;
+      word-break: keep-all;
+      font-size: 0.83rem;
+    }
+    .cell-amount { width: auto; text-align: right; font-weight: 900; white-space: nowrap; color: var(--blue); }
+    .cell-due {
+      white-space: nowrap;
+      word-break: keep-all;
+      line-height: 1.35;
+      font-size: 0.8rem;
     }
 
     .status-pill {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      min-height: 38px;
-      padding: 0 14px;
+      gap: 6px;
+      min-height: 32px;
+      padding: 0 8px;
       border-radius: 999px;
       border: 1px solid transparent;
-      font-size: 0.92rem;
+      font-size: 0.78rem;
       font-weight: 900;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+
+    .status-pill.awaiting { color: var(--violet); background: var(--violet-soft); border-color: rgba(124, 58, 237, 0.24); }
+    .status-pill.due_soon { color: var(--amber); background: var(--amber-soft); border-color: rgba(217, 119, 6, 0.24); }
+    .status-pill.unpaid { color: var(--blue); background: var(--blue-soft); border-color: rgba(37, 99, 235, 0.24); }
+    .status-pill.overdue { color: var(--rose); background: var(--rose-soft); border-color: rgba(220, 38, 38, 0.24); }
+
+    .status-pill i {
+      font-size: 0.76rem;
+    }
+
+    .muted-text { color: var(--text-faint); font-weight: 700; }
+    .cell-due .muted-text {
+      display: inline;
+      font-size: 0.76rem;
+      line-height: 1.35;
       white-space: nowrap;
     }
 
-    .status-pill.awaiting {
-      color: var(--violet);
-      background: var(--violet-soft);
-      border-color: rgba(124, 58, 237, 0.24);
+    .mobile-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel-strong);
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
     }
 
-    .status-pill.due_soon {
-      color: var(--amber);
-      background: var(--amber-soft);
-      border-color: rgba(217, 119, 6, 0.24);
+    .mobile-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: transparent;
     }
 
-    .status-pill.unpaid {
-      color: var(--blue);
-      background: var(--blue-soft);
-      border-color: rgba(37, 99, 235, 0.24);
+    .mobile-card.awaiting::before { background: rgba(124, 58, 237, 0.82); }
+    .mobile-card.due_soon::before { background: rgba(217, 119, 6, 0.82); }
+    .mobile-card.unpaid::before { background: rgba(37, 99, 235, 0.82); }
+    .mobile-card.overdue::before { background: rgba(220, 38, 38, 0.82); }
+
+    .mobile-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
     }
 
-    .status-pill.overdue {
-      color: var(--rose);
-      background: var(--rose-soft);
-      border-color: rgba(220, 38, 38, 0.24);
+    .mobile-contract {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
     }
 
-    .muted-text {
+    .mobile-index {
+      font-size: 0.78rem;
       color: var(--text-faint);
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    .truncate-note {
+    .mobile-contract-no {
+      font-size: 1rem;
+      font-weight: 900;
+      line-height: 1.35;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .mobile-borrower {
+      font-size: 1rem;
+      font-weight: 900;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    .mobile-group {
+      font-size: 0.88rem;
+      line-height: 1.5;
       color: var(--text-sub);
-      font-size: 0.92rem;
-      line-height: 1.6;
-      font-weight: 700;
-      text-align: right;
+      font-weight: 750;
     }
 
-    .state-card {
-      padding: 30px 24px;
+    .mobile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mobile-item {
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.58);
+      padding: 10px;
+      display: grid;
+      gap: 4px;
+    }
+
+    body.dark-mode .mobile-item {
+      background: rgba(17, 27, 42, 0.72);
+    }
+
+    .mobile-item-label {
+      font-size: 0.76rem;
+      color: var(--text-faint);
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .mobile-item-value {
+      font-size: 0.86rem;
+      color: var(--text);
+      font-weight: 800;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .brand-footer {
+      margin-top: 8px;
+      padding: 14px 2px 0;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--text-sub);
       text-align: center;
-      color: var(--text-sub);
+    }
+
+    .brand-footer img {
+      width: 58px;
+      height: auto;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .brand-footer-text {
+      font-size: 0.92rem;
+      line-height: 1.55;
+      font-weight: 800;
+      text-align: center;
+      max-width: 100%;
+    }
+
+    .footer-note {
+      margin-top: 8px;
+      margin-bottom: 4px;
+      border-radius: 16px;
+      border: 1px solid rgba(217, 119, 6, 0.26);
+      background: linear-gradient(180deg, rgba(255, 248, 235, 0.98) 0%, rgba(255, 243, 214, 0.96) 100%);
+      color: #9a5800;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 18px rgba(217, 119, 6, 0.08);
+      text-align: center;
+    }
+
+    body.dark-mode .footer-note {
+      border-color: rgba(251, 191, 36, 0.24);
+      background: linear-gradient(180deg, rgba(66, 43, 9, 0.92) 0%, rgba(49, 33, 8, 0.94) 100%);
+      color: #ffd58a;
+      box-shadow: 0 10px 24px rgba(2, 8, 20, 0.22);
+    }
+
+    .footer-note i {
+      font-size: 1.05rem;
+      line-height: 1;
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
+
+    .footer-note-text {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .state {
+      padding: 28px 20px;
+      text-align: center;
       display: grid;
       justify-items: center;
       gap: 10px;
     }
 
     .state-icon {
-      width: 74px;
-      height: 74px;
-      border-radius: 24px;
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.9rem;
-      box-shadow: var(--shadow-soft);
+      font-size: 1.8rem;
     }
 
-    .state-card.loading .state-icon {
+    .state.loading .state-icon { background: var(--amber-soft); color: var(--amber); }
+    .state.error .state-icon { background: var(--rose-soft); color: var(--rose); }
+    .state.empty .state-icon { background: var(--blue-soft); color: var(--blue); }
+
+    #loadingState {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      padding: 8px 0 2px;
+    }
+
+    #loadingState .state-icon {
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: transparent;
       color: var(--amber);
-      background: var(--amber-soft);
+      font-size: 1rem;
     }
 
-    .state-card.error .state-icon {
-      color: var(--rose);
-      background: var(--rose-soft);
+    #loadingState.state.loading .state-icon {
+      background: transparent;
+      color: var(--amber);
     }
 
-    .state-card.empty .state-icon {
-      color: var(--blue);
-      background: var(--blue-soft);
+    #loadingState h2 {
+      font-size: 1.12rem;
     }
 
-    .state-title {
+    #loadingState p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .state h2 {
       margin: 0;
-      font-size: 1.48rem;
+      font-size: 1.42rem;
       line-height: 1.2;
       font-weight: 900;
-      color: var(--text-main);
     }
 
-    .state-text {
+    .state p {
       margin: 0;
-      max-width: 720px;
-      font-size: 1rem;
+      max-width: 760px;
+      font-size: 0.98rem;
       line-height: 1.75;
+      color: var(--text-sub);
       font-weight: 700;
     }
 
     .spinner {
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       border: 3px solid rgba(217, 119, 6, 0.22);
       border-top-color: var(--amber);
       animation: spin 0.9s linear infinite;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @media (max-width: 1180px) {
-      .shell {
-        width: min(100vw - 20px, 100%);
-      }
-
-      .status-strip {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    @media (prefers-reduced-motion: reduce) {
+      .theme-btn,
+      .ghost-btn,
+      .search-btn,
+      .refresh-btn,
+      .summary-item,
+      .table tbody td {
+        transition: none;
       }
     }
 
-    @media (max-width: 820px) {
-      .shell {
-        width: min(100vw - 14px, 100%);
+    @media (max-width: 1120px) {
+      .summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 860px) {
+      .page {
+        width: min(100vw - 18px, 100%);
         padding-top: calc(12px + env(safe-area-inset-top, 0px));
       }
 
-      .top-panel,
-      .report-card,
-      .state-card {
-        border-radius: 24px;
+      .panel { border-radius: 22px; }
+      .header-panel {
+        top: calc(env(safe-area-inset-top, 0px) + 6px);
+        padding: 12px 14px;
+        gap: 10px;
       }
+      .content-panel { padding: 12px 4px 0; }
 
-      .top-panel {
-        padding: 18px;
-      }
-
-      .search-bar {
+      .toolbar {
         grid-template-columns: 1fr;
       }
 
-      .status-strip {
+      .summary-strip {
         grid-template-columns: 1fr;
       }
 
-      .table-toolbar,
-      .table-actions,
-      .top-head {
+      .header-row,
+      .meta-row {
         align-items: stretch;
       }
 
-      .theme-btn,
+      .meta-row {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
       .ghost-btn,
-      .refresh-btn,
       .search-btn,
-      .count-pill {
+      .refresh-btn {
         width: 100%;
       }
 
-      .report-head {
-        padding: 22px 18px 18px;
+      .desktop-table {
+        display: none;
       }
 
-      .report-body {
-        padding: 18px;
+      .mobile-list {
+        display: grid;
+      }
+
+      .brand-footer {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .summary-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .mobile-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <section class="top-panel">
-      <div class="top-head">
+  <main class="page">
+    <section class="panel header-panel">
+      <div class="header-row">
         <div>
-          <h1 class="page-title">ตรวจสอบเงินยืม</h1>
-          <p class="page-subtitle">แสดงเฉพาะรายการที่ต้องติดตาม 4 สถานะ คือ รอเพิ่มข้อมูล, ใกล้ครบกำหนด, ยังไม่ชำระ และ เลยกำหนด โดยเรียงวันครบกำหนดจากเก่าไปใหม่</p>
+          <h1 class="title">ตรวจสอบเงินยืม</h1>
         </div>
-        <button id="btnTheme" class="theme-btn" type="button"><i class="bi bi-moon-stars"></i><span>โหมดกลางคืน</span></button>
+        <button id="btnTheme" class="theme-btn" type="button" aria-label="สลับเป็นโหมดกลางคืน" title="สลับเป็นโหมดกลางคืน"><i class="bi bi-moon-stars"></i></button>
       </div>
 
-      <div class="search-bar" aria-label="ค้นหาผู้ยืม">
+      <div class="toolbar">
         <label class="search-field" for="searchInput">
           <i class="bi bi-search"></i>
-          <input id="searchInput" class="search-input" type="text" placeholder="ค้นหาชื่อผู้ยืม หรือเว้นว่างเพื่อแสดงทั้งหมด" autocomplete="name" spellcheck="false">
+          <input id="searchInput" class="search-input" type="text" placeholder="ค้นหาชื่อผู้ยืม (ไม่กรอก = แสดงทั้งหมด)" autocomplete="name" spellcheck="false">
         </label>
         <button id="btnSearch" class="search-btn" type="button"><i class="bi bi-search"></i>ค้นหา</button>
         <button id="btnReset" class="ghost-btn" type="button"><i class="bi bi-eraser"></i>ล้างชื่อ</button>
+        <button id="btnRefresh" class="refresh-btn" type="button"><i class="bi bi-arrow-clockwise"></i>รีเฟรช</button>
       </div>
     </section>
 
-    <section id="loadingState" class="state-card loading hidden" aria-live="polite">
+    <section id="loadingState" class="panel state loading hidden" aria-live="polite">
       <div class="state-icon"><div class="spinner" aria-hidden="true"></div></div>
-      <h2 class="state-title">กำลังโหลดข้อมูลทะเบียนคุมเงินยืม</h2>
-      <p class="state-text">ระบบกำลังดึงรายการที่ต้องติดตามและเรียงวันครบกำหนดจากเก่าไปใหม่ กรุณารอสักครู่</p>
+      <h2>กำลังโหลดข้อมูลทะเบียนคุมเงินยืม</h2>
+      <p>ระบบกำลังดึงรายการที่ต้องติดตามและเรียงวันครบกำหนดจากเก่าไปใหม่</p>
     </section>
 
-    <section id="errorState" class="state-card error hidden" aria-live="assertive">
+    <section id="errorState" class="panel state error hidden" aria-live="assertive">
       <div class="state-icon"><i class="bi bi-exclamation-octagon"></i></div>
-      <h2 class="state-title">ไม่สามารถโหลดข้อมูลได้</h2>
-      <p id="errorText" class="state-text">เกิดข้อผิดพลาดในการเชื่อมต่อระบบ</p>
+      <h2>ไม่สามารถโหลดข้อมูลได้</h2>
+      <p id="errorText">เกิดข้อผิดพลาดในการเชื่อมต่อระบบ</p>
     </section>
 
-    <section id="emptyState" class="state-card empty hidden">
+    <section id="emptyState" class="panel state empty hidden">
       <div class="state-icon"><i class="bi bi-table"></i></div>
-      <h2 id="emptyTitle" class="state-title">ยังไม่มีรายการที่ต้องติดตาม</h2>
-      <p id="emptyText" class="state-text">เมื่อระบบพบรายการเงินยืมในสถานะ รอเพิ่มข้อมูล, ใกล้ครบกำหนด, ยังไม่ชำระ หรือ เลยกำหนด รายการจะแสดงในตารางด้านล่างอัตโนมัติ</p>
+      <h2 id="emptyTitle">ไม่พบรายการที่ต้องติดตาม</h2>
+      <p id="emptyText">ขณะนี้ยังไม่มีข้อมูลที่ต้องแสดง</p>
     </section>
 
-    <section id="reportArea" class="report-card hidden">
-      <div class="report-head">
-        <h2 class="report-title">รายงานทะเบียนคุมเงินยืม</h2>
-        <div id="reportMeta" class="report-meta"></div>
-      </div>
+    <section id="contentPanel" class="content-panel hidden">
+      <div id="summaryStrip" class="summary-strip"></div>
 
-      <div class="report-body">
-        <div id="statusStrip" class="status-strip"></div>
+      <div id="metaRow" class="meta-row"></div>
 
-        <div class="table-toolbar">
-          <div class="toolbar-note">หัวตารางแสดงเฉพาะข้อมูลที่ต้องติดตามจริง และตัดคอลัมน์เลขรับออกแล้ว โดยแทนที่ด้วยยอดเงินในสัญญา</div>
-          <div class="table-actions">
-            <div id="tableCount" class="count-pill"><i class="bi bi-files"></i>0 รายการ</div>
-            <button id="btnRefresh" class="refresh-btn" type="button"><i class="bi bi-arrow-clockwise"></i>รีเฟรชข้อมูล</button>
-          </div>
-        </div>
-
+      <div class="desktop-table">
         <div class="table-wrap">
-          <table class="report-table" aria-label="ตารางรายการเงินยืมที่ต้องติดตาม">
+          <table class="table" aria-label="ตารางรายการเงินยืม">
+            <colgroup>
+              <col class="col-index">
+              <col class="col-contract">
+              <col class="col-borrower">
+              <col class="col-group">
+              <col class="col-expense">
+              <col class="col-funding">
+              <col class="col-amount">
+              <col class="col-status">
+              <col class="col-due">
+            </colgroup>
             <thead>
               <tr>
                 <th>ลำดับ</th>
                 <th>เลขที่สัญญา</th>
-                <th>ยอดเงินในสัญญา</th>
                 <th>ผู้ยืม</th>
                 <th>กลุ่ม/ศูนย์</th>
                 <th>ประเภทค่าใช้จ่าย</th>
                 <th>แหล่งเงินยืม</th>
+                <th>ยอดเงินในสัญญา</th>
                 <th>สถานะ</th>
                 <th>วันครบกำหนด</th>
               </tr>
@@ -745,8 +976,20 @@
             <tbody id="tableBody"></tbody>
           </table>
         </div>
+      </div>
 
-        <div id="truncateNote" class="truncate-note hidden"></div>
+      <div id="mobileList" class="mobile-list"></div>
+
+      <div id="truncateNote" class="meta-row hidden"></div>
+
+      <div class="footer-note" role="note" aria-label="หมายเหตุการอัปเดทสถานะ">
+        <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+        <div class="footer-note-text">อัพเดทสถานะเมื่อ กองฯ (เงินทดรอง) หรือกองบริหารการคลัง (เงินกรม) ดำเนินการออกใบรับใบสำคัญ/ใบเสร็จรับเงินให้เรียบร้อยแล้ว</div>
+      </div>
+
+      <div class="brand-footer">
+        <img src="https://ddc.moph.go.th/uploads/ckeditor2//files/logo-%E0%B8%81%E0%B8%A3%E0%B8%A1.png" alt="โลโก้กรมควบคุมโรค">
+        <div class="brand-footer-text">กองโรคจากการประกอบอาชีพและสิ่งแวดล้อม : กลุ่มบริหารทั่วไป (งานการเงิน)</div>
       </div>
     </section>
   </main>
@@ -792,11 +1035,11 @@
         emptyState: document.getElementById('emptyState'),
         emptyTitle: document.getElementById('emptyTitle'),
         emptyText: document.getElementById('emptyText'),
-        reportArea: document.getElementById('reportArea'),
-        reportMeta: document.getElementById('reportMeta'),
-        statusStrip: document.getElementById('statusStrip'),
-        tableCount: document.getElementById('tableCount'),
+        contentPanel: document.getElementById('contentPanel'),
+        summaryStrip: document.getElementById('summaryStrip'),
+        metaRow: document.getElementById('metaRow'),
         tableBody: document.getElementById('tableBody'),
+        mobileList: document.getElementById('mobileList'),
         truncateNote: document.getElementById('truncateNote')
       };
 
@@ -837,16 +1080,19 @@
         var text = safeTrim(value);
         if (!text) return null;
         var match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        if (match) {
-          return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
-        }
+        if (match) return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
         var parsed = new Date(text);
         return isNaN(parsed.getTime()) ? null : parsed;
       }
 
       function getStatusMeta(key) {
-        var normalized = safeTrim(key).toLowerCase();
-        return STATUS_META[normalized] || STATUS_META.unpaid;
+        return STATUS_META[safeTrim(key).toLowerCase()] || STATUS_META.unpaid;
+      }
+
+      function filterTrackingRecords(records) {
+        return (Array.isArray(records) ? records : []).filter(function (item) {
+          return Object.prototype.hasOwnProperty.call(STATUS_META, safeTrim(item && item.statusKey).toLowerCase());
+        });
       }
 
       function sortRecords(records) {
@@ -863,15 +1109,9 @@
             return 1;
           }
 
-          var aStatus = safeTrim(a && a.statusKey).toLowerCase();
-          var bStatus = safeTrim(b && b.statusKey).toLowerCase();
-          var aWeight = STATUS_ORDER[aStatus] || 9;
-          var bWeight = STATUS_ORDER[bStatus] || 9;
+          var aWeight = STATUS_ORDER[safeTrim(a && a.statusKey).toLowerCase()] || 9;
+          var bWeight = STATUS_ORDER[safeTrim(b && b.statusKey).toLowerCase()] || 9;
           if (aWeight !== bWeight) return aWeight - bWeight;
-
-          var aBorrower = safeTrim(a && a.borrowerName).toLowerCase();
-          var bBorrower = safeTrim(b && b.borrowerName).toLowerCase();
-          if (aBorrower !== bBorrower) return aBorrower.localeCompare(bBorrower, 'th');
 
           return safeTrim(a && (a.contractNo || a.docNoSdh)).localeCompare(safeTrim(b && (b.contractNo || b.docNoSdh)), 'th');
         });
@@ -879,8 +1119,8 @@
       }
 
       function normalizeStatusSummary(list) {
-        var incoming = Array.isArray(list) ? list : [];
         var lookup = {};
+        var incoming = Array.isArray(list) ? list : [];
         for (var i = 0; i < incoming.length; i++) {
           var item = incoming[i] || {};
           var key = safeTrim(item.key).toLowerCase();
@@ -892,9 +1132,7 @@
             amount: Number(item.amount || 0)
           };
         }
-
-        var orderedKeys = ['awaiting', 'due_soon', 'unpaid', 'overdue'];
-        return orderedKeys.map(function (key) {
+        return ['awaiting', 'due_soon', 'unpaid', 'overdue'].map(function (key) {
           return lookup[key] || {
             key: key,
             label: getStatusMeta(key).label,
@@ -904,45 +1142,22 @@
         });
       }
 
-      function filterTrackingRecords(records) {
-        var list = Array.isArray(records) ? records : [];
-        return list.filter(function (item) {
-          return Object.prototype.hasOwnProperty.call(STATUS_META, safeTrim(item && item.statusKey).toLowerCase());
-        });
-      }
-
       function applyTheme(theme) {
         var nextTheme = theme === 'dark' ? 'dark' : 'light';
         state.theme = nextTheme;
         els.body.classList.toggle('dark-mode', nextTheme === 'dark');
         if (els.btnTheme) {
+          var label = nextTheme === 'dark' ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดกลางคืน';
           els.btnTheme.innerHTML = nextTheme === 'dark'
-            ? '<i class="bi bi-sun"></i><span>โหมดสว่าง</span>'
-            : '<i class="bi bi-moon-stars"></i><span>โหมดกลางคืน</span>';
+            ? '<i class="bi bi-sun"></i>'
+            : '<i class="bi bi-moon-stars"></i>';
+          els.btnTheme.setAttribute('aria-label', label);
+          els.btnTheme.setAttribute('title', label);
         }
       }
 
-      function setSearchQueryInUrl(query) {
-        if (!window.history || typeof window.history.replaceState !== 'function') return;
-        var url = new URL(window.location.href);
-        if (query) url.searchParams.set('q', query);
-        else url.searchParams.delete('q');
-        window.history.replaceState({}, '', url.toString());
-      }
-
-      function loadInitialQuery() {
-        try {
-          var params = typeof C.parseQuery === 'function' ? C.parseQuery() : {};
-          var q = safeTrim(params.q || params.search || params.name || '');
-          if (q && els.searchInput) {
-            els.searchInput.value = q;
-            state.query = q;
-          }
-        } catch (_e) {}
-      }
-
-      function setLoading(loading) {
-        if (els.loadingState) els.loadingState.classList.toggle('hidden', !loading);
+      function setLoading(loading, showPanel) {
+        if (els.loadingState) els.loadingState.classList.toggle('hidden', !loading || !showPanel);
         if (els.btnSearch) {
           els.btnSearch.disabled = !!loading;
           els.btnSearch.innerHTML = loading
@@ -967,31 +1182,37 @@
         if (els.emptyTitle) els.emptyTitle.textContent = title || 'ไม่พบข้อมูล';
         if (els.emptyText) els.emptyText.textContent = text || 'ไม่พบรายการที่ตรงกับเงื่อนไข';
         if (els.emptyState) els.emptyState.classList.remove('hidden');
-        if (els.reportArea) els.reportArea.classList.add('hidden');
+        if (els.contentPanel) els.contentPanel.classList.add('hidden');
       }
 
       function hideEmpty() {
         if (els.emptyState) els.emptyState.classList.add('hidden');
       }
 
-      function renderStatusStrip(statusSummary) {
-        if (!els.statusStrip) return;
+      function renderSummary(statusSummary) {
+        if (!els.summaryStrip) return;
         var list = normalizeStatusSummary(statusSummary);
         var html = '';
         for (var i = 0; i < list.length; i++) {
           var item = list[i];
           var meta = getStatusMeta(item.key);
-          html += '<article class="status-box ' + meta.cls + '">';
-          html += '<div class="status-top"><div class="status-label"><i class="bi ' + meta.icon + '"></i><span>' + escapeHtml(item.label) + '</span></div><div class="status-value">' + escapeHtml(item.count) + '</div></div>';
-          html += '<div class="status-sub">ยอดเงินรวม ' + escapeHtml(formatMoney(item.amount)) + ' บาท</div>';
+          html += '<article class="summary-item ' + meta.cls + '">';
+          html += '<div class="summary-top"><div class="summary-label"><i class="bi ' + meta.icon + '"></i><span>' + escapeHtml(item.label) + '</span></div><div class="summary-value">' + escapeHtml(item.count) + '</div></div>';
+          html += '<div class="summary-sub">ยอดเงินรวม ' + escapeHtml(formatMoney(item.amount)) + ' บาท</div>';
           html += '</article>';
         }
-        els.statusStrip.innerHTML = html;
+        els.summaryStrip.innerHTML = html;
       }
 
       function buildStatusPill(item) {
         var meta = getStatusMeta(item && item.statusKey);
         return '<span class="status-pill ' + meta.cls + '"><i class="bi ' + meta.icon + '"></i>' + escapeHtml(item && item.statusLabel || meta.label) + '</span>';
+      }
+
+      function getDueDisplay(item) {
+        var dueDisplay = safeTrim(item && item.dueDateDisplay || '');
+        if (!dueDisplay && safeTrim(item && item.statusKey) === 'awaiting') dueDisplay = 'ยังไม่มีข้อมูลวันครบกำหนด';
+        return dueDisplay || '-';
       }
 
       function renderTable(records, totalMatched, truncated) {
@@ -1000,60 +1221,81 @@
         var html = '';
         for (var i = 0; i < list.length; i++) {
           var item = list[i] || {};
-          var contractText = safeTrim(item.contractNo || item.docNoSdh || '-');
-          var dueDisplay = safeTrim(item.dueDateDisplay || '');
-          if (!dueDisplay && safeTrim(item.statusKey) === 'awaiting') dueDisplay = 'ยังไม่มีข้อมูลวันครบกำหนด';
-          if (!dueDisplay) dueDisplay = '-';
+          var dueDisplay = getDueDisplay(item);
           html += '<tr class="row-' + escapeHtml(safeTrim(item.statusKey).toLowerCase()) + '">';
-          html += '<td class="cell-center">' + escapeHtml(i + 1) + '</td>';
-          html += '<td class="cell-contract">' + escapeHtml(contractText) + '</td>';
-          html += '<td class="cell-amount">' + escapeHtml(formatMoney(item.amount || 0)) + '</td>';
+          html += '<td class="cell-center cell-index">' + escapeHtml(i + 1) + '</td>';
+          html += '<td class="cell-contract">' + escapeHtml(item.contractNo || item.docNoSdh || '-') + '</td>';
           html += '<td class="cell-borrower">' + escapeHtml(item.borrowerName || '-') + '</td>';
           html += '<td class="cell-group">' + escapeHtml(item.groupCenter || '-') + '</td>';
           html += '<td class="cell-expense">' + escapeHtml(item.expenseType || '-') + '</td>';
           html += '<td class="cell-funding">' + escapeHtml(item.fundingSource || '-') + '</td>';
+          html += '<td class="cell-amount">' + escapeHtml(formatMoney(item.amount || 0)) + '</td>';
           html += '<td class="cell-center">' + buildStatusPill(item) + '</td>';
-          html += '<td class="cell-center">' + (dueDisplay === 'ยังไม่มีข้อมูลวันครบกำหนด' ? '<span class="muted-text">' + escapeHtml(dueDisplay) + '</span>' : escapeHtml(dueDisplay)) + '</td>';
+          html += '<td class="cell-center cell-due">' + (dueDisplay === 'ยังไม่มีข้อมูลวันครบกำหนด' ? '<span class="muted-text">' + escapeHtml(dueDisplay) + '</span>' : escapeHtml(dueDisplay)) + '</td>';
           html += '</tr>';
         }
         els.tableBody.innerHTML = html;
-
-        if (els.tableCount) {
-          var countLabel = String(totalMatched == null ? list.length : totalMatched) + ' รายการ';
-          els.tableCount.innerHTML = '<i class="bi bi-files"></i>' + escapeHtml(countLabel);
-        }
 
         if (els.truncateNote) {
           if (truncated) {
             els.truncateNote.textContent = 'ระบบแสดง ' + list.length + ' จากทั้งหมด ' + totalMatched + ' รายการ เนื่องจากตั้งค่าขีดจำกัดการแสดงผลไว้';
             els.truncateNote.classList.remove('hidden');
           } else {
-            els.truncateNote.classList.add('hidden');
             els.truncateNote.textContent = '';
+            els.truncateNote.classList.add('hidden');
           }
         }
       }
 
-      function renderReport(data, preparedRecords) {
-        var payload = data || {};
-        var summary = payload.summary || {};
-        var records = Array.isArray(preparedRecords) ? preparedRecords : sortRecords(filterTrackingRecords(payload.records || []));
-        var totalContracts = Number(payload.totalMatchedRecords == null ? records.length : payload.totalMatchedRecords);
-        var totalAmount = Number(summary.totalAmount || 0);
-        var refreshedText = formatDateTimeThai(state.lastUpdatedAt || new Date());
-
-        if (els.reportMeta) {
-          var metaHtml = '';
-          metaHtml += '<div>จำนวนทั้งหมด ' + escapeHtml(totalContracts) + ' รายการ</div>';
-          metaHtml += '<div>ยอดเงินในสัญญารวม ' + escapeHtml(formatMoney(totalAmount)) + ' บาท</div>';
-          metaHtml += '<div>อัปเดตเมื่อ: ' + escapeHtml(refreshedText) + '</div>';
-          els.reportMeta.innerHTML = metaHtml;
+      function renderMobileList(records) {
+        if (!els.mobileList) return;
+        var list = Array.isArray(records) ? records : [];
+        var html = '';
+        for (var i = 0; i < list.length; i++) {
+          var item = list[i] || {};
+          var meta = getStatusMeta(item.statusKey);
+          var dueDisplay = getDueDisplay(item);
+          html += '<article class="mobile-card ' + meta.cls + '">';
+          html += '<div class="mobile-card-head">';
+          html += '<div class="mobile-contract">';
+          html += '<div class="mobile-index">ลำดับ ' + escapeHtml(i + 1) + '</div>';
+          html += '<div class="mobile-contract-no">' + escapeHtml(item.contractNo || item.docNoSdh || '-') + '</div>';
+          html += '<div class="mobile-borrower">' + escapeHtml(item.borrowerName || '-') + '</div>';
+          html += '<div class="mobile-group">' + escapeHtml(item.groupCenter || '-') + '</div>';
+          html += '</div>';
+          html += buildStatusPill(item);
+          html += '</div>';
+          html += '<div class="mobile-grid">';
+          html += '<div class="mobile-item"><div class="mobile-item-label">ประเภทค่าใช้จ่าย</div><div class="mobile-item-value">' + escapeHtml(item.expenseType || '-') + '</div></div>';
+          html += '<div class="mobile-item"><div class="mobile-item-label">แหล่งเงินยืม</div><div class="mobile-item-value">' + escapeHtml(item.fundingSource || '-') + '</div></div>';
+          html += '<div class="mobile-item"><div class="mobile-item-label">ยอดเงินในสัญญา</div><div class="mobile-item-value">' + escapeHtml(formatMoney(item.amount || 0)) + ' บาท</div></div>';
+          html += '<div class="mobile-item"><div class="mobile-item-label">วันครบกำหนด</div><div class="mobile-item-value">' + (dueDisplay === 'ยังไม่มีข้อมูลวันครบกำหนด' ? '<span class="muted-text">' + escapeHtml(dueDisplay) + '</span>' : escapeHtml(dueDisplay)) + '</div></div>';
+          html += '</div>';
+          html += '</article>';
         }
+        els.mobileList.innerHTML = html;
+      }
 
-        renderStatusStrip(payload.statusSummary || []);
+      function renderMeta(totalContracts, totalAmount) {
+        if (!els.metaRow) return;
+        var parts = [];
+        parts.push('ยอดเงินในสัญญารวม ' + formatMoney(totalAmount) + ' บาท');
+        parts.push((state.query ? 'ค้นหาชื่อผู้ยืม: ' + state.query : 'แสดงรายการทั้งหมด') );
+        parts.push('อัปเดตเมื่อ: ' + formatDateTimeThai(state.lastUpdatedAt || new Date()));
+        els.metaRow.innerHTML = '<span>' + escapeHtml(parts[0]) + '</span><span>' + escapeHtml(parts[1]) + '</span><span>' + escapeHtml(parts[2]) + '</span>';
+      }
+
+      function renderContent(data, preparedRecords) {
+        var payload = data || {};
+        var records = Array.isArray(preparedRecords) ? preparedRecords : [];
+        var totalContracts = Number(payload.totalMatchedRecords == null ? records.length : payload.totalMatchedRecords);
+        var totalAmount = Number(payload.summary && payload.summary.totalAmount || 0);
+        renderSummary(payload.statusSummary || []);
+        renderMeta(totalContracts, totalAmount);
         renderTable(records, totalContracts, payload.truncated);
+        renderMobileList(records);
         hideEmpty();
-        if (els.reportArea) els.reportArea.classList.remove('hidden');
+        if (els.contentPanel) els.contentPanel.classList.remove('hidden');
       }
 
       function initApi() {
@@ -1072,7 +1314,8 @@
         hideError();
         hideEmpty();
         state.query = safeTrim(els.searchInput && els.searchInput.value || '');
-        setLoading(true);
+        var hadVisibleContent = !!(els.contentPanel && !els.contentPanel.classList.contains('hidden'));
+        setLoading(true, !hadVisibleContent);
 
         try {
           var response = await state.api.loanPublicDashboard({ searchQuery: state.query, maxRecords: 1000 }, { noPageLoader: true });
@@ -1080,8 +1323,6 @@
           if (!data) throw new Error('ไม่พบข้อมูลที่สามารถแสดงผลได้');
 
           state.lastUpdatedAt = new Date();
-          setSearchQueryInUrl(state.query);
-
           var filtered = sortRecords(filterTrackingRecords(data.records || []));
           if (!filtered.length) {
             showEmpty(
@@ -1093,13 +1334,15 @@
             return;
           }
 
-          renderReport(data, filtered);
+          renderContent(data, filtered);
         } catch (err) {
-          if (els.reportArea) els.reportArea.classList.add('hidden');
-          showEmpty('โหลดข้อมูลไม่สำเร็จ', 'ระบบไม่สามารถสร้างรายงานทะเบียนคุมเงินยืมได้ในขณะนี้');
+          if (!hadVisibleContent) {
+            if (els.contentPanel) els.contentPanel.classList.add('hidden');
+            showEmpty('โหลดข้อมูลไม่สำเร็จ', 'ระบบไม่สามารถสร้างรายงานทะเบียนคุมเงินยืมได้ในขณะนี้');
+          }
           showError(err && err.message ? err.message : 'เกิดข้อผิดพลาดในการเชื่อมต่อระบบ');
         } finally {
-          setLoading(false);
+          setLoading(false, false);
         }
       }
 
@@ -1115,21 +1358,9 @@
             applyTheme(state.theme === 'dark' ? 'light' : 'dark');
           });
         }
-        if (els.btnSearch) {
-          els.btnSearch.addEventListener('click', function () {
-            loadDashboard();
-          });
-        }
-        if (els.btnReset) {
-          els.btnReset.addEventListener('click', function () {
-            resetSearch();
-          });
-        }
-        if (els.btnRefresh) {
-          els.btnRefresh.addEventListener('click', function () {
-            loadDashboard();
-          });
-        }
+        if (els.btnSearch) els.btnSearch.addEventListener('click', loadDashboard);
+        if (els.btnReset) els.btnReset.addEventListener('click', resetSearch);
+        if (els.btnRefresh) els.btnRefresh.addEventListener('click', loadDashboard);
         if (els.searchInput) {
           els.searchInput.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
@@ -1150,7 +1381,6 @@
           showError(err && err.message ? err.message : 'ไม่พบการตั้งค่าระบบสำหรับเชื่อมต่อ API');
           return;
         }
-        loadInitialQuery();
         loadDashboard();
       }
 
