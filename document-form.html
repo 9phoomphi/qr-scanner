@@ -891,8 +891,8 @@
           </div>
 
           <div style="margin-bottom:10px;">
-            <label class="form-label">ชื่อผู้ส่ง/ผู้ยืม/ผู้ใช้หนี้/ผู้ประสานงาน <span class="text-danger">*</span></label>
-            <input type="text" id="sender" class="form-control" placeholder="ชื่อผู้ส่ง/ผู้ยืม/ผู้ใช้หนี้/ผู้ประสานงาน">
+            <label class="form-label">ชื่อผู้ส่งเบิก/ผู้ยืม/ผู้ใช้หนี้/ผู้จัดทำ <span class="text-danger">*</span></label>
+            <input type="text" id="sender" class="form-control" placeholder="ชื่อผู้ส่งเบิก/ผู้ยืม/ผู้ใช้หนี้/ผู้จัดทำ">
           </div>
 
           <div>
@@ -927,11 +927,11 @@
           <div class="form-section-title"><i class="bi bi-cash-stack"></i>จำนวนเงิน</div>
           <div class="row two">
             <div>
-              <label class="form-label">จำนวนเบิก/ยืม/คืน <span class="text-danger">*</span></label>
+              <label class="form-label">จำนวนเงินเบิก/ยืม/คืน <span class="text-danger">*</span></label>
               <input type="number" id="amount" class="form-control" step="0.01" placeholder="0.00">
             </div>
             <div>
-              <label class="form-label">ส่วนต่าง/เงินเหลือคืน <span class="text-danger">*</span></label>
+              <label class="form-label">เงินเหลือคืน <span class="text-danger">*</span></label>
               <input type="number" id="difference" class="form-control" step="0.01" placeholder="0.00">
             </div>
           </div>
@@ -1726,15 +1726,15 @@
         if (!formData.subjectL) return 'กรุณากรอกวัน/เดือน/ปี';
         if (!formData.subjectN) return 'กรุณากรอกสถานที่';
         if (!formData.docNoSdh) return 'กรุณากรอกเลขที่ สธ. (กอง/กลุ่ม)';
-        if (!formData.sender) return 'กรุณากรอกชื่อผู้ส่ง/ผู้ยืม/ผู้ใช้หนี้/ผู้ประสานงาน';
+        if (!formData.sender) return 'กรุณากรอกชื่อผู้ส่งเบิก/ผู้ยืม/ผู้ใช้หนี้/ผู้จัดทำ';
         if (!formData.purpose) return 'กรุณาเลือกวัตถุประสงค์';
         if (!formData.budgetType) return 'กรุณาเลือกประเภทเงินงบประมาณ';
 
         if (!formData.amount || isNaN(parseFloat(formData.amount))) {
-          return 'กรุณากรอกจำนวนเบิก/ยืม/คืน (ตัวเลข)';
+          return 'กรุณากรอกจำนวนเงินเบิก/ยืม/คืน (ตัวเลข)';
         }
         if (!formData.difference || isNaN(parseFloat(formData.difference))) {
-          return 'กรุณากรอกส่วนต่าง/เงินเหลือคืน (ตัวเลข)';
+          return 'กรุณากรอกเงินเหลือคืน (ตัวเลข)';
         }
 
         var needPlan = formData.budgetType === 'เงินงบประมาณ';

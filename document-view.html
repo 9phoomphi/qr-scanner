@@ -1951,10 +1951,10 @@
         html += '</div>';
 
         html += infoItem('กลุ่ม/ศูนย์', doc.group || '-');
-        html += infoItem('ชื่อผู้ส่ง/ผู้ยืม/ผู้ใช้หนี้/ผู้ประสานงาน', doc.sender || '-');
+        html += infoItem('ชื่อผู้ส่งเบิก/ผู้ยืม/ผู้ใช้หนี้/ผู้จัดทำ', doc.sender || '-');
         html += infoItem('วัตถุประสงค์', doc.purpose || '-');
-        html += infoItem('จำนวนเบิก/ยืม/คืน', C.fmtMoney(doc.amount || '-'));
-        html += infoItem('ส่วนต่าง/เงินเหลือคืน', C.fmtMoney(doc.difference || '-'));
+        html += infoItem('จำนวนเงินเบิก/ยืม/คืน', C.fmtMoney(doc.amount || '-'));
+        html += infoItem('เงินเหลือคืน', C.fmtMoney(doc.difference || '-'));
 
         els.detailInfo.innerHTML = html;
       }
@@ -2446,10 +2446,10 @@
         h += row('วันที่', d.dateRecDisplay || '-');
         h += row('กลุ่ม/ศูนย์', d.group || '-');
         h += row('เลขที่ สธ. (กอง/กลุ่ม)', d.docNoSdh || '-');
-        h += row('ผู้ส่ง', d.sender || '-');
+        h += row('ชื่อผู้ส่งเบิก/ผู้ยืม/ผู้ใช้หนี้/ผู้จัดทำ', d.sender || '-');
         h += row('วัตถุประสงค์', d.purpose || '-');
-        h += row('จำนวนเบิก/ยืม/คืน', moneyText(d.amount));
-        h += row('ส่วนต่าง/เงินเหลือคืน', moneyText(d.difference));
+        h += row('จำนวนเงินเบิก/ยืม/คืน', moneyText(d.amount));
+        h += row('เงินเหลือคืน', moneyText(d.difference));
         h += row('ประเภทเงินงบประมาณ', d.budgetType || '-');
         if (projectPlan !== '-') {
           h += row('แผนโครงการ', projectPlan);
