@@ -88,6 +88,9 @@
       width: min(1280px, calc(100vw - 40px));
       margin: 0 auto;
       padding: calc(18px + env(safe-area-inset-top, 0px)) 0 calc(42px + env(safe-area-inset-bottom, 0px));
+      display: grid;
+      align-content: start;
+      gap: 28px;
     }
 
     .hero {
@@ -141,27 +144,6 @@
       min-width: 0;
     }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(16, 185, 129, 0.14);
-      border: 1px solid rgba(16, 185, 129, 0.28);
-      color: #047857;
-      font-size: 0.84rem;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-      margin-bottom: 12px;
-    }
-
-    body.dark-mode .hero-badge {
-      color: #b7f7d7;
-      background: rgba(16, 185, 129, 0.16);
-      border-color: rgba(74, 222, 128, 0.28);
-    }
-
     .hero-title {
       margin: 0;
       font-size: clamp(2rem, 4vw, 3rem);
@@ -169,15 +151,6 @@
       font-weight: 900;
       letter-spacing: -0.03em;
       color: var(--text-main);
-    }
-
-    .hero-subtitle {
-      margin: 10px 0 0;
-      max-width: 760px;
-      font-size: 1.04rem;
-      line-height: 1.65;
-      color: var(--text-sub);
-      font-weight: 600;
     }
 
     .hero-actions {
@@ -314,53 +287,9 @@
       filter: none;
     }
 
-    .search-meta {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 10px;
-      align-items: stretch;
-      margin-top: 14px;
-    }
-
-    .search-note,
-    .result-note,
-    .warning-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      border: 1px solid var(--line);
-      background: var(--chip-bg);
-      color: var(--text-sub);
-    }
-
-    .result-note {
-      border-color: rgba(37, 99, 235, 0.2);
-      background: rgba(37, 99, 235, 0.08);
-      color: #1d4ed8;
-    }
-
-    body.dark-mode .result-note {
-      color: #c8ddff;
-    }
-
-    .warning-chip {
-      border-color: rgba(217, 119, 6, 0.28);
-      background: rgba(217, 119, 6, 0.1);
-      color: #b45309;
-    }
-
-    body.dark-mode .warning-chip {
-      color: #f9d187;
-    }
-
     .dashboard {
       display: grid;
       gap: 22px;
-      margin-top: 22px;
     }
 
     .section-card {
@@ -798,6 +727,7 @@
     @media (max-width: 1120px) {
       .shell {
         width: min(100vw - 26px, 100%);
+        gap: 24px;
       }
       .section-card {
         padding: 22px;
@@ -815,6 +745,7 @@
       .shell {
         width: min(100vw - 18px, 100%);
         padding-top: calc(12px + env(safe-area-inset-top, 0px));
+        gap: 20px;
       }
       .hero,
       .section-card,
@@ -855,9 +786,7 @@
     <section class="hero">
       <div class="hero-top">
         <div>
-          <div class="hero-badge"><i class="bi bi-broadcast-pin"></i>หน้าเว็บสาธารณะ ไม่ต้องเข้าสู่ระบบ</div>
           <h1 class="hero-title">แดชบอร์ดตรวจสอบเงินยืม</h1>
-          <p class="hero-subtitle">สำหรับผู้ยืมตรวจสอบข้อมูลของตนเองว่าเคยมีรายการเงินยืมหรือไม่ ยอดเงินรวมเท่าไร มีกี่โครงการ และแต่ละรายการชำระแล้วหรือยัง คงค้างชำระหรือไม่</p>
         </div>
         <div class="hero-actions">
           <button id="btnTheme" class="theme-btn" type="button"><i class="bi bi-moon-stars"></i><span>โหมดกลางคืน</span></button>
@@ -872,11 +801,6 @@
           </label>
           <button id="btnSearch" class="btn-primary" type="button"><i class="bi bi-search"></i>ค้นหา</button>
           <button id="btnReset" class="btn-secondary" type="button"><i class="bi bi-arrow-counterclockwise"></i>ล้างค่า</button>
-        </div>
-        <div class="search-meta">
-          <div class="search-note"><i class="bi bi-shield-check"></i>ระบบจะแสดงเฉพาะข้อมูลสรุปที่จำเป็นสำหรับการตรวจสอบสถานะเงินยืม</div>
-          <div id="queryNote" class="result-note hidden"></div>
-          <div id="borrowerWarning" class="warning-chip hidden"></div>
         </div>
       </section>
     </section>
@@ -952,8 +876,6 @@
         searchInput: document.getElementById('searchInput'),
         btnSearch: document.getElementById('btnSearch'),
         btnReset: document.getElementById('btnReset'),
-        queryNote: document.getElementById('queryNote'),
-        borrowerWarning: document.getElementById('borrowerWarning'),
         loadingState: document.getElementById('loadingState'),
         errorState: document.getElementById('errorState'),
         errorText: document.getElementById('errorText'),
@@ -1031,25 +953,8 @@
       }
 
       function updateQueryVisuals(query, summary) {
-        if (els.queryNote) {
-          if (query) {
-            els.queryNote.classList.remove('hidden');
-            els.queryNote.innerHTML = '<i class="bi bi-search-heart"></i>ผลการค้นหา: <strong>' + escapeHtml(query) + '</strong>';
-          } else {
-            els.queryNote.classList.add('hidden');
-            els.queryNote.textContent = '';
-          }
-        }
-        if (els.borrowerWarning) {
-          var borrowerCount = Number(summary && summary.borrowerCount || 0);
-          if (borrowerCount > 1) {
-            els.borrowerWarning.classList.remove('hidden');
-            els.borrowerWarning.innerHTML = '<i class="bi bi-exclamation-triangle"></i>พบมากกว่า 1 ชื่อที่ตรงกับคำค้นหา กรุณาระบุชื่อให้ละเอียดขึ้น';
-          } else {
-            els.borrowerWarning.classList.add('hidden');
-            els.borrowerWarning.textContent = '';
-          }
-        }
+        void query;
+        void summary;
       }
 
       function statusIcon(key) {
@@ -1223,8 +1128,6 @@
         state.query = '';
         setSearchQueryInUrl('');
         if (els.searchInput) els.searchInput.value = '';
-        if (els.queryNote) els.queryNote.classList.add('hidden');
-        if (els.borrowerWarning) els.borrowerWarning.classList.add('hidden');
         hideError();
         if (els.dashboardArea) els.dashboardArea.classList.add('hidden');
         showEmpty('เริ่มต้นค้นหาด้วยชื่อผู้ยืม', 'กรอกชื่อ-นามสกุลของผู้ยืมเพื่อดูสรุปรายการเงินยืม ยอดเงินรวม จำนวนโครงการ และสถานะการชำระคืน');
