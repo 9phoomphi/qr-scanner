@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>แดชบอร์ดตรวจสอบเงินยืม</title>
+  <title>ตรวจสอบเงินยืม</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -643,23 +643,176 @@
 
     .foot-chip {
       min-width: 0;
-      display: inline-flex;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
       align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.42);
+      gap: 10px;
+      padding: 11px 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.46);
       border: 1px solid rgba(148, 163, 184, 0.18);
       color: var(--text-sub);
-      font-size: 0.88rem;
-      font-weight: 700;
-      line-height: 1.5;
+      line-height: 1.45;
       overflow-wrap: anywhere;
     }
 
     body.dark-mode .foot-chip {
       background: rgba(3, 10, 20, 0.36);
       border-color: rgba(148, 163, 184, 0.14);
+    }
+
+    .foot-chip-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.02rem;
+      flex: 0 0 auto;
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--text-sub);
+    }
+
+    .foot-chip-copy {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .foot-chip-label {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      color: var(--text-faint);
+    }
+
+    .foot-chip-value {
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .foot-chip.tone-blue {
+      background: rgba(37, 99, 235, 0.08);
+      border-color: rgba(37, 99, 235, 0.18);
+    }
+
+    .foot-chip.tone-blue .foot-chip-icon {
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--blue);
+    }
+
+    .foot-chip.tone-blue .foot-chip-label,
+    .foot-chip.tone-blue .foot-chip-value {
+      color: var(--blue);
+    }
+
+    .foot-chip.tone-emerald {
+      background: rgba(5, 150, 105, 0.08);
+      border-color: rgba(5, 150, 105, 0.18);
+    }
+
+    .foot-chip.tone-emerald .foot-chip-icon {
+      background: rgba(5, 150, 105, 0.12);
+      color: var(--emerald);
+    }
+
+    .foot-chip.tone-emerald .foot-chip-label,
+    .foot-chip.tone-emerald .foot-chip-value {
+      color: var(--emerald);
+    }
+
+    .foot-chip.tone-amber {
+      background: rgba(217, 119, 6, 0.08);
+      border-color: rgba(217, 119, 6, 0.2);
+    }
+
+    .foot-chip.tone-amber .foot-chip-icon {
+      background: rgba(217, 119, 6, 0.12);
+      color: var(--amber);
+    }
+
+    .foot-chip.tone-amber .foot-chip-label,
+    .foot-chip.tone-amber .foot-chip-value {
+      color: var(--amber);
+    }
+
+    .foot-chip.tone-rose {
+      background: rgba(220, 38, 38, 0.08);
+      border-color: rgba(220, 38, 38, 0.2);
+    }
+
+    .foot-chip.tone-rose .foot-chip-icon {
+      background: rgba(220, 38, 38, 0.12);
+      color: var(--rose);
+    }
+
+    .foot-chip.tone-rose .foot-chip-label,
+    .foot-chip.tone-rose .foot-chip-value {
+      color: var(--rose);
+    }
+
+    .foot-chip.tone-violet {
+      background: rgba(124, 58, 237, 0.08);
+      border-color: rgba(124, 58, 237, 0.18);
+    }
+
+    .foot-chip.tone-violet .foot-chip-icon {
+      background: rgba(124, 58, 237, 0.12);
+      color: var(--violet);
+    }
+
+    .foot-chip.tone-violet .foot-chip-label,
+    .foot-chip.tone-violet .foot-chip-value {
+      color: var(--violet);
+    }
+
+    .foot-chip.tone-slate {
+      background: rgba(71, 85, 105, 0.08);
+      border-color: rgba(71, 85, 105, 0.18);
+    }
+
+    .foot-chip.tone-slate .foot-chip-icon {
+      background: rgba(71, 85, 105, 0.12);
+      color: var(--slate);
+    }
+
+    .foot-chip.tone-slate .foot-chip-label,
+    .foot-chip.tone-slate .foot-chip-value {
+      color: var(--slate);
+    }
+
+    body.dark-mode .foot-chip.tone-blue {
+      background: rgba(37, 99, 235, 0.14);
+      border-color: rgba(96, 165, 250, 0.22);
+    }
+
+    body.dark-mode .foot-chip.tone-emerald {
+      background: rgba(5, 150, 105, 0.16);
+      border-color: rgba(52, 211, 153, 0.22);
+    }
+
+    body.dark-mode .foot-chip.tone-amber {
+      background: rgba(217, 119, 6, 0.16);
+      border-color: rgba(251, 191, 36, 0.22);
+    }
+
+    body.dark-mode .foot-chip.tone-rose {
+      background: rgba(220, 38, 38, 0.16);
+      border-color: rgba(248, 113, 113, 0.22);
+    }
+
+    body.dark-mode .foot-chip.tone-violet {
+      background: rgba(124, 58, 237, 0.16);
+      border-color: rgba(167, 139, 250, 0.22);
+    }
+
+    body.dark-mode .foot-chip.tone-slate {
+      background: rgba(71, 85, 105, 0.18);
+      border-color: rgba(148, 163, 184, 0.22);
     }
 
     .empty-state,
@@ -789,7 +942,7 @@
     <section class="hero">
       <div class="hero-top">
         <div>
-          <h1 class="hero-title">แดชบอร์ดตรวจสอบเงินยืม</h1>
+          <h1 class="hero-title">ตรวจสอบเงินยืม</h1>
         </div>
         <div class="hero-actions">
           <button id="btnTheme" class="theme-btn" type="button"><i class="bi bi-moon-stars"></i><span>โหมดกลางคืน</span></button>
@@ -993,6 +1146,15 @@
         return 'bi-hourglass-split';
       }
 
+      function getStatusTone(key) {
+        if (key === 'paid') return 'tone-emerald';
+        if (key === 'overdue') return 'tone-rose';
+        if (key === 'due_soon') return 'tone-amber';
+        if (key === 'awaiting') return 'tone-violet';
+        if (key === 'cancelled') return 'tone-slate';
+        return 'tone-blue';
+      }
+
       function renderSummary(summary) {
         summary = summary || {};
         if (!els.summaryGrid) return;
@@ -1075,8 +1237,30 @@
         els.projectGrid.innerHTML = html;
       }
 
-      function buildRecordChip(icon, label, value) {
-        return '<div class="foot-chip"><i class="bi ' + icon + '"></i><span>' + escapeHtml(label) + ': ' + escapeHtml(value || '-') + '</span></div>';
+      function buildRecordChip(icon, label, value, toneClass) {
+        var tone = safeTrim(toneClass || '') || 'tone-slate';
+        return '<div class="foot-chip ' + escapeHtml(tone) + '">'
+          + '<span class="foot-chip-icon"><i class="bi ' + icon + '"></i></span>'
+          + '<span class="foot-chip-copy"><span class="foot-chip-label">' + escapeHtml(label) + '</span><span class="foot-chip-value">' + escapeHtml(value || '-') + '</span></span>'
+          + '</div>';
+      }
+
+      function getDueChipTone(item) {
+        var statusKey = safeTrim(item && item.statusKey || '');
+        if (statusKey === 'overdue') return 'tone-rose';
+        if (statusKey === 'due_soon') return 'tone-amber';
+        if (statusKey === 'paid') return 'tone-emerald';
+        if (statusKey === 'awaiting' || statusKey === 'cancelled') return 'tone-slate';
+        return 'tone-blue';
+      }
+
+      function getSettlementChipTone(item) {
+        var record = item || {};
+        if (safeTrim(record.settlementDocDateDisplay || '') || safeTrim(record.settlementDocDateInput || '')) {
+          return 'tone-emerald';
+        }
+        if (safeTrim(record.statusKey || '') === 'cancelled') return 'tone-slate';
+        return 'tone-blue';
       }
 
       function renderRecords(records, totalMatched, truncated) {
@@ -1108,10 +1292,10 @@
           html += '<div class="meta-item"><div class="meta-label">ประเภทค่าใช้จ่าย</div><div class="meta-value">' + escapeHtml(item.expenseType || '-') + '</div></div>';
           html += '</div>';
           html += '<div class="record-foot">';
-          html += buildRecordChip('bi-bank2', 'แหล่งเงินยืม', item.fundingSource || '-');
-          html += buildRecordChip('bi-calendar2-week', 'วันครบกำหนด', item.dueDateDisplay || '-');
-          html += buildRecordChip('bi-receipt-cutoff', 'วันที่ชำระเอกสาร', item.settlementDocDateDisplay || '-');
-          html += buildRecordChip('bi-info-circle', 'สถานะล่าสุด', item.remainingText || item.statusLabel || '-');
+          html += buildRecordChip('bi-bank2', 'แหล่งเงินยืม', item.fundingSource || '-', 'tone-blue');
+          html += buildRecordChip('bi-calendar2-week', 'วันครบกำหนด', item.dueDateDisplay || '-', getDueChipTone(item));
+          html += buildRecordChip('bi-receipt-cutoff', 'วันที่ชำระเอกสาร', item.settlementDocDateDisplay || '-', getSettlementChipTone(item));
+          html += buildRecordChip('bi-info-circle', 'สถานะล่าสุด', item.remainingText || item.statusLabel || '-', getStatusTone(item.statusKey || ''));
           html += '</div>';
           html += '</article>';
         }
