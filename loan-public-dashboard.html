@@ -906,6 +906,30 @@
         return C.fmtMoney(value == null ? '' : value);
       }
 
+      function buildPlanSegment(label, value) {
+        var text = safeTrim(value);
+        if (!text) return '';
+        var normalizedText = text.replace(/\s+/g, '').toLowerCase();
+        var normalizedLabel = safeTrim(label).replace(/\s+/g, '').toLowerCase();
+        if (normalizedLabel && normalizedText.indexOf(normalizedLabel) === 0) {
+          return text;
+        }
+        return label + ' ' + text;
+      }
+
+      function buildPlanDisplay(item) {
+        var record = item || {};
+        var parts = [
+          buildPlanSegment('ผลผลิตที่', record.prod),
+          buildPlanSegment('กิจกรรมหลัก', record.mainAct),
+          buildPlanSegment('โครงการย่อยที่', record.subProject),
+          buildPlanSegment('กิจกรรมย่อยที่', record.activity)
+        ].filter(function (part) { return !!safeTrim(part); });
+
+        if (parts.length) return parts.join(' / ');
+        return safeTrim(record.projectLabel || record.meetingTitle || '-');
+      }
+
       function getPreferredTheme() {
         return 'light';
       }
@@ -1071,9 +1095,10 @@
         for (var i = 0; i < list.length; i++) {
           var item = list[i] || {};
           var displayId = safeTrim(item.contractNo || '') || safeTrim(item.docNoSdh || '') || '-';
+          var planDisplay = buildPlanDisplay(item);
           html += '<article class="record-card">';
           html += '<div class="record-head">';
-          html += '<div><span class="status-badge ' + escapeHtml(item.statusKey || 'unpaid') + '"><i class="bi ' + statusIcon(item.statusKey || '') + '"></i>' + escapeHtml(item.statusLabel || '-') + '</span><h3 class="record-title">' + escapeHtml(item.projectLabel || item.meetingTitle || '-') + '</h3></div>';
+          html += '<div><span class="status-badge ' + escapeHtml(item.statusKey || 'unpaid') + '"><i class="bi ' + statusIcon(item.statusKey || '') + '"></i>' + escapeHtml(item.statusLabel || '-') + '</span><h3 class="record-title">' + escapeHtml(planDisplay) + '</h3></div>';
           html += '<div class="record-amount">' + escapeHtml(formatMoney(item.amount || 0)) + '</div>';
           html += '</div>';
           html += '<div class="record-meta-grid">';
