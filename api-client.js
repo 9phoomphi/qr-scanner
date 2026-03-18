@@ -631,6 +631,16 @@
     }, opts);
   };
 
+  DocumentControlApi.prototype.loanPublicDashboard = function (params, opts) {
+    params = params || {};
+    return this.call('loan.public_dashboard', {
+      deviceKey: this.defaultDeviceKey,
+      clientIpKey: this.defaultIpKey,
+      searchQuery: safeTrim(params.searchQuery || params.borrowerName || ''),
+      maxRecords: Number(params.maxRecords || 80)
+    }, opts);
+  };
+
   DocumentControlApi.prototype.loanDetail = function (recordId, opts) {
     return this.call('loan.detail', {
       deviceKey: this.defaultDeviceKey,
