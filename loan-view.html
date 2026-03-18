@@ -544,7 +544,7 @@
   </div>
 
   <script src="./config.js"></script>
-  <script src="./api-client.js?v=20260317-1"></script>
+  <script src="./api-client.js?v=20260318-2"></script>
   <script src="./theme-legacy.js?v=20260221-3"></script>
   <script src="./app-common.js?v=20260317-1"></script>
   <script>
@@ -933,11 +933,21 @@
         els.btnToggleContractStatus.disabled = true;
 
         try {
-          var res = await state.api.loanChangeContractStatus(
-            C.safeTrim((state.doc && (state.doc.recordId || state.doc.contractNo || state.doc.docNoSdh)) || recordId || ''),
-            nextStatus,
-            { loaderMessage: cancelled ? 'กำลังเปลี่ยนกลับสถานะสัญญา...' : 'กำลังยกเลิกสัญญา...' }
-          );
+          var targetRecordId = C.safeTrim((state.doc && (state.doc.recordId || state.doc.contractNo || state.doc.docNoSdh)) || recordId || '');
+          var requestOptions = { loaderMessage: cancelled ? 'กำลังเปลี่ยนกลับสถานะสัญญา...' : 'กำลังยกเลิกสัญญา...' };
+          var res;
+          if (typeof state.api.loanChangeContractStatus === 'function') {
+            res = await state.api.loanChangeContractStatus(targetRecordId, nextStatus, requestOptions);
+          } else if (typeof state.api.call === 'function') {
+            res = await state.api.call('loan.change_contract_status', {
+              deviceKey: state.api.defaultDeviceKey,
+              clientIpKey: state.api.defaultIpKey,
+              recordId: targetRecordId,
+              nextStatus: nextStatus
+            }, requestOptions);
+          } else {
+            throw new Error('api_client_missing_method');
+          }
           if (!res || res.success === false || !res.doc) {
             throw new Error((res && res.error) ? res.error : 'ไม่สามารถเปลี่ยนสถานะสัญญาได้');
           }

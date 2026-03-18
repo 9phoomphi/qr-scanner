@@ -582,7 +582,7 @@
 
     .purpose-summary-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 10px;
     }
 
@@ -590,8 +590,10 @@
       border-radius: 18px;
       border: 1px solid rgba(148, 163, 184, 0.24);
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(248, 252, 255, 0.72));
-      padding: 14px;
+      padding: 15px 16px;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+      display: grid;
+      gap: 10px;
     }
 
     .purpose-card.sheet-blue {
@@ -615,24 +617,43 @@
     }
 
     .purpose-card-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .purpose-card-main {
+      min-width: 0;
+    }
+
+    .purpose-card-meta {
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
     }
 
     .purpose-card-title {
       margin: 0;
-      font-size: 0.92rem;
-      line-height: 1.4;
+      font-size: 0.98rem;
+      line-height: 1.45;
       font-weight: 820;
       color: var(--text-color);
       word-break: break-word;
     }
 
+    .purpose-card-stat {
+      min-width: 92px;
+      text-align: right;
+      display: grid;
+      gap: 4px;
+      align-content: center;
+    }
+
     .purpose-card-count {
-      font-size: 1.38rem;
+      font-size: 1.76rem;
       line-height: 1;
       font-weight: 900;
       color: var(--text-color);
@@ -645,7 +666,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      margin-top: 8px;
+      margin-top: 2px;
       flex-wrap: wrap;
     }
 
@@ -1363,6 +1384,15 @@
       .purpose-summary-grid {
         grid-template-columns: 1fr;
       }
+
+      .purpose-card-head {
+        grid-template-columns: 1fr;
+      }
+
+      .purpose-card-stat {
+        text-align: left;
+        min-width: 0;
+      }
     }
 
     @media (max-width: 520px) {
@@ -1497,7 +1527,7 @@
   </div>
 
   <script src="./config.js"></script>
-  <script src="./api-client.js?v=20260317-1"></script>
+  <script src="./api-client.js?v=20260318-2"></script>
   <script src="./theme-legacy.js?v=20260221-3"></script>
   <script src="./app-common.js?v=20260317-1"></script>
   <script>
@@ -1595,6 +1625,55 @@
         return 'sheet-other';
       }
 
+      function getSheetColorOrder(value) {
+        var label = normalizeSheetColorLabel(value);
+        if (label === 'ใบฟ้า') return 0;
+        if (label === 'ใบชมพู') return 1;
+        if (label === 'ใบเขียว') return 2;
+        return 3;
+      }
+
+      function sortPurposeSummary(items) {
+        var list = Array.isArray(items) ? items.slice() : [];
+        list.sort(function (a, b) {
+          var colorDiff = getSheetColorOrder((a && a.sheetColor) || '') - getSheetColorOrder((b && b.sheetColor) || '');
+          if (colorDiff !== 0) return colorDiff;
+          var countDiff = Number((b && b.count) || 0) - Number((a && a.count) || 0);
+          if (countDiff !== 0) return countDiff;
+          return String((a && a.purpose) || '').localeCompare(String((b && b.purpose) || ''), 'th');
+        });
+        return list;
+      }
+
+      function pickTopPurpose(items) {
+        var list = Array.isArray(items) ? items : [];
+        var top = null;
+        for (var i = 0; i < list.length; i++) {
+          var item = list[i] || {};
+          if (!top) {
+            top = item;
+            continue;
+          }
+          var itemCount = Number(item.count || 0);
+          var topCount = Number(top.count || 0);
+          if (itemCount > topCount) {
+            top = item;
+            continue;
+          }
+          if (itemCount === topCount) {
+            var colorDiff = getSheetColorOrder(item.sheetColor || '') - getSheetColorOrder(top.sheetColor || '');
+            if (colorDiff < 0) {
+              top = item;
+              continue;
+            }
+            if (colorDiff === 0 && String(item.purpose || '').localeCompare(String(top.purpose || ''), 'th') < 0) {
+              top = item;
+            }
+          }
+        }
+        return top;
+      }
+
       function buildSheetPill(value) {
         var label = normalizeSheetColorLabel(value);
         if (!label) return '';
@@ -1648,10 +1727,7 @@
           });
         }
 
-        purposeSummary.sort(function (a, b) {
-          if (b.count !== a.count) return b.count - a.count;
-          return String(a.purpose || '').localeCompare(String(b.purpose || ''), 'th');
-        });
+        purposeSummary = sortPurposeSummary(purposeSummary);
 
         return {
           totalDocuments: docs.length,
@@ -1659,7 +1735,7 @@
           verifyCount: verifyCount,
           bossCount: bossCount,
           latestVerifyDate: latestVerifyDate,
-          topPurpose: purposeSummary.length ? purposeSummary[0] : null,
+          topPurpose: pickTopPurpose(purposeSummary),
           purposeSummary: purposeSummary
         };
       }
@@ -1673,8 +1749,8 @@
         var verifyCount = Number(dashboard.verifyCount || 0);
         var bossCount = Number(dashboard.bossCount || 0);
         var latestVerifyDate = C.safeTrim(dashboard.latestVerifyDate || '') || '-';
-        var purposeSummary = Array.isArray(dashboard.purposeSummary) ? dashboard.purposeSummary : [];
-        var topPurpose = dashboard.topPurpose || (purposeSummary.length ? purposeSummary[0] : null);
+        var purposeSummary = sortPurposeSummary(Array.isArray(dashboard.purposeSummary) ? dashboard.purposeSummary : []);
+        var topPurpose = pickTopPurpose(purposeSummary);
         var summaryText = C.safeTrim(options.summaryText || '');
 
         var html = '';
@@ -1720,9 +1796,9 @@
             if (Number(item.count || 0) > 0 && width < 8) width = 8;
             var sheetCls = getSheetColorClass(item.sheetColor || '');
             html += '<article class="purpose-card ' + sheetCls + '">';
-            html += '<div class="purpose-card-head"><div><div style="margin-bottom:8px;">' + buildSheetPill(item.sheetColor || '') + '</div><h4 class="purpose-card-title">' + esc(item.purpose || '-') + '</h4></div><div class="purpose-card-count">' + esc(Number(item.count || 0)) + '</div></div>';
+            html += '<div class="purpose-card-head"><div class="purpose-card-main"><div class="purpose-card-meta">' + buildSheetPill(item.sheetColor || '') + '</div><h4 class="purpose-card-title">' + esc(item.purpose || '-') + '</h4></div><div class="purpose-card-stat"><div class="purpose-card-count">' + esc(Number(item.count || 0)) + '</div><div class="purpose-percent">' + esc(formatPercent(pct)) + '</div></div></div>';
             html += '<div class="purpose-progress"><span class="purpose-progress-bar" style="width:' + width + '%"></span></div>';
-            html += '<div class="purpose-card-foot"><span class="purpose-percent">จำนวน ' + esc(Number(item.count || 0)) + ' ฉบับ</span><span class="purpose-percent">' + esc(formatPercent(pct)) + '</span></div>';
+            html += '<div class="purpose-card-foot"><span class="purpose-percent">จำนวน ' + esc(Number(item.count || 0)) + ' ฉบับ</span><span class="purpose-percent">หมวดใบงาน: ' + esc(normalizeSheetColorLabel(item.sheetColor || '') || 'อื่น ๆ') + '</span></div>';
             html += '</article>';
           }
           html += '</div>';
@@ -2085,7 +2161,9 @@
           + '.print-meta{margin:8px 0 0;text-align:center;font-size:10.5px;color:#475569}'
           + '.dashboard-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}'
           + '.dashboard-metric,.dashboard-panel,.purpose-card,.dashboard-flow-card{border:1px solid #dbe4f0;border-radius:18px;background:#fff;padding:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.84)}'
-          + '.dashboard-metric-head,.dashboard-panel-head,.purpose-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}'
+          + '.purpose-card{display:grid;gap:8px}'
+          + '.dashboard-metric-head,.dashboard-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}'
+          + '.purpose-card-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}'
           + '.dashboard-metric-label,.dashboard-panel-head p,.purpose-percent,.dashboard-top-foot,.dashboard-metric-sub,.flow-label{font-size:10px;color:#475569;line-height:1.4}'
           + '.dashboard-metric-value{font-size:28px;line-height:1;font-weight:900;color:#0f172a}'
           + '.dashboard-metric-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:12px;background:#e0f2fe;color:#0369a1}'
@@ -2110,7 +2188,8 @@
           + '.dashboard-flow-card .flow-value{font-size:24px;line-height:1;font-weight:900;color:#0f172a}'
           + '.dashboard-flow-card.flow-verify i,.dashboard-flow-card.flow-verify .flow-value{color:#15803d}'
           + '.dashboard-flow-card.flow-boss i,.dashboard-flow-card.flow-boss .flow-value{color:#7c3aed}'
-          + '.purpose-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}'
+          + '.purpose-summary-grid{display:grid;grid-template-columns:1fr;gap:8px}'
+          + '.purpose-card-main{min-width:0}.purpose-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}.purpose-card-stat{display:grid;gap:2px;min-width:76px;text-align:right}'
           + '.purpose-card-title{margin:0;font-size:12px;line-height:1.45;font-weight:800;color:#0f172a}'
           + '.purpose-card-count{font-size:22px;line-height:1;font-weight:900;color:#0f172a}'
           + '.purpose-card.sheet-blue{background:#eff6ff}.purpose-card.sheet-pink{background:#fdf2f8}.purpose-card.sheet-green{background:#f0fdf4}.purpose-card.sheet-other{background:#f8fafc}'
