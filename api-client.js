@@ -656,6 +656,15 @@
     }, opts);
   };
 
+  DocumentControlApi.prototype.loanChangeContractStatus = function (recordId, nextStatus, opts) {
+    return this.call('loan.change_contract_status', {
+      deviceKey: this.defaultDeviceKey,
+      clientIpKey: this.defaultIpKey,
+      recordId: safeTrim(recordId || ''),
+      nextStatus: safeTrim(nextStatus || '')
+    }, opts);
+  };
+
   DocumentControlApi.prototype.docCreate = function (formData, opts) {
     return this.call('doc.create', {
       deviceKey: this.defaultDeviceKey,
