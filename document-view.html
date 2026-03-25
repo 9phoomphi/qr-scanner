@@ -1628,8 +1628,8 @@
 
   <script src="./config.js"></script>
   <script src="./api-client.js?v=20260318-2"></script>
-  <script src="./theme-legacy.js?v=20260325-1"></script>
-  <script src="./app-common.js?v=20260325-1"></script>
+  <script src="./theme-legacy.js?v=20260325-2"></script>
+  <script src="./app-common.js?v=20260325-2"></script>
   <script>
     (function () {
       'use strict';
@@ -1639,7 +1639,7 @@
       var docId = C.safeTrim(q.id || '');
       var qrToken = C.safeTrim(q.t || q.token || '');
       var qrMode = C.safeTrim(q.qr || q.public || q.mode || '').toLowerCase();
-      var legacyQrHint = !!docId && !!C.safeTrim(q.dk || q.deviceKey || q.ipk || q.clientIpKey || q.su || q.scriptUrl || q.script || '');
+      var legacyQrHint = !!docId && !!C.safeTrim(q.dk || q.deviceKey || q.mk || q.machineKey || q.su || q.scriptUrl || q.script || '');
       var isLegacyPublicQrRequest = !qrToken && legacyQrHint;
       var isPublicQrRequest = !!qrToken || qrMode === '1' || qrMode === 'true' || qrMode === 'qr' || qrMode === 'public' || isLegacyPublicQrRequest;
       var APP_BROWSER_NAME = 'ระบบทะเบียนคุมเอกสาร';
@@ -2514,6 +2514,7 @@
 
       async function loadDetail() {
         showError('');
+        var canAttemptLegacyPublicFallback = !!legacyQrHint;
 
         var detailRes;
         var membersRes = { data: [] };
@@ -2548,12 +2549,33 @@
             infoRes = res[2] || {};
             meRes = res[3] || {};
           } catch (privateErr) {
-            var fallbackRes = await tryLegacyPublicDetail();
-            if (fallbackRes) {
+            if (canAttemptLegacyPublicFallback) {
+              var fallbackRes = await tryLegacyPublicDetail();
+              if (fallbackRes) {
+                applyResolvedViewMode('public');
+                state.currentUser = null;
+                state.doc = fallbackRes.doc;
+                state.statusData = fallbackRes.statusData || {};
+                state.members = [];
+                state.info = { locations: [], fiscalYears: [] };
+                syncDocRouteId((state.doc && state.doc.docId) || docId);
+                renderDocument();
+                els.mainCard.style.display = 'block';
+                return true;
+              }
+            }
+            throw privateErr;
+          }
+        }
+
+        if (!isPublicQrRequest && (!meRes || meRes.success === false || !meRes.user)) {
+          if (canAttemptLegacyPublicFallback) {
+            var legacyRes = await tryLegacyPublicDetail();
+            if (legacyRes) {
               applyResolvedViewMode('public');
               state.currentUser = null;
-              state.doc = fallbackRes.doc;
-              state.statusData = fallbackRes.statusData || {};
+              state.doc = legacyRes.doc;
+              state.statusData = legacyRes.statusData || {};
               state.members = [];
               state.info = { locations: [], fiscalYears: [] };
               syncDocRouteId((state.doc && state.doc.docId) || docId);
@@ -2561,23 +2583,6 @@
               els.mainCard.style.display = 'block';
               return true;
             }
-            throw privateErr;
-          }
-        }
-
-        if (!isPublicQrRequest && (!meRes || meRes.success === false || !meRes.user)) {
-          var legacyRes = await tryLegacyPublicDetail();
-          if (legacyRes) {
-            applyResolvedViewMode('public');
-            state.currentUser = null;
-            state.doc = legacyRes.doc;
-            state.statusData = legacyRes.statusData || {};
-            state.members = [];
-            state.info = { locations: [], fiscalYears: [] };
-            syncDocRouteId((state.doc && state.doc.docId) || docId);
-            renderDocument();
-            els.mainCard.style.display = 'block';
-            return true;
           }
           C.redirect('index.html', {}, true);
           return false;

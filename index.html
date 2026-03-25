@@ -1964,8 +1964,8 @@
 
   <script src="./config.js"></script>
   <script src="./api-client.js?v=20260318-2"></script>
-  <script src="./theme-legacy.js?v=20260325-1"></script>
-  <script src="./app-common.js?v=20260325-1"></script>
+  <script src="./theme-legacy.js?v=20260325-2"></script>
+  <script src="./app-common.js?v=20260325-2"></script>
   <script>
     (function () {
       'use strict';
@@ -2124,7 +2124,7 @@
         for (var k in routeQuery) {
           if (!Object.prototype.hasOwnProperty.call(routeQuery, k)) continue;
           var key = String(k || '').toLowerCase();
-          if (key === 'dk' || key === 'ipk') continue;
+          if (key === 'dk' || key === 'mk') continue;
           var value = C.safeTrim(routeQuery[k] || '');
           if (!value) continue;
           return true;

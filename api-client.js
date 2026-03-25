@@ -137,7 +137,7 @@
     options = options || {};
     this.scriptUrl = normalizeScriptUrl(options.scriptUrl || '');
     this.defaultDeviceKey = safeTrim(options.deviceKey || '') || randomDeviceKey();
-    this.defaultIpKey = safeTrim(options.ipKey || '');
+    this.defaultMachineKey = safeTrim(options.machineKey || options.mk || '');
     this.timeoutMs = normalizeTimeoutMs(options.timeoutMs, 15000);
     var storedMode = readStoredTransportMode(this.scriptUrl) || '';
     if (typeof fetch === 'function') {
@@ -155,21 +155,21 @@
       payload: normalizedPayload
     };
     var bodyDeviceKey = safeTrim(normalizedPayload.deviceKey || normalizedPayload.dk || this.defaultDeviceKey || '');
-    var bodyIpKey = safeTrim(
-      normalizedPayload.clientIpKey
-      || normalizedPayload.ipKey
-      || normalizedPayload.ipk
-      || this.defaultIpKey
+    var bodyMachineKey = safeTrim(
+      normalizedPayload.clientMachineKey
+      || normalizedPayload.machineKey
+      || normalizedPayload.mk
+      || this.defaultMachineKey
       || ''
     );
     if (bodyDeviceKey) {
       body.deviceKey = bodyDeviceKey;
       body.dk = bodyDeviceKey;
     }
-    if (bodyIpKey) {
-      body.clientIpKey = bodyIpKey;
-      body.ipKey = bodyIpKey;
-      body.ipk = bodyIpKey;
+    if (bodyMachineKey) {
+      body.clientMachineKey = bodyMachineKey;
+      body.machineKey = bodyMachineKey;
+      body.mk = bodyMachineKey;
     }
     var requestId = safeTrim(opts && opts.requestId ? opts.requestId : '');
     if (requestId) body.requestId = requestId;
@@ -179,7 +179,11 @@
   DocumentControlApi.prototype._ensureSessionKeys = function (payload) {
     var out = payload && typeof payload === 'object' ? payload : {};
     if (!safeTrim(out.deviceKey)) out.deviceKey = this.defaultDeviceKey;
-    if (!safeTrim(out.clientIpKey) && this.defaultIpKey) out.clientIpKey = this.defaultIpKey;
+    if (!safeTrim(out.clientMachineKey) && this.defaultMachineKey) {
+      out.clientMachineKey = this.defaultMachineKey;
+      out.machineKey = this.defaultMachineKey;
+      out.mk = this.defaultMachineKey;
+    }
     return out;
   };
 
@@ -214,17 +218,18 @@
     }
 
     var sessionDeviceKey = safeTrim((payload && (payload.deviceKey || payload.dk)) || this.defaultDeviceKey || '');
-    var sessionIpKey = safeTrim(
-      (payload && (payload.clientIpKey || payload.ipKey || payload.ipk))
-      || this.defaultIpKey
+    var sessionMachineKey = safeTrim(
+      (payload && (payload.clientMachineKey || payload.machineKey || payload.mk))
+      || this.defaultMachineKey
       || ''
     );
     var endpoint = appendQuery(this.scriptUrl, {
       api: '1',
       dk: sessionDeviceKey,
       deviceKey: sessionDeviceKey,
-      ipk: sessionIpKey,
-      clientIpKey: sessionIpKey
+      mk: sessionMachineKey,
+      machineKey: sessionMachineKey,
+      clientMachineKey: sessionMachineKey
     });
     var body = this._buildPayload(action, payload, opts);
     var timeoutMs = normalizeTimeoutMs((opts && opts.timeoutMs), this.timeoutMs || 15000);
@@ -293,9 +298,9 @@
 
       var queryPayload = self._buildPayload(action, payload, opts).payload || {};
       var queryDeviceKey = safeTrim((queryPayload && (queryPayload.deviceKey || queryPayload.dk)) || self.defaultDeviceKey || '');
-      var queryIpKey = safeTrim(
-        (queryPayload && (queryPayload.clientIpKey || queryPayload.ipKey || queryPayload.ipk))
-        || self.defaultIpKey
+      var queryMachineKey = safeTrim(
+        (queryPayload && (queryPayload.clientMachineKey || queryPayload.machineKey || queryPayload.mk))
+        || self.defaultMachineKey
         || ''
       );
       var src = appendQuery(self.scriptUrl, {
@@ -304,8 +309,9 @@
         callback: callbackName,
         dk: queryDeviceKey,
         deviceKey: queryDeviceKey,
-        ipk: queryIpKey,
-        clientIpKey: queryIpKey,
+        mk: queryMachineKey,
+        machineKey: queryMachineKey,
+        clientMachineKey: queryMachineKey,
         payload: JSON.stringify(queryPayload),
         _: Date.now()
       });
@@ -390,8 +396,8 @@
     if (safeTrim(requestPayload.deviceKey)) {
       this.defaultDeviceKey = safeTrim(requestPayload.deviceKey);
     }
-    if (safeTrim(requestPayload.clientIpKey)) {
-      this.defaultIpKey = safeTrim(requestPayload.clientIpKey);
+    if (safeTrim(requestPayload.clientMachineKey || requestPayload.machineKey || requestPayload.mk)) {
+      this.defaultMachineKey = safeTrim(requestPayload.clientMachineKey || requestPayload.machineKey || requestPayload.mk);
     }
     var useJsonpOnly = !!(opts && opts.useJsonpOnly);
     var loaderTicket = this._startGlobalLoader(opts);
@@ -485,7 +491,7 @@
       username: safeTrim(username),
       password: String(password == null ? '' : password),
       deviceKey: (opts && opts.deviceKey) ? safeTrim(opts.deviceKey) : this.defaultDeviceKey,
-      clientIpKey: (opts && opts.ipKey) ? safeTrim(opts.ipKey) : this.defaultIpKey
+      clientMachineKey: (opts && (opts.clientMachineKey || opts.machineKey || opts.mk)) ? safeTrim(opts.clientMachineKey || opts.machineKey || opts.mk) : this.defaultMachineKey
     };
     this.defaultDeviceKey = payload.deviceKey || this.defaultDeviceKey;
     var self = this;
@@ -502,11 +508,11 @@
     var self = this;
     return this.call('auth.logout', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey
+      clientMachineKey: this.defaultMachineKey
     }, opts).finally(function () {
       self._cacheClear('auth.me');
       self.defaultDeviceKey = randomDeviceKey();
-      self.defaultIpKey = '';
+      self.defaultMachineKey = '';
       try {
         if (global.DocFrontendCommon && typeof global.DocFrontendCommon.clearSessionIdentity === 'function') {
           global.DocFrontendCommon.clearSessionIdentity();
@@ -524,7 +530,7 @@
     var self = this;
     return this.call('auth.me', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey
+      clientMachineKey: this.defaultMachineKey
     }, opts).then(function (res) {
       if (res && res.success && res.user) self._cacheWrite('auth.me', res);
       return res;
@@ -538,7 +544,7 @@
     var self = this;
     return this.call('options.info', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey
+      clientMachineKey: this.defaultMachineKey
     }, opts).then(function (res) {
       if (res && res.success) self._cacheWrite('options.info', res);
       return res;
@@ -552,7 +558,7 @@
     var self = this;
     return this.call('options.members', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey
+      clientMachineKey: this.defaultMachineKey
     }, opts).then(function (res) {
       if (res && res.success) self._cacheWrite('options.members', res);
       return res;
@@ -562,7 +568,7 @@
   DocumentControlApi.prototype.dictGet = function (scope, opts) {
     return this.call('dict.get', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       scope: scope || ''
     }, opts);
   };
@@ -574,7 +580,7 @@
     var self = this;
     return this.call('storage.options', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey
+      clientMachineKey: this.defaultMachineKey
     }, opts).then(function (res) {
       if (res && res.success) self._cacheWrite('storage.options', res);
       return res;
@@ -585,7 +591,7 @@
     params = params || {};
     return this.call('docs.list', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       page: Number(params.page || 1),
       itemsPerPage: Number(params.itemsPerPage || 20),
       searchQuery: safeTrim(params.searchQuery || ''),
@@ -596,7 +602,7 @@
   DocumentControlApi.prototype.docDetail = function (docId, opts) {
     return this.call('doc.detail', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docId: safeTrim(docId || '')
     }, opts);
   };
@@ -605,7 +611,7 @@
     opts = opts || {};
     return this.call('doc.public_qr_detail', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docId: safeTrim(docId || ''),
       qrToken: safeTrim(qrToken || ''),
       allowLegacy: opts.allowLegacy ? '1' : ''
@@ -615,7 +621,7 @@
   DocumentControlApi.prototype.systemReport = function (opts) {
     return this.call('docs.report_all', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey
+      clientMachineKey: this.defaultMachineKey
     }, opts);
   };
 
@@ -626,7 +632,7 @@
     var self = this;
     return this.call('loan.options', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey
+      clientMachineKey: this.defaultMachineKey
     }, opts).then(function (res) {
       if (res && res.success) self._cacheWrite('loan.options', res);
       return res;
@@ -636,7 +642,7 @@
   DocumentControlApi.prototype.loanLookupDoc = function (docNoSdh, opts) {
     return this.call('loan.lookup_doc', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docNoSdh: safeTrim(docNoSdh || '')
     }, opts);
   };
@@ -645,7 +651,7 @@
     params = params || {};
     return this.call('loan.list', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       page: Number(params.page || 1),
       itemsPerPage: Number(params.itemsPerPage || 20),
       searchQuery: safeTrim(params.searchQuery || '')
@@ -656,7 +662,7 @@
     params = params || {};
     return this.call('loan.public_dashboard', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       searchQuery: safeTrim(params.searchQuery || params.borrowerName || ''),
       maxRecords: Number(params.maxRecords || 80)
     }, opts);
@@ -665,7 +671,7 @@
   DocumentControlApi.prototype.loanDetail = function (recordId, opts) {
     return this.call('loan.detail', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       recordId: safeTrim(recordId || '')
     }, opts);
   };
@@ -673,7 +679,7 @@
   DocumentControlApi.prototype.loanCreate = function (formData, opts) {
     return this.call('loan.create', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       formData: formData || {}
     }, opts);
   };
@@ -681,7 +687,7 @@
   DocumentControlApi.prototype.loanUpdate = function (recordId, formData, opts) {
     return this.call('loan.update', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       recordId: safeTrim(recordId || ''),
       formData: formData || {}
     }, opts);
@@ -690,7 +696,7 @@
   DocumentControlApi.prototype.loanChangeContractStatus = function (recordId, nextStatus, opts) {
     return this.call('loan.change_contract_status', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       recordId: safeTrim(recordId || ''),
       nextStatus: safeTrim(nextStatus || '')
     }, opts);
@@ -699,7 +705,7 @@
   DocumentControlApi.prototype.docCreate = function (formData, opts) {
     return this.call('doc.create', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       formData: formData || {}
     }, opts);
   };
@@ -707,7 +713,7 @@
   DocumentControlApi.prototype.docUpdate = function (docId, formData, opts) {
     return this.call('doc.update', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docId: safeTrim(docId || ''),
       formData: formData || {}
     }, opts);
@@ -716,7 +722,7 @@
   DocumentControlApi.prototype.docUpdateStatus = function (docId, statusData, opts) {
     return this.call('doc.update_status', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docId: safeTrim(docId || ''),
       statusData: statusData || {}
     }, opts);
@@ -725,7 +731,7 @@
   DocumentControlApi.prototype.docChangeMainStatus = function (docId, newStatus, statusRemark, opts) {
     return this.call('doc.change_main_status', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docId: safeTrim(docId || ''),
       newStatus: safeTrim(newStatus || ''),
       statusRemark: String(statusRemark == null ? '' : statusRemark)
@@ -735,7 +741,7 @@
   DocumentControlApi.prototype.docUpdateField = function (docId, fieldName, fieldValue, opts) {
     return this.call('doc.update_field', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docId: safeTrim(docId || ''),
       fieldName: safeTrim(fieldName || ''),
       fieldValue: fieldValue
@@ -746,7 +752,7 @@
     var normalizedDocId = safeTrim(docId || '');
     return this.call('storage.check_eligibility', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docId: normalizedDocId,
       id: normalizedDocId,
       amDocNo: normalizedDocId
@@ -756,7 +762,7 @@
   DocumentControlApi.prototype.saveDocumentsToBox = function (docIds, boxId, userName, opts) {
     return this.call('storage.save_documents', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docIds: Array.isArray(docIds) ? docIds : [],
       boxId: safeTrim(boxId || ''),
       userName: safeTrim(userName || '')
@@ -766,7 +772,7 @@
   DocumentControlApi.prototype.saveStorageData = function (docId, newLoc, userName, fiscalYear, destroyDate, opts) {
     return this.call('storage.save_data', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       docId: safeTrim(docId || ''),
       newLoc: safeTrim(newLoc || ''),
       userName: safeTrim(userName || ''),
@@ -779,7 +785,7 @@
     var normalizedBox = safeTrim(boxName || '');
     return this.call('box.detail', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       boxName: normalizedBox,
       box: normalizedBox,
       boxId: normalizedBox,
@@ -819,7 +825,7 @@
   DocumentControlApi.prototype.boxesManageList = function (scope, opts) {
     return this.call('boxes.manage.list', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       scope: safeTrim(scope || '')
     }, opts);
   };
@@ -828,7 +834,7 @@
     var self = this;
     return this.call('boxes.manage.save', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       scope: safeTrim(scope || ''),
       oldName: safeTrim(oldName || ''),
       newName: safeTrim(newName || ''),
@@ -847,7 +853,7 @@
     var normalized = safeTrim(boxName || '');
     return this.call('boxes.manage.delete', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       scope: safeTrim(scope || ''),
       boxName: normalized,
       name: normalized,
@@ -870,7 +876,7 @@
     params = params || {};
     return this.call('inspection.report', {
       deviceKey: this.defaultDeviceKey,
-      clientIpKey: this.defaultIpKey,
+      clientMachineKey: this.defaultMachineKey,
       officerName: safeTrim(params.officerName || ''),
       selectedFiscalYears: Array.isArray(params.selectedFiscalYears) ? params.selectedFiscalYears : [],
       startDate: safeTrim(params.startDate || ''),

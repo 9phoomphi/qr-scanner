@@ -304,7 +304,7 @@
     return key;
   }
 
-  function normalizeIpKeyClient(value) {
+  function normalizeMachineKeyClient(value) {
     var key = String(value || '').trim().toLowerCase();
     if (!key) return '';
     key = key.replace(/[^a-z0-9_-]/g, '');
@@ -312,13 +312,87 @@
     return key;
   }
 
-  function getStoredIpAuthState() {
-    try { localStorage.removeItem('docControlIpAuthStateV1'); } catch (_err0) {}
-    return null;
+  function hashText(value) {
+    var text = String(value == null ? '' : value);
+    var hash = 2166136261;
+    for (var i = 0; i < text.length; i++) {
+      hash ^= text.charCodeAt(i);
+      hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+    }
+    return ('0000000' + (hash >>> 0).toString(16)).slice(-8);
   }
 
-  function getStoredIpKey() {
-    return '';
+  function collectRecoveryFingerprintParts() {
+    var nav = global.navigator || {};
+    var scr = global.screen || {};
+    var tz = '';
+    try {
+      tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    } catch (_e0) {}
+
+    var parts = [
+      'tz:' + String(tz || ''),
+      'lang:' + String(nav.language || ''),
+      'langs:' + String((nav.languages && nav.languages.join(',')) || ''),
+      'platform:' + String(nav.platform || ''),
+      'hc:' + String(nav.hardwareConcurrency || ''),
+      'dm:' + String(nav.deviceMemory || ''),
+      'touch:' + String(nav.maxTouchPoints || ''),
+      'sw:' + String(scr.width || ''),
+      'sh:' + String(scr.height || ''),
+      'saw:' + String(scr.availWidth || ''),
+      'sah:' + String(scr.availHeight || ''),
+      'cd:' + String(scr.colorDepth || ''),
+      'pd:' + String(scr.pixelDepth || ''),
+      'dpr:' + String(global.devicePixelRatio || '')
+    ];
+
+    try {
+      var canvas = document && typeof document.createElement === 'function' ? document.createElement('canvas') : null;
+      var gl = canvas && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+      if (gl) {
+        var dbg = gl.getExtension('WEBGL_debug_renderer_info');
+        if (dbg) {
+          parts.push('glv:' + String(gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || ''));
+          parts.push('glr:' + String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || ''));
+        }
+      }
+    } catch (_e1) {}
+
+    return parts;
+  }
+
+  function buildRecoveryMachineKey() {
+    var parts = collectRecoveryFingerprintParts();
+    var compact = parts.join('|');
+    if (!compact) return '';
+    return normalizeMachineKeyClient('mk_' + hashText(compact + '|a') + hashText(compact + '|b') + hashText(compact + '|c'));
+  }
+
+  function getStoredMachineKey() {
+    var storageKey = 'docControlMachineKeyV1';
+    var key = '';
+
+    try {
+      key = normalizeMachineKeyClient(sessionStorage.getItem(storageKey) || '');
+    } catch (_e1) {}
+
+    if (!key) {
+      try {
+        key = normalizeMachineKeyClient(localStorage.getItem(storageKey) || '');
+      } catch (_e2) {}
+    }
+
+    if (!key) key = normalizeMachineKeyClient(global.__docControlMachineKey || '');
+    if (!key) key = buildRecoveryMachineKey();
+
+    if (key) {
+      try { sessionStorage.setItem(storageKey, key); } catch (_e3) {}
+      try { localStorage.setItem(storageKey, key); } catch (_e4) {}
+      global.__docControlMachineKey = key;
+    }
+
+    return key;
   }
 
   function stripSensitiveSessionParams(url) {
@@ -328,16 +402,16 @@
       u.searchParams.delete('dk');
       u.searchParams.delete('deviceKey');
       u.searchParams.delete('device');
-      u.searchParams.delete('ipk');
-      u.searchParams.delete('ipKey');
-      u.searchParams.delete('clientIpKey');
+      u.searchParams.delete('mk');
+      u.searchParams.delete('machineKey');
+      u.searchParams.delete('clientMachineKey');
       return u.toString();
     } catch (_e0) {
       var hashIdx = String(url).indexOf('#');
       var hashPart = hashIdx >= 0 ? String(url).substring(hashIdx) : '';
       var base = hashIdx >= 0 ? String(url).substring(0, hashIdx) : String(url);
       return base
-        .replace(/([?&])(dk|deviceKey|device|ipk|ipKey|clientIpKey)=[^&#]*/gi, '$1')
+        .replace(/([?&])(dk|deviceKey|device|mk|machineKey|clientMachineKey)=[^&#]*/gi, '$1')
         .replace(/[?&]$/, '') + hashPart;
     }
   }
@@ -357,8 +431,6 @@
     }
 
     try { localStorage.removeItem('docControlDeviceKeyV3'); } catch (_e3) {}
-    try { localStorage.removeItem('docControlIpAuthStateV1'); } catch (_e4) {}
-
     if (!key) key = normalizeDeviceKeyClient(global.__docControlDeviceKey || '');
     if (!key) key = 'dk_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
 
@@ -379,7 +451,7 @@
     return stripSensitiveSessionParams(url);
   }
 
-  function appendIpKeyToUrl(url) {
+  function appendMachineKeyToUrl(url) {
     return stripSensitiveSessionParams(url);
   }
 
@@ -904,13 +976,12 @@
   }
 
   global.normalizeDeviceKeyClient = normalizeDeviceKeyClient;
-  global.normalizeIpKeyClient = normalizeIpKeyClient;
-  global.getStoredIpAuthState = getStoredIpAuthState;
-  global.getStoredIpKey = getStoredIpKey;
+  global.normalizeMachineKeyClient = normalizeMachineKeyClient;
+  global.getStoredMachineKey = getStoredMachineKey;
   global.ensureDeviceKey = ensureDeviceKey;
   global.getDeviceKey = getDeviceKey;
   global.appendDeviceKeyToUrl = appendDeviceKeyToUrl;
-  global.appendIpKeyToUrl = appendIpKeyToUrl;
+  global.appendMachineKeyToUrl = appendMachineKeyToUrl;
   global.appendSessionKeysToUrl = appendSessionKeysToUrl;
   global.syncCurrentUrlSessionKeys = syncCurrentUrlSessionKeys;
   global.syncCurrentUrlDeviceKey = syncCurrentUrlSessionKeys;

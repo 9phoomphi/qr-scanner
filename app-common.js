@@ -4,7 +4,6 @@
   var STORAGE_SCRIPT_URL = 'docControlScriptUrlV3';
   var STORAGE_DEVICE_KEY = 'docControlDeviceKeyV1';
   var LEGACY_STORAGE_DEVICE_KEY = 'docControlDeviceKeyV3';
-  var LEGACY_STORAGE_IP_AUTH = 'docControlIpAuthStateV1';
 
   function safeText(value) {
     return String(value == null ? '' : value);
@@ -36,6 +35,17 @@
     return key;
   }
 
+  function getRuntimeMachineKey() {
+    var key = '';
+    try {
+      if (typeof global.getStoredMachineKey === 'function') {
+        key = safeTrim(global.getStoredMachineKey() || '');
+      }
+    } catch (_e1) {}
+    if (!key) key = safeTrim(global.__docControlMachineKey || '');
+    return key;
+  }
+
   function safeUrl(url) {
     var v = safeTrim(url);
     if (!v) return '';
@@ -64,7 +74,6 @@
 
   function clearLegacySessionArtifacts() {
     try { localStorage.removeItem(LEGACY_STORAGE_DEVICE_KEY); } catch (_e1) {}
-    try { localStorage.removeItem(LEGACY_STORAGE_IP_AUTH); } catch (_e2) {}
   }
 
   function storeRuntimeDeviceKey(deviceKey) {
@@ -112,6 +121,7 @@
     var savedDevice = '';
     var sharedDevice = '';
     var runtimeDevice = '';
+    var runtimeMachineKey = '';
     var query = parseQuery();
     var queryUrl = normalizeScriptUrl(query.su || query.scriptUrl || query.script || '');
 
@@ -124,6 +134,7 @@
     clearLegacySessionArtifacts();
 
     runtimeDevice = getRuntimeDeviceKey();
+    runtimeMachineKey = getRuntimeMachineKey();
 
     var scriptUrl = cfg.scriptUrl || queryUrl || savedUrl;
     var deviceKey = cfg.deviceKey || savedDevice || sharedDevice || runtimeDevice || randomDeviceKey();
@@ -139,6 +150,7 @@
     return {
       scriptUrl: scriptUrl,
       deviceKey: deviceKey,
+      machineKey: runtimeMachineKey,
       lockSettings: cfg.lockSettings,
       config: cfg
     };
@@ -147,6 +159,7 @@
   function persistSettings(scriptUrl, deviceKey) {
     var nextUrl = normalizeScriptUrl(scriptUrl);
     var nextDevice = safeTrim(deviceKey) || getRuntimeDeviceKey() || randomDeviceKey();
+    var nextMachineKey = getRuntimeMachineKey();
     if (!nextUrl) throw new Error('missing_script_url');
     if (!nextDevice) throw new Error('missing_device_key');
 
@@ -157,7 +170,8 @@
 
     return {
       scriptUrl: nextUrl,
-      deviceKey: nextDevice
+      deviceKey: nextDevice,
+      machineKey: nextMachineKey
     };
   }
 
@@ -192,6 +206,7 @@
     return new global.DocumentControlApi({
       scriptUrl: s.scriptUrl,
       deviceKey: s.deviceKey,
+      machineKey: s.machineKey,
       timeoutMs: timeoutMs
     });
   }

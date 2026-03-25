@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>ทะเบียนคุมเงินยืม</title>
+  <title>แก้ไขทะเบียนคุมเงินยืม</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -549,8 +549,8 @@
       <div class="loan-card">
         <div class="loan-card-head">
           <div>
-            <h2 id="formTitle" class="loan-card-title">เพิ่มทะเบียนคุมเงินยืม</h2>
-            <p class="loan-card-sub">บันทึกตามสัญญา พร้อมดึงข้อมูลอัตโนมัติจากทะเบียนคุมเอกสาร</p>
+            <h2 id="formTitle" class="loan-card-title">แก้ไขทะเบียนคุมเงินยืม</h2>
+            <p class="loan-card-sub">แก้ไขข้อมูลตามสัญญา พร้อมดึงข้อมูลอัตโนมัติจากทะเบียนคุมเอกสาร</p>
           </div>
         </div>
 
@@ -692,7 +692,7 @@
           </section>
 
           <div class="submit-wrap">
-            <button id="btnSubmit" type="button" class="loan-btn primary loan-submit-btn"><i class="bi bi-save-fill"></i><span id="btnSubmitText">บันทึกรายการ</span></button>
+            <button id="btnSubmit" type="button" class="loan-btn primary loan-submit-btn"><i class="bi bi-save-fill"></i><span id="btnSubmitText">บันทึกการแก้ไข</span></button>
           </div>
         </div>
       </div>
@@ -718,7 +718,6 @@
 
       var C = window.DocFrontendCommon;
       var q = C.parseQuery();
-      var queryMode = C.safeTrim((q.mode || '').toLowerCase() || '');
       var queryId = C.safeTrim(q.id || '');
       var DATE_IDS = [
         'approveDate',
@@ -1124,13 +1123,8 @@
 
       function setEditMode(recordId) {
         state.editId = C.safeTrim(recordId || '');
-        if (state.editId) {
-          els.formTitle.textContent = 'แก้ไขทะเบียนคุมเงินยืม';
-          els.btnSubmitText.textContent = 'บันทึกการแก้ไข';
-        } else {
-          els.formTitle.textContent = 'เพิ่มทะเบียนคุมเงินยืม';
-          els.btnSubmitText.textContent = 'บันทึกรายการ';
-        }
+        els.formTitle.textContent = 'แก้ไขทะเบียนคุมเงินยืม';
+        els.btnSubmitText.textContent = 'บันทึกการแก้ไข';
       }
 
       function resetForm(keepDocNo) {
@@ -1321,24 +1315,19 @@
         try {
           var result = await submitLoanWithRetry(payload);
 
-          var nextId = C.safeTrim((result && (result.docId || result.recordId || result.id)) || state.editId || payload.contractNo || queryId);
-          // ปิด overlay บันทึกทันทีหลัง API สำเร็จ เพื่อไม่ให้ค้างทับหลัง popup success
+          // ปิด overlay บันทึกทันทีหลัง API สำเร็จ เพื่อลดโอกาสค้างทับหน้าจอ
           setSaving(false);
           withLoading(false);
 
           await Swal.fire({
             icon: 'success',
-            title: state.editId ? 'บันทึกการแก้ไขสำเร็จ' : 'เพิ่มรายการเงินยืมสำเร็จ',
-            confirmButtonText: 'ดูรายละเอียดรายการเงินยืม',
-            confirmButtonColor: '#007AFF',
-            allowOutsideClick: false
+            title: state.editId ? 'บันทึกการแก้ไขสำเร็จ' : 'บันทึกรายการสำเร็จ',
+            timer: 1100,
+            showConfirmButton: false
           });
 
-          if (nextId) {
-            redirectWithLoader('loan-view.html', { id: nextId }, true, 'กำลังเปิดหน้ารายละเอียดรายการเงินยืม...');
-          } else {
-            redirectWithLoader('loan-index.html', {}, true, 'กำลังกลับหน้าทะเบียนคุมเงินยืม...');
-          }
+          var nextId = C.safeTrim((result && (result.docId || result.recordId || result.id)) || state.editId || payload.contractNo || queryId);
+          redirectWithLoader('loan-view.html', { id: nextId }, true, 'กำลังกลับหน้ารายละเอียดรายการเงินยืม...');
         } catch (err) {
           showError((err && err.message) ? err.message : 'บันทึกข้อมูลไม่สำเร็จ');
         } finally {
@@ -1405,7 +1394,12 @@
 
       function bindEvents() {
         els.btnBack.addEventListener('click', function () {
-          redirectWithLoader('loan-index.html', {}, false, 'กำลังกลับหน้าทะเบียนคุมเงินยืม...');
+          var backId = C.safeTrim(state.editId || queryId || '');
+          if (backId) {
+            redirectWithLoader('loan-view.html', { id: backId }, false, 'กำลังกลับหน้ารายละเอียดรายการเงินยืม...');
+          } else {
+            redirectWithLoader('loan-index.html', {}, false, 'กำลังกลับหน้าทะเบียนคุมเงินยืม...');
+          }
         });
 
         els.docNoSdh.addEventListener('keydown', function (e) {
@@ -1441,7 +1435,13 @@
       }
 
       async function init() {
-        beginInitLoading('กำลังโหลดหน้าบันทึกทะเบียนคุมเงินยืม...');
+        beginInitLoading('กำลังโหลดหน้าแก้ไขทะเบียนคุมเงินยืม...');
+        if (!queryId) {
+          redirectWithLoader('loan-index.html', {}, true, 'ไม่พบรหัสรายการที่ต้องการแก้ไข กำลังกลับหน้าทะเบียนคุมเงินยืม...');
+          endInitLoading();
+          return;
+        }
+
         hookDateDisplayUpdateForComputedPreview();
         bindComputedPreviewWatchers();
         refreshDateDisplays();
@@ -1483,12 +1483,7 @@
           C.attachHelpHints('loan', state.api, els.mainCard);
           updateReadOnlyMode();
 
-          // ให้โหมดแก้ไขมีลำดับความสำคัญสูงกว่าโหมดเพิ่มเสมอเมื่อมี id ส่งมา
-          if (queryId) {
-            await loadDetail(queryId);
-          } else if (queryMode === 'add') {
-            resetForm(false);
-          }
+          await loadDetail(queryId);
           if (els.mainCard) els.mainCard.style.display = 'grid';
         } catch (err) {
           showError((err && err.message) ? err.message : 'โหลดหน้าทะเบียนคุมเงินยืมไม่สำเร็จ');

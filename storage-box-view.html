@@ -669,8 +669,8 @@
 
   <script src="./config.js"></script>
   <script src="./api-client.js?v=20260318-2"></script>
-  <script src="./theme-legacy.js?v=20260325-1"></script>
-  <script src="./app-common.js?v=20260325-1"></script>
+  <script src="./theme-legacy.js?v=20260325-2"></script>
+  <script src="./app-common.js?v=20260325-2"></script>
   <script>
     (function () {
       'use strict';
@@ -680,7 +680,7 @@
       var boxName = resolveBoxNameFromQuery(q);
       var qrToken = C.safeTrim(q.t || q.token || '');
       var qrMode = C.safeTrim(q.qr || q.public || q.mode || '').toLowerCase();
-      var legacyQrHint = !!boxName && !!C.safeTrim(q.dk || q.deviceKey || q.ipk || q.clientIpKey || q.su || q.scriptUrl || q.script || '');
+      var legacyQrHint = !!boxName && !!C.safeTrim(q.dk || q.deviceKey || q.mk || q.machineKey || q.su || q.scriptUrl || q.script || '');
       var isLegacyPublicQrRequest = !qrToken && legacyQrHint;
       var isPublicQrRequest = !!qrToken || qrMode === '1' || qrMode === 'true' || qrMode === 'qr' || qrMode === 'public' || isLegacyPublicQrRequest;
       var APP_BROWSER_NAME = 'ระบบทะเบียนคุมเอกสาร';
@@ -1129,6 +1129,7 @@
 
       async function loadDetail() {
         showError('');
+        var canAttemptLegacyPublicFallback = !!legacyQrHint;
 
         if (!boxName) {
           boxName = readLastBoxName();
@@ -1164,26 +1165,30 @@
             boxRes = res[0] || {};
             meRes = res[1] || {};
           } catch (privateErr) {
-            var fallbackBoxRes = await tryLegacyPublicBoxDetail();
-            if (fallbackBoxRes) {
-              renderViewMode('public');
-              state.detail = fallbackBoxRes;
-              render();
-              els.mainCard.style.display = 'block';
-              return true;
+            if (canAttemptLegacyPublicFallback) {
+              var fallbackBoxRes = await tryLegacyPublicBoxDetail();
+              if (fallbackBoxRes) {
+                renderViewMode('public');
+                state.detail = fallbackBoxRes;
+                render();
+                els.mainCard.style.display = 'block';
+                return true;
+              }
             }
             throw privateErr;
           }
         }
 
         if (!isPublicQrRequest && (!meRes || meRes.success === false || !meRes.user)) {
-          var legacyBoxRes = await tryLegacyPublicBoxDetail();
-          if (legacyBoxRes) {
-            renderViewMode('public');
-            state.detail = legacyBoxRes;
-            render();
-            els.mainCard.style.display = 'block';
-            return true;
+          if (canAttemptLegacyPublicFallback) {
+            var legacyBoxRes = await tryLegacyPublicBoxDetail();
+            if (legacyBoxRes) {
+              renderViewMode('public');
+              state.detail = legacyBoxRes;
+              render();
+              els.mainCard.style.display = 'block';
+              return true;
+            }
           }
           C.redirect('index.html', {}, true);
           return false;

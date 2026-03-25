@@ -545,8 +545,8 @@
 
   <script src="./config.js"></script>
   <script src="./api-client.js?v=20260318-2"></script>
-  <script src="./theme-legacy.js?v=20260325-1"></script>
-  <script src="./app-common.js?v=20260325-1"></script>
+  <script src="./theme-legacy.js?v=20260325-2"></script>
+  <script src="./app-common.js?v=20260325-2"></script>
   <script>
     (function () {
       'use strict';
@@ -941,7 +941,7 @@
           } else if (typeof state.api.call === 'function') {
             res = await state.api.call('loan.change_contract_status', {
               deviceKey: state.api.defaultDeviceKey,
-              clientIpKey: state.api.defaultIpKey,
+              clientMachineKey: state.api.defaultMachineKey,
               recordId: targetRecordId,
               nextStatus: nextStatus
             }, requestOptions);
