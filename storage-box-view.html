@@ -498,11 +498,25 @@
       line-height: 1.45;
       display: none;
       align-items: center;
+      justify-content: center;
       gap: 8px;
+      width: min(100%, 760px);
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
     }
 
     .readonly-box.show {
-      display: inline-flex;
+      display: flex;
+    }
+
+    .readonly-box i {
+      flex: 0 0 auto;
+    }
+
+    .readonly-box span,
+    .readonly-box div {
+      text-align: center;
     }
 
     @media (max-width: 880px) {
