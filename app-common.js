@@ -64,23 +64,15 @@
     }
   }
 
-  function readSharedDeviceKey() {
-    try {
-      return safeTrim(localStorage.getItem(STORAGE_DEVICE_KEY) || '');
-    } catch (_e) {
-      return '';
-    }
-  }
-
   function clearLegacySessionArtifacts() {
     try { localStorage.removeItem(LEGACY_STORAGE_DEVICE_KEY); } catch (_e1) {}
+    try { localStorage.removeItem(STORAGE_DEVICE_KEY); } catch (_e2) {}
   }
 
   function storeRuntimeDeviceKey(deviceKey) {
     var normalized = safeTrim(deviceKey || '');
     if (!normalized) return '';
     try { sessionStorage.setItem(STORAGE_DEVICE_KEY, normalized); } catch (_e1) {}
-    try { localStorage.setItem(STORAGE_DEVICE_KEY, normalized); } catch (_e2) {}
     clearLegacySessionArtifacts();
     global.__docControlDeviceKey = normalized;
     return normalized;
@@ -119,7 +111,6 @@
     var cfg = readConfig();
     var savedUrl = '';
     var savedDevice = '';
-    var sharedDevice = '';
     var runtimeDevice = '';
     var runtimeMachineKey = '';
     var query = parseQuery();
@@ -130,14 +121,13 @@
     } catch (_e) {}
 
     savedDevice = readSessionDeviceKey();
-    sharedDevice = readSharedDeviceKey();
     clearLegacySessionArtifacts();
 
     runtimeDevice = getRuntimeDeviceKey();
     runtimeMachineKey = getRuntimeMachineKey();
 
     var scriptUrl = cfg.scriptUrl || queryUrl || savedUrl;
-    var deviceKey = cfg.deviceKey || savedDevice || sharedDevice || runtimeDevice || randomDeviceKey();
+    var deviceKey = cfg.deviceKey || savedDevice || runtimeDevice || randomDeviceKey();
 
     if (scriptUrl) {
       try { localStorage.setItem(STORAGE_SCRIPT_URL, scriptUrl); } catch (_e0) {}

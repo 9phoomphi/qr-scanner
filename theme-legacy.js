@@ -362,11 +362,29 @@
     return parts;
   }
 
-  function buildRecoveryMachineKey() {
-    var parts = collectRecoveryFingerprintParts();
-    var compact = parts.join('|');
-    if (!compact) return '';
-    return normalizeMachineKeyClient('mk_' + hashText(compact + '|a') + hashText(compact + '|b') + hashText(compact + '|c'));
+  function buildRandomMachineKey() {
+    var buf = [];
+    var i;
+
+    if (global.crypto && typeof global.crypto.getRandomValues === 'function' && typeof Uint32Array === 'function') {
+      try {
+        var values = new Uint32Array(4);
+        global.crypto.getRandomValues(values);
+        for (i = 0; i < values.length; i++) {
+          buf.push(('00000000' + Number(values[i] >>> 0).toString(16)).slice(-8));
+        }
+      } catch (_e0) {
+        buf = [];
+      }
+    }
+
+    if (!buf.length) {
+      for (i = 0; i < 4; i++) {
+        buf.push(hashText(String(Math.random()) + '|' + Date.now() + '|' + i));
+      }
+    }
+
+    return normalizeMachineKeyClient('mk_' + buf.join(''));
   }
 
   function getStoredMachineKey() {
@@ -384,7 +402,7 @@
     }
 
     if (!key) key = normalizeMachineKeyClient(global.__docControlMachineKey || '');
-    if (!key) key = buildRecoveryMachineKey();
+    if (!key) key = buildRandomMachineKey();
 
     if (key) {
       try { sessionStorage.setItem(storageKey, key); } catch (_e3) {}
@@ -424,19 +442,13 @@
       key = normalizeDeviceKeyClient(sessionStorage.getItem(storageKey) || '');
     } catch (_e2) {}
 
-    if (!key) {
-      try {
-        key = normalizeDeviceKeyClient(localStorage.getItem(storageKey) || '');
-      } catch (_e2b) {}
-    }
-
+    try { localStorage.removeItem(storageKey); } catch (_e2b) {}
     try { localStorage.removeItem('docControlDeviceKeyV3'); } catch (_e3) {}
     if (!key) key = normalizeDeviceKeyClient(global.__docControlDeviceKey || '');
     if (!key) key = 'dk_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
 
     if (key) {
       try { sessionStorage.setItem(storageKey, key); } catch (_e5) {}
-      try { localStorage.setItem(storageKey, key); } catch (_e6) {}
       global.__docControlDeviceKey = key;
     }
 
