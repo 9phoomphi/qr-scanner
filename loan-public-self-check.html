@@ -156,26 +156,12 @@
       flex-wrap: wrap;
     }
 
-    .title-wrap {
-      display: grid;
-      gap: 6px;
-    }
-
     .title {
       margin: 0;
       font-size: clamp(1.28rem, 2.4vw, 2rem);
       line-height: 1.02;
       font-weight: 900;
       letter-spacing: -0.03em;
-    }
-
-    .subtitle {
-      margin: 0;
-      font-size: 0.94rem;
-      line-height: 1.6;
-      font-weight: 750;
-      color: var(--text-sub);
-      max-width: 980px;
     }
 
     .theme-btn,
@@ -267,18 +253,10 @@
       margin-top: 2px;
     }
 
-    .privacy-banner h2 {
-      margin: 0 0 4px;
-      font-size: 0.98rem;
-      line-height: 1.4;
+    .privacy-banner-text {
+      font-size: 0.92rem;
+      line-height: 1.55;
       font-weight: 900;
-    }
-
-    .privacy-banner p {
-      margin: 0;
-      font-size: 0.88rem;
-      line-height: 1.6;
-      font-weight: 800;
     }
 
     .toolbar {
@@ -445,14 +423,14 @@
     .table-top-note {
       overflow: hidden;
       border-radius: 18px;
-      border: 1px solid rgba(5, 150, 105, 0.24);
-      background: linear-gradient(180deg, rgba(240, 253, 250, 0.98) 0%, rgba(220, 252, 231, 0.96) 100%);
-      color: #047857;
+      border: 1px solid rgba(217, 119, 6, 0.42);
+      background: linear-gradient(180deg, rgba(255, 247, 214, 0.99) 0%, rgba(255, 234, 167, 0.98) 100%);
+      color: #92400e;
       padding: 12px 14px;
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      box-shadow: 0 10px 22px rgba(5, 150, 105, 0.07);
+      box-shadow: 0 14px 28px rgba(217, 119, 6, 0.18);
     }
 
     .table-top-note i {
@@ -463,17 +441,17 @@
     }
 
     .table-top-note-text {
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       line-height: 1.7;
-      font-weight: 850;
+      font-weight: 900;
       text-align: left;
     }
 
     body.dark-mode .table-top-note {
-      border-color: rgba(52, 211, 153, 0.24);
-      background: linear-gradient(180deg, rgba(7, 58, 43, 0.92) 0%, rgba(5, 46, 34, 0.94) 100%);
-      color: #a7f3d0;
-      box-shadow: 0 12px 24px rgba(2, 8, 20, 0.22);
+      border-color: rgba(251, 191, 36, 0.36);
+      background: linear-gradient(180deg, rgba(94, 55, 10, 0.94) 0%, rgba(69, 40, 8, 0.96) 100%);
+      color: #fde68a;
+      box-shadow: 0 16px 30px rgba(2, 8, 20, 0.28);
     }
 
     .table-wrap {
@@ -741,27 +719,6 @@
       font-weight: 700;
     }
 
-    .state-list {
-      margin: 2px 0 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 8px;
-      max-width: 760px;
-      text-align: left;
-    }
-
-    .state-list li {
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: var(--panel-strong);
-      padding: 10px 12px;
-      font-size: 0.88rem;
-      line-height: 1.6;
-      font-weight: 800;
-      color: var(--text-sub);
-    }
-
     .spinner {
       width: 24px;
       height: 24px;
@@ -850,19 +807,15 @@
   <main class="page">
     <section class="panel header-panel">
       <div class="header-row">
-        <div class="title-wrap">
+        <div>
           <h1 class="title">ตรวจสอบสัญญาเงินยืมของตนเอง</h1>
-          <p class="subtitle">หน้าเว็บนี้ออกแบบสำหรับการตรวจสอบข้อมูลสัญญาเงินยืมคงค้างแบบสาธารณะ โดยจะไม่แสดงรายชื่อรวมตั้งแต่หน้าแรก ผู้ใช้ต้องค้นหาด้วยชื่อ-สกุลของตนเองก่อนทุกครั้ง</p>
         </div>
         <button id="btnTheme" class="theme-btn" type="button" aria-label="สลับเป็นโหมดกลางคืน" title="สลับเป็นโหมดกลางคืน"><i class="bi bi-moon-stars"></i></button>
       </div>
 
       <div class="privacy-banner" role="note" aria-label="ประกาศการคุ้มครองข้อมูลส่วนบุคคล">
         <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
-        <div>
-          <h2>คุ้มครองข้อมูลส่วนบุคคลมากขึ้น</h2>
-          <p>ระบบจะไม่แสดงรายชื่อผู้ยืมทั้งหมดเหมือนหน้าสาธารณะทั่วไป และจะแสดงเฉพาะสัญญาที่ยังค้างอยู่ของชื่อ-สกุลที่ค้นหาเท่านั้น</p>
-        </div>
+        <div class="privacy-banner-text">กรณีมีชื่อผู้ยืมในทะเบียนจะไม่สามารถยืมเงินซ้ำได้</div>
       </div>
 
       <div class="toolbar">
@@ -882,11 +835,6 @@
       <div class="state-icon"><i class="bi bi-person-vcard"></i></div>
       <h2>เริ่มตรวจสอบด้วยชื่อ-สกุลของผู้ยืม</h2>
       <p id="introText">กรอกชื่อ-สกุลของผู้ยืมในช่องค้นหาด้านบน แล้วกดค้นหา ระบบจะแสดงเฉพาะสัญญาเงินยืมที่ยังอยู่ในสถานะต้องติดตามของชื่อนั้นเท่านั้น</p>
-      <ul class="state-list">
-        <li>ไม่แสดงข้อมูลรวมของทุกคนตั้งแต่หน้าแรก เพื่อช่วยลดความเสี่ยงด้าน PDPA</li>
-        <li>ผลการค้นหาหน้านี้จะตัดคอลัมน์ชื่อผู้ยืมออกจากตาราง เพื่อลดการเปิดเผยข้อมูลเกินจำเป็น</li>
-        <li>หากไม่พบข้อมูล อาจเกิดจากไม่มีสัญญาคงค้าง หรือกรอกชื่อไม่ตรงกับข้อมูลในทะเบียน</li>
-      </ul>
     </section>
 
     <section id="loadingState" class="panel state loading hidden" aria-live="polite">
@@ -913,8 +861,8 @@
       <div id="metaRow" class="meta-row"></div>
 
       <div class="table-top-note" role="note" aria-label="หมายเหตุการอัปเดทสถานะ">
-        <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
-        <div class="table-top-note-text">หน้าตรวจสอบนี้จะแสดงเฉพาะสัญญาเงินยืมที่ยังต้องติดตามของชื่อที่ค้นหา และซ่อนคอลัมน์ชื่อผู้ยืมออกจากตารางเพื่อจำกัดการเปิดเผยข้อมูลส่วนบุคคล</div>
+        <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+        <div class="table-top-note-text">อัพเดทสถานะเมื่อ กองฯ (เงินทดรอง) หรือกองบริหารการคลัง (เงินกรม) ดำเนินการออกใบรับใบสำคัญ/ใบเสร็จรับเงินให้เรียบร้อยแล้ว</div>
       </div>
 
       <div class="desktop-table">
@@ -1125,6 +1073,11 @@
 
       function setLoading(loading, showPanel) {
         if (els.loadingState) els.loadingState.classList.toggle('hidden', !loading || !showPanel);
+        if (loading && showPanel) {
+          if (els.introState) els.introState.classList.add('hidden');
+          if (els.emptyState) els.emptyState.classList.add('hidden');
+          if (els.contentPanel) els.contentPanel.classList.add('hidden');
+        }
         if (els.btnSearch) {
           els.btnSearch.disabled = !!loading;
           els.btnSearch.innerHTML = loading
@@ -1306,8 +1259,7 @@
           return;
         }
 
-        var hadVisibleContent = !!(els.contentPanel && !els.contentPanel.classList.contains('hidden'));
-        setLoading(true, !hadVisibleContent);
+        setLoading(true, true);
 
         try {
           var response = await state.api.loanPublicSelfDashboard({
