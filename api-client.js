@@ -930,6 +930,16 @@
     }, opts);
   };
 
+  DocumentControlApi.prototype.loanInternalDashboard = function (params, opts) {
+    params = params || {};
+    return this.call('loan.internal_dashboard', {
+      deviceKey: this.defaultDeviceKey,
+      clientMachineKey: this.defaultMachineKey,
+      searchQuery: safeTrim(params.searchQuery || params.borrowerName || ''),
+      maxRecords: Number(params.maxRecords || 80)
+    }, opts);
+  };
+
   DocumentControlApi.prototype.loanPublicDashboard = function (params, opts) {
     params = params || {};
     return this.call('loan.public_dashboard', {
@@ -981,6 +991,14 @@
       clientMachineKey: this.defaultMachineKey,
       recordId: safeTrim(recordId || ''),
       nextStatus: safeTrim(nextStatus || '')
+    }, opts);
+  };
+
+  DocumentControlApi.prototype.loanSendLineReminder = function (recordId, opts) {
+    return this.call('loan.send_line_reminder', {
+      deviceKey: this.defaultDeviceKey,
+      clientMachineKey: this.defaultMachineKey,
+      recordId: safeTrim(recordId || '')
     }, opts);
   };
 
