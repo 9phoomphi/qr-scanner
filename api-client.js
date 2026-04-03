@@ -1009,6 +1009,15 @@
     }, opts);
   };
 
+  DocumentControlApi.prototype.lineReconcileCoverage = function (params, opts) {
+    params = params || {};
+    return this.call('line.reconcile_coverage', {
+      deviceKey: this.defaultDeviceKey,
+      clientMachineKey: this.defaultMachineKey,
+      maxUsers: Number(params.maxUsers || 1000)
+    }, opts);
+  };
+
   DocumentControlApi.prototype.docCreate = function (formData, opts) {
     return this.call('doc.create', {
       deviceKey: this.defaultDeviceKey,

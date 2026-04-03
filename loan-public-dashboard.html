@@ -300,6 +300,14 @@
       align-items: center;
     }
 
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .search-controls {
       display: grid;
       grid-template-columns: minmax(0,1fr) auto auto;
@@ -926,6 +934,7 @@
       .page { width: min(100vw - 18px, 100%); }
       .toolbar,
       .search-controls { grid-template-columns: 1fr; }
+      .toolbar-actions { width: 100%; }
       .desktop-table { display: none; }
       .mobile-list { display: grid; }
       .ghost-btn,
@@ -978,7 +987,10 @@
           <button id="btnSearch" class="search-btn" type="button"><i class="bi bi-search"></i>ค้นหา</button>
           <button id="btnReset" class="ghost-btn" type="button"><i class="bi bi-eraser"></i>ล้างชื่อ</button>
         </div>
-        <button id="btnRefresh" class="refresh-btn" type="button"><i class="bi bi-arrow-clockwise"></i>รีเฟรช</button>
+        <div class="toolbar-actions">
+          <button id="btnSyncLineIds" class="ghost-btn" type="button"><i class="bi bi-cloud-arrow-down"></i>ดึง LINE ID ทันที</button>
+          <button id="btnRefresh" class="refresh-btn" type="button"><i class="bi bi-arrow-clockwise"></i>รีเฟรช</button>
+        </div>
       </div>
     </section>
 
@@ -1062,7 +1074,7 @@
   </main>
 
   <script src="./config.js"></script>
-  <script src="./api-client.js?v=20260403-1"></script>
+  <script src="./api-client.js?v=20260403-2"></script>
   <script src="./app-common.js?v=20260325-2"></script>
   <script>
     (function () {
@@ -1081,12 +1093,14 @@
         user: null,
         isReadOnly: false,
         canSendLine: false,
+        isLoading: false,
         query: '',
         lastUpdatedAt: null,
         theme: 'light',
         currentPayload: null,
         currentRecords: [],
-        pendingReminderRecordId: ''
+        pendingReminderRecordId: '',
+        pendingCoverageSync: false
       };
 
       var els = {
@@ -1097,6 +1111,7 @@
         searchInput: document.getElementById('searchInput'),
         btnSearch: document.getElementById('btnSearch'),
         btnReset: document.getElementById('btnReset'),
+        btnSyncLineIds: document.getElementById('btnSyncLineIds'),
         btnRefresh: document.getElementById('btnRefresh'),
         loadingState: document.getElementById('loadingState'),
         errorState: document.getElementById('errorState'),
@@ -1223,6 +1238,7 @@
       }
 
       function setLoading(loading, showPanel) {
+        state.isLoading = !!loading;
         if (els.loadingState) els.loadingState.classList.toggle('hidden', !loading || !showPanel);
         if (els.btnSearch) {
           els.btnSearch.disabled = !!loading;
@@ -1233,6 +1249,25 @@
         if (els.btnReset) els.btnReset.disabled = !!loading;
         if (els.btnRefresh) els.btnRefresh.disabled = !!loading;
         if (els.btnTheme) els.btnTheme.disabled = !!loading;
+        updateSyncLineButton();
+      }
+
+      function updateSyncLineButton() {
+        if (!els.btnSyncLineIds) return;
+        var disabled = !!state.isLoading || !!state.pendingCoverageSync || !state.canSendLine;
+        els.btnSyncLineIds.disabled = disabled;
+        if (state.pendingCoverageSync) {
+          els.btnSyncLineIds.innerHTML = '<div class="spinner" aria-hidden="true"></div><span>กำลังดึง LINE ID</span>';
+          return;
+        }
+        els.btnSyncLineIds.innerHTML = '<i class="bi bi-cloud-arrow-down"></i>ดึง LINE ID ทันที';
+        if (!state.canSendLine) {
+          els.btnSyncLineIds.setAttribute('title', 'บัญชีสิทธิ์อ่านอย่างเดียวไม่สามารถสั่งดึงข้อมูล LINE ได้');
+          els.btnSyncLineIds.setAttribute('aria-label', 'บัญชีสิทธิ์อ่านอย่างเดียวไม่สามารถสั่งดึงข้อมูล LINE ได้');
+        } else {
+          els.btnSyncLineIds.setAttribute('title', 'ดึงรายชื่อเพื่อน LINE OA และตรวจเติม LINE ID ที่ยังตกหล่นทันที');
+          els.btnSyncLineIds.setAttribute('aria-label', 'ดึงรายชื่อเพื่อน LINE OA และตรวจเติม LINE ID ที่ยังตกหล่นทันที');
+        }
       }
 
       function hideError() {
@@ -1406,6 +1441,7 @@
         state.user = response.user;
         state.isReadOnly = isReadOnlyUser(response.user);
         state.canSendLine = !state.isReadOnly;
+        updateSyncLineButton();
       }
 
       async function loadDashboard() {
@@ -1461,6 +1497,62 @@
         if (els.searchInput) els.searchInput.value = '';
         state.query = '';
         loadDashboard();
+      }
+
+      async function syncLineIdsNow() {
+        if (!state.api || typeof state.api.lineReconcileCoverage !== 'function') {
+          window.alert('ไม่พบตัวเชื่อมต่อสำหรับดึง LINE ID ทันที');
+          return;
+        }
+        if (state.pendingCoverageSync) return;
+        if (!state.canSendLine) {
+          window.alert('บัญชีนี้เป็นสิทธิ์อ่านอย่างเดียว จึงยังไม่สามารถสั่งดึง LINE ID ได้');
+          return;
+        }
+
+        state.pendingCoverageSync = true;
+        updateSyncLineButton();
+
+        try {
+          var response = await state.api.lineReconcileCoverage({ maxUsers: 1000 }, {
+            noPageLoader: true,
+            timeoutMs: 90000
+          });
+          var data = response && response.data ? response.data : {};
+          var followerSync = data && data.followerSync ? data.followerSync : {};
+          var lines = ['ดึงข้อมูล LINE เสร็จเรียบร้อยแล้ว'];
+
+          if (typeof followerSync.fetchedCount !== 'undefined') {
+            lines.push('ดึงรายชื่อเพื่อน LINE OA: ' + Number(followerSync.fetchedCount || 0) + ' ราย');
+          }
+          if (typeof data.autoFilledCount !== 'undefined') {
+            lines.push('เติม LINE ID อัตโนมัติ: ' + Number(data.autoFilledCount || 0) + ' ราย');
+          }
+          if (typeof data.unresolvedCount !== 'undefined') {
+            lines.push('ยังต้องตรวจสอบเพิ่ม: ' + Number(data.unresolvedCount || 0) + ' ราย');
+          }
+          if (typeof data.conflictCount !== 'undefined' && Number(data.conflictCount || 0) > 0) {
+            lines.push('ชื่อซ้ำ/ชนกัน: ' + Number(data.conflictCount || 0) + ' ราย');
+          }
+          if (data.coverageSheetName) {
+            lines.push('รายงานถูกอัปเดตในชีต: ' + data.coverageSheetName);
+          }
+
+          window.alert(lines.join('\n'));
+          await loadDashboard();
+        } catch (err) {
+          if (isAuthError(err)) {
+            redirectToLogin();
+            return;
+          }
+          var message = err && err.message ? err.message : 'ดึงข้อมูล LINE ไม่สำเร็จ';
+          var detail = safeTrim(err && err.data && err.data.response || '');
+          if (detail && message.indexOf(detail) === -1) message += '\nรายละเอียด: ' + detail;
+          window.alert(message);
+        } finally {
+          state.pendingCoverageSync = false;
+          updateSyncLineButton();
+        }
       }
 
       async function sendLineReminder(recordId, borrowerName, contractNo) {
@@ -1521,6 +1613,7 @@
         }
         if (els.btnSearch) els.btnSearch.addEventListener('click', loadDashboard);
         if (els.btnReset) els.btnReset.addEventListener('click', resetSearch);
+        if (els.btnSyncLineIds) els.btnSyncLineIds.addEventListener('click', syncLineIdsNow);
         if (els.btnRefresh) els.btnRefresh.addEventListener('click', loadDashboard);
         if (els.searchInput) {
           els.searchInput.addEventListener('keydown', function (event) {
@@ -1537,6 +1630,7 @@
       async function init() {
         applyTheme('light');
         bindEvents();
+        updateSyncLineButton();
         try {
           initApi();
         } catch (err) {
