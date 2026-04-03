@@ -495,6 +495,8 @@
           var apiErr = new Error(parsed && parsed.error ? parsed.error : 'api_error');
           apiErr.code = parsed && parsed.code ? parsed.code : 'api_error';
           apiErr.isApiError = true;
+          apiErr.data = parsed && parsed.data ? parsed.data : null;
+          apiErr.response = parsed || null;
           throw apiErr;
         }
         return parsed;
@@ -531,7 +533,12 @@
         callbackFired = true;
         cleanup();
         if (!response || response.success === false) {
-          reject(new Error(response && response.error ? response.error : 'api_error'));
+          var apiErr = new Error(response && response.error ? response.error : 'api_error');
+          apiErr.code = response && response.code ? response.code : 'api_error';
+          apiErr.isApiError = true;
+          apiErr.data = response && response.data ? response.data : null;
+          apiErr.response = response || null;
+          reject(apiErr);
           return;
         }
         resolve(response);

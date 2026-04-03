@@ -1489,7 +1489,15 @@
             redirectToLogin();
             return;
           }
-          window.alert(err && err.message ? err.message : 'ส่ง LINE แจ้งเตือนไม่สำเร็จ');
+          var message = err && err.message ? err.message : 'ส่ง LINE แจ้งเตือนไม่สำเร็จ';
+          var detail = safeTrim(err && err.data && err.data.response || '');
+          var lineUserId = safeTrim(err && err.data && err.data.lineUserId || '');
+          if (!detail && /HTTP 400/i.test(message)) {
+            detail = 'กรุณาตรวจสอบ LINE User ID ในชีตข้อมูล Line และให้ผู้ใช้เพิ่มเพื่อนหรือเคยโต้ตอบกับ LINE OA ก่อน';
+          }
+          if (detail && message.indexOf(detail) === -1) message += '\nรายละเอียด: ' + detail;
+          if (lineUserId && message.indexOf(lineUserId) === -1) message += '\nLINE User ID: ' + lineUserId;
+          window.alert(message);
         } finally {
           state.pendingReminderRecordId = '';
           rerenderCurrentRecords();
